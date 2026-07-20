@@ -161,13 +161,19 @@
                         </div>
                     </div>
 
-                    <!-- Google Sheet Integration Module -->
+                    <!-- Google Sheet Integration Module (Updated for Dual Sync) -->
                     <div>
                         <p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-4">Google Sheet Live Connection</p>
                         <div class="bg-neutral-50 rounded-2xl p-4 space-y-3 border border-neutral-100">
-                            <label class="block text-[11px] font-semibold text-neutral-700">Sheet CSV URL</label>
-                            <input type="text" id="g-sheet-url" onchange="saveSheetUrl()" placeholder="Paste Published CSV URL..." class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-xl focus:outline-none focus:ring-1 accent-ring bg-white">
-                            <p class="text-[9px] text-neutral-500 leading-normal">Publish your Google Sheet to CSV web output to auto-synchronize incoming transactions from your synced workspace.</p>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Transaction CSV URL</label>
+                                <input type="text" id="g-sheet-url" onchange="saveSheetUrl()" placeholder="Paste Transaction CSV URL..." class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-xl focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Payroll CSV URL</label>
+                                <input type="text" id="g-payroll-url" onchange="savePayrollUrl()" placeholder="Paste Payroll CSV URL..." class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-xl focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <p class="text-[9px] text-neutral-500 leading-normal">Publish each sheet tab separately as CSV web output to auto-synchronize your dashboard workspace.</p>
                             <button onclick="triggerSheetSync()" class="w-full py-1.5 text-xs font-bold text-neutral-800 border border-neutral-300 rounded-xl hover:border-black hover:bg-white transition-all bg-neutral-100 flex justify-center items-center gap-1">
                                 <i class="fa-solid fa-arrows-rotate text-[10px]"></i> Sync Live Sheet
                             </button>
@@ -503,8 +509,11 @@
                                     <th class="p-4">Status</th>
                                     <th class="p-4 text-center">Actions</th>
                                 </tr>
-                            </table>
-                        </div>
+                            </thead>
+                            <tbody id="clients-list-body" class="divide-y divide-neutral-100 text-neutral-800">
+                                <!-- Dynamic row insertions -->
+                            </tbody>
+                        </table>
                     </div>
                 </section>
 
@@ -709,6 +718,7 @@
             commissions: [],
             clientLayout: 'card',
             sheetUrl: '',
+            payrollUrl: '',
             customDealTypes: ["Paid Campaign", "Free Trial"],
             customCommTypes: ["Salary", "Discretionary Commission", "Bonus Payout"],
             customCommStatuses: ["Paid", "Pending"]
@@ -732,6 +742,11 @@
 
             if (appState.sheetUrl) {
                 document.getElementById("g-sheet-url").value = appState.sheetUrl;
+            }
+            if (appState.payrollUrl) {
+                document.getElementById("g-payroll-url").value = appState.payrollUrl;
+            }
+            if (appState.sheetUrl || appState.payrollUrl) {
                 triggerSheetSync();
             }
 
@@ -1604,10 +1619,19 @@
             showToast("Google Sheet URL profile saved!", "success");
         }
 
+        function savePayrollUrl() {
+            const url = document.getElementById("g-payroll-url").value.trim();
+            appState.payrollUrl = url;
+            saveState();
+            showToast("Google Sheet Payroll URL saved!", "success");
+        }
+
         async function triggerSheetSync() {
-            const url = appState.sheetUrl || document.getElementById("g-sheet-url").value.trim();
-            if (!url) {
-                showToast("No active Google Sheet URL saved to run synchronization pipeline.", "error");
+            const txUrl = appState.sheetUrl || document.getElementById("g-sheet-url").value.trim();
+            const payUrl = appState.payrollUrl || document.getElementById("g-payroll-url").value.trim();
+            
+            if (!txUrl && !payUrl) {
+                showToast("No active Google Sheet URLs saved to run synchronization pipeline.", "error");
                 return;
             }
 
@@ -1615,17 +1639,27 @@
             const statusText = document.getElementById("sheet-sync-status-text");
 
             statusDot.className = "w-2.5 h-2.5 rounded-full bg-amber-500 inline-block animate-pulse";
-            statusText.innerText = "Syncing Sheet...";
+            statusText.innerText = "Syncing Sheets...";
 
             try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error("Could not retrieve Sheet contents.");
+                if (txUrl) {
+                    const response = await fetch(txUrl);
+                    if (response.ok) {
+                        const csvText = await response.text();
+                        parseSheetCSV(csvText);
+                    }
+                }
 
-                const csvText = await response.text();
-                parseSheetCSV(csvText);
+                if (payUrl) {
+                    const response = await fetch(payUrl);
+                    if (response.ok) {
+                        const csvText = await response.text();
+                        parsePayrollCSV(csvText);
+                    }
+                }
 
                 statusDot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block";
-                statusText.innerText = "Live Sheet Synced";
+                statusText.innerText = "Live Sheets Synced";
                 showToast("Real-time Sheets synchronization accomplished!", "success");
             } catch (err) {
                 statusDot.className = "w-2.5 h-2.5 rounded-full bg-rose-500 inline-block";
@@ -1669,6 +1703,49 @@
 
             if (freshTransactions.length > 0) {
                 appState.transactions = freshTransactions;
+                saveState();
+                updateUI();
+            }
+        }
+
+        function parsePayrollCSV(csvText) {
+            const lines = csvText.split('\n');
+            if (lines.length <= 1) return;
+
+            const freshCommissions = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const row = lines[i].split(',');
+                if (row.length >= 6) {
+                    const date = row[0].replace(/"/g, '').trim();
+                    const project = row[1].replace(/"/g, '').trim();
+                    const manager = row[2].replace(/"/g, '').trim();
+                    const type = row[3].replace(/"/g, '').trim() || "Salary";
+                    const client = row[4].replace(/"/g, '').trim();
+                    const val = parseFloat(row[5].replace(/"/g, '')) || 0;
+                    const currency = row[6] ? row[6].replace(/"/g, '').trim() : "KRW";
+                    const status = row[7] ? row[7].replace(/"/g, '').trim() : "Paid";
+
+                    if (date && project && manager && val) {
+                        const rate = getExchangeRateOnDate(currency, date);
+                        freshCommissions.push({
+                            id: Date.now() + i + 1000,
+                            date,
+                            project,
+                            manager,
+                            type,
+                            client,
+                            val,
+                            currency,
+                            amountInKRW: val * rate,
+                            status
+                        });
+                    }
+                }
+            }
+
+            if (freshCommissions.length > 0) {
+                appState.commissions = freshCommissions;
                 saveState();
                 updateUI();
             }
