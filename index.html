@@ -104,8 +104,8 @@
                 <span class="text-neutral-500">Ledger Profile: <strong class="text-black font-semibold">VIVELY FINANCE</strong></span>
                 <div class="h-4 w-[1px] bg-neutral-200"></div>
                 <span class="text-neutral-500 flex items-center gap-1.5">
-                    <span id="sheet-sync-status-dot" class="w-2.5 h-2.5 rounded-full bg-neutral-300 inline-block"></span>
-                    <span id="sheet-sync-status-text">Inactive Session Ledger</span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
+                    <span>Local Database Active</span>
                 </span>
                 <div class="h-4 w-[1px] bg-neutral-200"></div>
                 <button onclick="handleLogout()" class="text-neutral-400 hover:text-rose-600 font-semibold transition-all flex items-center gap-1">
@@ -165,24 +165,13 @@
                         </div>
                     </div>
 
-                    <!-- Google Sheet Integration Module -->
+                    <!-- Export Data Module -->
                     <div>
-                        <p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-4">Google Sheet Sync Settings</p>
-                        <div class="bg-neutral-50 rounded-2xl p-4 space-y-3 border border-neutral-100">
-                            <div>
-                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Transaction CSV URL</label>
-                                <input type="text" id="g-sheet-url" onchange="saveSheetUrl()" placeholder="Paste Transaction CSV URL..." class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-xl focus:outline-none focus:ring-1 accent-ring bg-white">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Payroll CSV URL</label>
-                                <input type="text" id="g-payroll-url" onchange="savePayrollUrl()" placeholder="Paste Payroll CSV URL..." class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-xl focus:outline-none focus:ring-1 accent-ring bg-white">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Apps Script Web App URL (Auto-Save)</label>
-                                <input type="text" id="g-script-url" onchange="saveScriptUrl()" placeholder="Paste Web App URL for 2-way sync..." class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-xl focus:outline-none focus:ring-1 accent-ring bg-white">
-                            </div>
-                            <button onclick="triggerSheetSync()" class="w-full py-1.5 text-xs font-bold text-neutral-800 border border-neutral-300 rounded-xl hover:border-black hover:bg-white transition-all bg-neutral-100 flex justify-center items-center gap-1">
-                                <i class="fa-solid fa-arrows-rotate text-[10px]"></i> Sync Live Sheet
+                        <p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-3">Export Data to Excel</p>
+                        <div class="bg-neutral-50 rounded-2xl p-4 space-y-2 border border-neutral-100">
+                            <p class="text-[10px] text-neutral-500 leading-normal">Download database anytime for Google Sheets or Excel analysis.</p>
+                            <button onclick="exportCurrentTabCSV()" class="w-full py-2 text-xs font-bold text-white accent-bg rounded-xl hover:opacity-90 transition-all flex justify-center items-center gap-1.5 shadow-sm">
+                                <i class="fa-solid fa-file-excel"></i> Export Active Sheet (.csv)
                             </button>
                         </div>
                     </div>
@@ -292,9 +281,14 @@
                             <h2 class="text-xl font-bold tracking-tight">Daily Expenses & Transaction Log</h2>
                             <p class="text-xs text-neutral-500">Track, manage, and edit individual ledger items including physical proofs of purchase.</p>
                         </div>
-                        <button onclick="toggleTransactionForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
-                            <i class="fa-solid fa-plus mr-1.5"></i> Log Transaction
-                        </button>
+                        <div class="flex gap-2">
+                            <button onclick="exportCSV('transactions')" class="px-3.5 py-2 border border-neutral-200 text-neutral-700 rounded-xl text-xs font-semibold hover:bg-neutral-50 transition-all flex items-center gap-1.5">
+                                <i class="fa-solid fa-download"></i> Export CSV
+                            </button>
+                            <button onclick="toggleTransactionForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
+                                <i class="fa-solid fa-plus mr-1.5"></i> Log Transaction
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Transaction Form Card -->
@@ -404,16 +398,21 @@
                     </div>
                 </section>
 
-                <!-- TAB BARU: Employee Data (Data Karyawan) -->
+                <!-- TAB: Employee Data (Data Karyawan) -->
                 <section id="tab-employees" class="hidden space-y-8 animate-fade-in">
                     <div class="flex justify-between items-center border-b border-neutral-100 pb-5">
                         <div>
                             <h2 class="text-xl font-bold tracking-tight">Employee & Staff Directory</h2>
                             <p class="text-xs text-neutral-500">Kelola data karyawan, status kerja, serta detail rekening bank untuk pencatatan payroll.</p>
                         </div>
-                        <button onclick="toggleEmployeeForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
-                            <i class="fa-solid fa-plus mr-1.5"></i> Add Employee
-                        </button>
+                        <div class="flex gap-2">
+                            <button onclick="exportCSV('employees')" class="px-3.5 py-2 border border-neutral-200 text-neutral-700 rounded-xl text-xs font-semibold hover:bg-neutral-50 transition-all flex items-center gap-1.5">
+                                <i class="fa-solid fa-download"></i> Export CSV
+                            </button>
+                            <button onclick="toggleEmployeeForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
+                                <i class="fa-solid fa-plus mr-1.5"></i> Add Employee
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Form Input Employee -->
@@ -495,6 +494,9 @@
                         </div>
                         
                         <div class="flex items-center gap-3">
+                            <button onclick="exportCSV('clients')" class="px-3.5 py-2 border border-neutral-200 text-neutral-700 rounded-xl text-xs font-semibold hover:bg-neutral-50 transition-all flex items-center gap-1.5">
+                                <i class="fa-solid fa-download"></i> Export CSV
+                            </button>
                             <div class="bg-neutral-100 p-1 rounded-xl flex gap-1 border border-neutral-200">
                                 <button onclick="setClientLayout('card')" id="layout-btn-card" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-black shadow-sm">
                                     <i class="fa-solid fa-grip mr-1"></i> Cards
@@ -609,9 +611,14 @@
                             <h2 class="text-xl font-bold tracking-tight">Payroll, Salaries & Commissions Hub</h2>
                             <p class="text-xs text-neutral-500">Log both fixed corporate salaries and discretionary flat-rate PM commissions under one workspace.</p>
                         </div>
-                        <button onclick="toggleCommissionForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
-                            <i class="fa-solid fa-plus mr-1.5"></i> Log Payout / Salary
-                        </button>
+                        <div class="flex gap-2">
+                            <button onclick="exportCSV('commissions')" class="px-3.5 py-2 border border-neutral-200 text-neutral-700 rounded-xl text-xs font-semibold hover:bg-neutral-50 transition-all flex items-center gap-1.5">
+                                <i class="fa-solid fa-download"></i> Export CSV
+                            </button>
+                            <button onclick="toggleCommissionForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
+                                <i class="fa-solid fa-plus mr-1.5"></i> Log Payout / Salary
+                            </button>
+                        </div>
                     </div>
 
                     <!-- PM Commission / Salary Form -->
@@ -746,6 +753,8 @@
 
     <!-- Application JavaScript Logic -->
     <script>
+        let currentTabId = 'dashboard';
+
         function handleLogin(e) {
             if (e) e.preventDefault();
             const passwordInput = document.getElementById("login-password").value;
@@ -797,9 +806,6 @@
             commissions: [],
             employees: [],
             clientLayout: 'card',
-            sheetUrl: '',
-            payrollUrl: '',
-            scriptUrl: '',
             customDealTypes: ["Paid Campaign", "Free Trial"],
             customCommTypes: ["Salary", "Discretionary Commission", "Bonus Payout"],
             customCommStatuses: ["Paid", "Pending"]
@@ -810,24 +816,19 @@
         let pieChart = null;
 
         function initApp() {
-            const savedState = localStorage.getItem("vively_state_empty_v7");
+            const savedState = localStorage.getItem("vively_standalone_db_v1");
             if (savedState) {
                 appState = JSON.parse(savedState);
                 if (!appState.customDealTypes) appState.customDealTypes = [...defaultData.customDealTypes];
                 if (!appState.customCommTypes) appState.customCommTypes = [...defaultData.customCommTypes];
                 if (!appState.customCommStatuses) appState.customCommStatuses = [...defaultData.customCommStatuses];
                 if (!appState.employees) appState.employees = [];
+                if (!appState.transactions) appState.transactions = [];
+                if (!appState.clients) appState.clients = [];
+                if (!appState.commissions) appState.commissions = [];
             } else {
                 appState = JSON.parse(JSON.stringify(defaultData));
                 saveState();
-            }
-
-            if (appState.sheetUrl) document.getElementById("g-sheet-url").value = appState.sheetUrl;
-            if (appState.payrollUrl) document.getElementById("g-payroll-url").value = appState.payrollUrl;
-            if (appState.scriptUrl) document.getElementById("g-script-url").value = appState.scriptUrl;
-
-            if (appState.sheetUrl || appState.payrollUrl) {
-                triggerSheetSync();
             }
 
             renderForexSidebar();
@@ -837,7 +838,7 @@
         }
 
         function saveState() {
-            localStorage.setItem("vively_state_empty_v7", JSON.stringify(appState));
+            localStorage.setItem("vively_standalone_db_v1", JSON.stringify(appState));
         }
 
         function populateDynamicSelects() {
@@ -895,7 +896,7 @@
             populateDynamicSelects();
             populateEmployeeDropdowns();
             updateUI();
-            showToast("Workspace wiped clean and reset successfully!", "success");
+            showToast("Workspace database cleared!", "success");
         }
 
         function renderForexSidebar() {
@@ -959,6 +960,7 @@
         }
 
         function switchTab(tabId) {
+            currentTabId = tabId;
             const tabs = ['dashboard', 'transactions', 'employees', 'clients', 'commissions'];
             tabs.forEach(t => {
                 const element = document.getElementById(`tab-${t}`);
@@ -1192,29 +1194,6 @@
             );
         }
 
-        /* --- AUTO-SAVE TO GOOGLE SHEET VIA WEB APP --- */
-        async function syncToGoogleSheet(action, payload) {
-            if (!appState.scriptUrl) return;
-            try {
-                await fetch(appState.scriptUrl, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action, data: payload })
-                });
-                showToast("Data synced to Google Sheet!", "success");
-            } catch (e) {
-                console.error("Auto-sync error", e);
-            }
-        }
-
-        function saveScriptUrl() {
-            const url = document.getElementById("g-script-url").value.trim();
-            appState.scriptUrl = url;
-            saveState();
-            showToast("Google Apps Script URL saved!", "success");
-        }
-
         function setClientLayout(layout) {
             appState.clientLayout = layout;
             saveState();
@@ -1431,11 +1410,10 @@
                     showToast("Transaction updated!", "success");
                 } else {
                     appState.transactions.unshift(txData);
-                    showToast("New transaction appended!", "success");
+                    showToast("New transaction saved!", "success");
                 }
 
                 saveState();
-                syncToGoogleSheet('addTransaction', txData);
                 updateUI();
                 cancelTransactionForm();
             };
@@ -1525,111 +1503,53 @@
             }
 
             saveState();
-            syncToGoogleSheet('addPayroll', comData);
             updateUI();
             cancelCommissionForm();
+            showToast("Payroll entry saved!", "success");
         }
 
-        function saveSheetUrl() {
-            appState.sheetUrl = document.getElementById("g-sheet-url").value.trim();
-            saveState();
+        /* --- EXPORT CSV FEATURE --- */
+        function exportCurrentTabCSV() {
+            if (currentTabId === 'transactions' || currentTabId === 'dashboard') exportCSV('transactions');
+            else if (currentTabId === 'employees') exportCSV('employees');
+            else if (currentTabId === 'clients') exportCSV('clients');
+            else if (currentTabId === 'commissions') exportCSV('commissions');
         }
 
-        function savePayrollUrl() {
-            appState.payrollUrl = document.getElementById("g-payroll-url").value.trim();
-            saveState();
-        }
+        function exportCSV(type) {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            let filename = `vively_${type}_${new Date().toISOString().slice(0,10)}.csv`;
 
-        async function triggerSheetSync() {
-            const txUrl = appState.sheetUrl || document.getElementById("g-sheet-url").value.trim();
-            const payUrl = appState.payrollUrl || document.getElementById("g-payroll-url").value.trim();
-            
-            if (!txUrl && !payUrl) return;
-
-            const statusDot = document.getElementById("sheet-sync-status-dot");
-            const statusText = document.getElementById("sheet-sync-status-text");
-
-            statusDot.className = "w-2.5 h-2.5 rounded-full bg-amber-500 inline-block animate-pulse";
-            statusText.innerText = "Syncing Sheets...";
-
-            try {
-                if (txUrl) {
-                    const response = await fetch(txUrl);
-                    if (response.ok) parseSheetCSV(await response.text());
-                }
-                if (payUrl) {
-                    const response = await fetch(payUrl);
-                    if (response.ok) parsePayrollCSV(await response.text());
-                }
-
-                statusDot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block";
-                statusText.innerText = "Live Sheets Synced";
-                showToast("Real-time Sheets synchronization accomplished!", "success");
-            } catch (err) {
-                statusDot.className = "w-2.5 h-2.5 rounded-full bg-rose-500 inline-block";
-                statusText.innerText = "Sync Interrupted";
+            if (type === 'transactions') {
+                csvContent += "Date,Description,Category,Amount,Currency,AmountInKRW,Type\n";
+                appState.transactions.forEach(t => {
+                    csvContent += `"${t.date}","${t.description}","${t.category}",${t.amount},"${t.currency}",${t.amountInKRW},"${t.type}"\n`;
+                });
+            } else if (type === 'employees') {
+                csvContent += "Name,Type,Status,Phone,Email,Bank,AccountNo\n";
+                appState.employees.forEach(e => {
+                    csvContent += `"${e.name}","${e.type}","${e.status}","${e.phone}","${e.email}","${e.bank}","${e.account}"\n`;
+                });
+            } else if (type === 'clients') {
+                csvContent += "CompanyName,Industry,Service,DealType,ContractValue,Currency,Owner,Status,CreatorsSeeding\n";
+                appState.clients.forEach(c => {
+                    csvContent += `"${c.name}","${c.industry}","${c.service}","${c.dealType}",${c.originalValue},"${c.currency}","${c.owner}","${c.status}",${c.creatorsSeeding}\n`;
+                });
+            } else if (type === 'commissions') {
+                csvContent += "Date,ProjectName,Recipient,Type,ClientCompany,Value,Currency,ValueInKRW,Status\n";
+                appState.commissions.forEach(c => {
+                    csvContent += `"${c.date}","${c.project}","${c.manager}","${c.type}","${c.client}",${c.val},"${c.currency}",${c.amountInKRW},"${c.status}"\n`;
+                });
             }
-        }
 
-        /* PERBAIKAN PENTING: Penggabungan Data Tanpa Menghapus Data Lokal */
-        function parseSheetCSV(csvText) {
-            const lines = csvText.split('\n');
-            if (lines.length <= 1) return;
-
-            for (let i = 1; i < lines.length; i++) {
-                const row = lines[i].split(',');
-                if (row.length >= 4) {
-                    const date = row[0].replace(/"/g, '').trim();
-                    const desc = row[1].replace(/"/g, '').trim();
-                    const cat = row[2].replace(/"/g, '').trim();
-                    const amt = parseFloat(row[3].replace(/"/g, '')) || 0;
-                    const cur = row[4] ? row[4].replace(/"/g, '').trim() : "KRW";
-
-                    if (date && desc && amt) {
-                        const exists = appState.transactions.some(t => t.date === date && t.description === desc && t.amount === amt);
-                        if (!exists) {
-                            const rate = getExchangeRateOnDate(cur, date);
-                            appState.transactions.push({
-                                id: Date.now() + i,
-                                date, description: desc, category: cat, amount: amt, currency: cur,
-                                amountInKRW: amt * rate, type: cat === "Revenue" ? "CREDIT" : "DEBIT", picture: ""
-                            });
-                        }
-                    }
-                }
-            }
-            saveState();
-            updateUI();
-        }
-
-        function parsePayrollCSV(csvText) {
-            const lines = csvText.split('\n');
-            if (lines.length <= 1) return;
-
-            for (let i = 1; i < lines.length; i++) {
-                const row = lines[i].split(',');
-                if (row.length >= 6) {
-                    const date = row[0].replace(/"/g, '').trim();
-                    const project = row[1].replace(/"/g, '').trim();
-                    const manager = row[2].replace(/"/g, '').trim();
-                    const type = row[3].replace(/"/g, '').trim() || "Salary";
-                    const client = row[4].replace(/"/g, '').trim();
-                    const val = parseFloat(row[5].replace(/"/g, '')) || 0;
-
-                    if (date && project && manager && val) {
-                        const exists = appState.commissions.some(c => c.date === date && c.project === project && c.val === val);
-                        if (!exists) {
-                            const rate = getExchangeRateOnDate("KRW", date);
-                            appState.commissions.push({
-                                id: Date.now() + i + 1000,
-                                date, project, manager, type, client, val, currency: "KRW", amountInKRW: val * rate, status: "Paid"
-                            });
-                        }
-                    }
-                }
-            }
-            saveState();
-            updateUI();
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast(`Exported ${type} to CSV file!`, "success");
         }
 
         window.onload = function() {
