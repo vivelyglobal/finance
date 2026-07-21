@@ -143,6 +143,7 @@
                                 <i class="fa-solid fa-address-book text-neutral-400"></i>
                                 Key Client Portfolio
                             </button>
+                            <!-- REVISED SIDEBAR LABEL: Client Payment -->
                             <button onclick="switchTab('client-payments')" id="btn-client-payments" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 hover:bg-neutral-50 hover:text-black border-l-4 border-transparent">
                                 <i class="fa-solid fa-file-invoice-dollar text-neutral-400"></i>
                                 Client Payment
@@ -588,7 +589,7 @@
                     </div>
                 </section>
 
-                <!-- Tab 3: Key Client Portfolio (REVISED FILTER LABEL TO "All Status") -->
+                <!-- Tab 3: Key Client Portfolio -->
                 <section id="tab-clients" class="hidden space-y-8 animate-fade-in">
                     <div class="flex justify-between items-center border-b border-neutral-100 pb-5">
                         <div>
@@ -756,8 +757,8 @@
                 <section id="tab-client-payments" class="hidden space-y-8 animate-fade-in">
                     <div class="flex justify-between items-center border-b border-neutral-100 pb-5">
                         <div>
-                            <h2 class="text-xl font-bold tracking-tight">Client Payment Hub</h2>
-                            <p class="text-xs text-neutral-500">Manage multiple installment terms and track remaining balances for Paid Collab brands.</p>
+                            <h2 class="text-xl font-bold tracking-tight">Client Payment</h2>
+                            <p class="text-xs text-neutral-500">Manage payment terms and track remaining balances (Sisa Pembayaran) for Paid Collab brands.</p>
                         </div>
                     </div>
 
@@ -766,15 +767,20 @@
                         <h3 class="text-xs font-bold text-black uppercase tracking-wider text-neutral-500" id="payment-schedule-form-title">Log Payment Term</h3>
                         <form id="new-payment-schedule-form" onsubmit="addManualPaymentSchedule(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                             <input type="hidden" id="edit-payment-schedule-id" value="">
+                            <input type="hidden" id="pay-client-total-value" value="0">
+                            
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Target Client Brand</label>
                                 <input type="text" id="pay-client-display" readonly required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg bg-neutral-100 text-neutral-600 font-bold">
                                 <input type="hidden" id="pay-client-name">
                             </div>
+                            
+                            <!-- PERCENTAGE INPUT (Auto-calculates amount) -->
                             <div>
-                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Term Description</label>
-                                <input type="text" id="pay-term-desc" placeholder="e.g., Down Payment 50%, Final 50%..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Payment Percentage (%)</label>
+                                <input type="number" id="pay-percentage" placeholder="e.g., 50" oninput="calculatePaymentAmount()" required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
+                            
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Due Date</label>
                                 <input type="date" id="pay-due-date" required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
@@ -792,10 +798,13 @@
                                     <option value="IDR">IDR (Rp)</option>
                                 </select>
                             </div>
+                            
+                            <!-- AMOUNT INPUT -->
                             <div>
-                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Amount</label>
-                                <input type="number" id="pay-amount" placeholder="Amount..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Amount (Auto-calculated)</label>
+                                <input type="number" id="pay-amount" placeholder="Calculated Amount..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
+                            
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Payment Status</label>
                                 <select id="pay-status" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
@@ -815,7 +824,7 @@
                         </form>
                     </div>
 
-                    <!-- Cards Container for Paid Collab Clients -->
+                    <!-- Cards Container for Paid Collab Clients (DASHBOARD) -->
                     <div id="paid-clients-payment-container" class="space-y-6">
                     </div>
                 </section>
@@ -1873,6 +1882,15 @@
         }
 
         /* --- CLIENT PAYMENT HUB (PER-BRAND PAYMENT SCHEDULE & MULTI-INSTALLMENTS) --- */
+        
+        // Auto-Calculate amount based on percentage
+        function calculatePaymentAmount() {
+            const pct = parseFloat(document.getElementById("pay-percentage").value) || 0;
+            const total = parseFloat(document.getElementById("pay-client-total-value").value) || 0;
+            const amount = total * (pct / 100);
+            document.getElementById("pay-amount").value = amount; // no fractions needed mostly, but allowed
+        }
+
         function renderPaymentScheduleHub() {
             const container = document.getElementById("paid-clients-payment-container");
             container.innerHTML = "";
@@ -1891,13 +1909,14 @@
             paidClients.forEach(client => {
                 const clientPayments = appState.clientPayments.filter(p => p.clientName === client.name);
                 
-                let totalPaidKRW = 0;
+                // Calculate based on the client's original currency for the dashboard UI
+                let totalPaidNative = 0;
                 clientPayments.forEach(p => {
-                    if (p.status === "Paid") totalPaidKRW += parseFloat(p.amountInKRW);
+                    if (p.status === "Paid") totalPaidNative += parseFloat(p.amount);
                 });
 
-                const totalContractKRW = client.originalValue * getExchangeRateOnDate(client.currency, client.campaignStart || '2026-01-01');
-                const remainingBalanceKRW = Math.max(0, totalContractKRW - totalPaidKRW);
+                const totalContractNative = client.originalValue || 0;
+                const remainingBalanceNative = Math.max(0, totalContractNative - totalPaidNative);
 
                 let rowsHtml = "";
                 if (clientPayments.length === 0) {
@@ -1943,17 +1962,17 @@
                             <div class="flex items-center gap-6">
                                 <div class="text-right">
                                     <p class="text-[10px] font-bold text-neutral-400 uppercase">Contract Value</p>
-                                    <p class="text-sm font-bold text-black">${parseFloat(client.originalValue).toLocaleString()} ${client.currency}</p>
+                                    <p class="text-sm font-bold text-black">${totalContractNative.toLocaleString()} ${client.currency}</p>
                                 </div>
                                 <div class="text-right">
                                     <p class="text-[10px] font-bold text-emerald-500 uppercase">Total Paid</p>
-                                    <p class="text-sm font-bold text-emerald-600">₩ ${totalPaidKRW.toLocaleString()}</p>
+                                    <p class="text-sm font-bold text-emerald-600">${totalPaidNative.toLocaleString()} ${client.currency}</p>
                                 </div>
                                 <div class="text-right">
                                     <p class="text-[10px] font-bold text-rose-400 uppercase">Remaining Balance</p>
-                                    <p class="text-sm font-bold text-rose-600">₩ ${remainingBalanceKRW.toLocaleString()}</p>
+                                    <p class="text-sm font-bold text-rose-600">${remainingBalanceNative.toLocaleString()} ${client.currency}</p>
                                 </div>
-                                <button onclick="openPaymentFormForClient('${client.name}', '${client.currency}')" class="px-3.5 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm flex items-center gap-1.5">
+                                <button onclick="openPaymentFormForClient('${client.name}', '${client.currency}', ${client.originalValue || 0})" class="px-3.5 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm flex items-center gap-1.5">
                                     <i class="fa-solid fa-plus text-[10px]"></i> Add Payment Term
                                 </button>
                             </div>
@@ -1964,7 +1983,7 @@
                             <table class="w-full text-left border-collapse text-xs">
                                 <thead>
                                     <tr class="bg-neutral-50 border-b border-neutral-100 text-neutral-400 font-bold uppercase tracking-wider text-[9px]">
-                                        <th class="p-3.5">Term Milestone</th>
+                                        <th class="p-3.5">Payment Percentage</th>
                                         <th class="p-3.5">Due Date</th>
                                         <th class="p-3.5">Actual Paid Date</th>
                                         <th class="p-3.5 text-right">Amount</th>
@@ -1984,7 +2003,7 @@
             });
         }
 
-        function openPaymentFormForClient(clientName, currency) {
+        function openPaymentFormForClient(clientName, currency, contractValue) {
             document.getElementById("payment-schedule-form-card").classList.remove("hidden");
             document.getElementById("payment-schedule-form-title").innerText = `Log Payment Term for ${clientName}`;
             document.getElementById("edit-payment-schedule-id").value = "";
@@ -1993,6 +2012,7 @@
             document.getElementById("pay-client-display").value = clientName;
             document.getElementById("pay-client-name").value = clientName;
             document.getElementById("pay-currency").value = currency || "KRW";
+            document.getElementById("pay-client-total-value").value = contractValue;
             
             document.getElementById("payment-schedule-form-card").scrollIntoView({ behavior: 'smooth' });
         }
@@ -2007,7 +2027,8 @@
             e.preventDefault();
             const editId = document.getElementById("edit-payment-schedule-id").value;
             const clientName = document.getElementById("pay-client-name").value;
-            const termDesc = document.getElementById("pay-term-desc").value.trim();
+            const percentage = parseFloat(document.getElementById("pay-percentage").value) || 0;
+            const termDesc = percentage + "%"; // Stored for display purposes
             const dueDate = document.getElementById("pay-due-date").value;
             const paidDate = document.getElementById("pay-paid-date").value;
             const currency = document.getElementById("pay-currency").value;
@@ -2021,7 +2042,7 @@
 
                 const payData = {
                     id: editId ? parseInt(editId) : Date.now(),
-                    clientName, termDesc, dueDate, paidDate, currency, amount,
+                    clientName, percentage, termDesc, dueDate, paidDate, currency, amount,
                     amountInKRW, status, picture: pictureBase64 || ""
                 };
 
@@ -2058,9 +2079,12 @@
             document.getElementById("payment-schedule-form-title").innerText = `Revise Payment Term for ${p.clientName}`;
             document.getElementById("edit-payment-schedule-id").value = p.id;
 
+            const clientObj = appState.clients.find(c => c.name === p.clientName);
+            document.getElementById("pay-client-total-value").value = clientObj ? clientObj.originalValue : 0;
+
             document.getElementById("pay-client-display").value = p.clientName;
             document.getElementById("pay-client-name").value = p.clientName;
-            document.getElementById("pay-term-desc").value = p.termDesc;
+            document.getElementById("pay-percentage").value = p.percentage || parseFloat(p.termDesc) || 0;
             document.getElementById("pay-due-date").value = p.dueDate;
             document.getElementById("pay-paid-date").value = p.paidDate || "";
             document.getElementById("pay-currency").value = p.currency;
