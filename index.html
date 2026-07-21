@@ -291,6 +291,37 @@
                         </div>
                     </div>
 
+                    <!-- TRANSACTION SUMMARY MODULE (BARU) -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-neutral-50 border border-neutral-100 rounded-2xl p-4 flex items-center justify-between">
+                            <div>
+                                <p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Total Filtered Income</p>
+                                <h4 class="text-lg font-bold text-emerald-600 mt-1" id="tx-summary-income">₩ 0</h4>
+                            </div>
+                            <div class="w-9 h-9 rounded-xl bg-emerald-100/50 flex items-center justify-center text-emerald-600 text-sm">
+                                <i class="fa-solid fa-arrow-down-left"></i>
+                            </div>
+                        </div>
+                        <div class="bg-neutral-50 border border-neutral-100 rounded-2xl p-4 flex items-center justify-between">
+                            <div>
+                                <p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Total Filtered Expenses</p>
+                                <h4 class="text-lg font-bold text-rose-600 mt-1" id="tx-summary-expenses">₩ 0</h4>
+                            </div>
+                            <div class="w-9 h-9 rounded-xl bg-rose-100/50 flex items-center justify-center text-rose-600 text-sm">
+                                <i class="fa-solid fa-arrow-up-right"></i>
+                            </div>
+                        </div>
+                        <div class="bg-neutral-50 border border-neutral-100 rounded-2xl p-4 flex items-center justify-between">
+                            <div>
+                                <p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Filtered Net Balance</p>
+                                <h4 class="text-lg font-bold text-black mt-1" id="tx-summary-net">₩ 0</h4>
+                            </div>
+                            <div class="w-9 h-9 rounded-xl bg-neutral-200/50 flex items-center justify-center text-black text-sm">
+                                <i class="fa-solid fa-scale-balanced"></i>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Transaction Form Card -->
                     <div id="transaction-form-card" class="hidden bg-neutral-50 border border-neutral-100 rounded-2xl p-6 space-y-4">
                         <h3 class="text-xs font-bold text-black uppercase tracking-wider text-neutral-500" id="transaction-form-title">New Transaction Details</h3>
@@ -398,7 +429,7 @@
                     </div>
                 </section>
 
-                <!-- TAB: Employee Data (REVISED TO KOREAN BANK & ENGLISH STANDARDS) -->
+                <!-- TAB: Employee Data -->
                 <section id="tab-employees" class="hidden space-y-8 animate-fade-in">
                     <div class="flex justify-between items-center border-b border-neutral-100 pb-5">
                         <div>
@@ -1034,13 +1065,17 @@
             renderCharts();
         }
 
+        /* --- TRANSACTION MANAGER & DYNAMIC SUMMARY --- */
         function renderTransactionsTable() {
             const tbody = document.getElementById("transactions-table-body");
             tbody.innerHTML = "";
 
             const catFilter = document.getElementById("table-category-filter").value;
             const monthFilter = document.getElementById("table-month-filter").value;
+            
             let count = 0;
+            let filteredIncomeKRW = 0;
+            let filteredExpenseKRW = 0;
 
             appState.transactions.forEach(t => {
                 const txMonth = t.date.split('-')[1];
@@ -1048,6 +1083,14 @@
                 if (monthFilter !== "ALL" && txMonth !== monthFilter) return;
 
                 count++;
+                
+                // Summing filtered totals
+                if (t.type === "CREDIT") {
+                    filteredIncomeKRW += parseFloat(t.amountInKRW);
+                } else {
+                    filteredExpenseKRW += parseFloat(t.amountInKRW);
+                }
+
                 const attachmentButton = t.picture ? 
                     `<button onclick="openReceiptModal('${t.picture}')" class="text-[#ff66c4] hover:text-black transition-all p-1.5 font-bold"><i class="fa-solid fa-image text-sm mr-1"></i> View Proof</button>` : 
                     `<span class="text-neutral-400 text-[10px] italic">No proof</span>`;
@@ -1076,6 +1119,15 @@
                 `;
                 tbody.insertAdjacentHTML('beforeend', row);
             });
+
+            // Update Transaction Summary Cards Dynamically
+            const currencySymbol = getCurrencySymbol();
+            const currKey = document.getElementById("global-currency-select").value;
+            const netBalanceKRW = filteredIncomeKRW - filteredExpenseKRW;
+
+            document.getElementById("tx-summary-income").innerText = `${currencySymbol} ${getConvertedVal(filteredIncomeKRW).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
+            document.getElementById("tx-summary-expenses").innerText = `${currencySymbol} ${getConvertedVal(filteredExpenseKRW).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
+            document.getElementById("tx-summary-net").innerText = `${currencySymbol} ${getConvertedVal(netBalanceKRW).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
 
             document.getElementById("table-filtered-counter").innerText = `Showing ${count} transaction${count !== 1 ? 's' : ''}`;
         }
