@@ -171,7 +171,7 @@
                         <div class="bg-neutral-50 rounded-2xl p-4 space-y-2 border border-neutral-100">
                             <p class="text-[10px] text-neutral-500 leading-normal">Download database anytime for Google Sheets or Excel analysis.</p>
                             <button onclick="exportCurrentTabCSV()" class="w-full py-2 text-xs font-bold text-white accent-bg rounded-xl hover:opacity-90 transition-all flex justify-center items-center gap-1.5 shadow-sm">
-                                <i class="fa-solid fa-file-excel"></i> Export Active Sheet (.csv)
+                                <i class="fa-solid fa-file-excel"></i> Export Data
                             </button>
                         </div>
                     </div>
@@ -283,7 +283,7 @@
                         </div>
                         <div class="flex gap-2">
                             <button onclick="exportCSV('transactions')" class="px-3.5 py-2 border border-neutral-200 text-neutral-700 rounded-xl text-xs font-semibold hover:bg-neutral-50 transition-all flex items-center gap-1.5">
-                                <i class="fa-solid fa-download"></i> Export CSV
+                                <i class="fa-solid fa-download"></i> Export Data
                             </button>
                             <button onclick="toggleTransactionForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
                                 <i class="fa-solid fa-plus mr-1.5"></i> Log Transaction
@@ -398,16 +398,16 @@
                     </div>
                 </section>
 
-                <!-- TAB: Employee Data (Data Karyawan) -->
+                <!-- TAB: Employee Data -->
                 <section id="tab-employees" class="hidden space-y-8 animate-fade-in">
                     <div class="flex justify-between items-center border-b border-neutral-100 pb-5">
                         <div>
                             <h2 class="text-xl font-bold tracking-tight">Employee & Staff Directory</h2>
-                            <p class="text-xs text-neutral-500">Kelola data karyawan, status kerja, serta detail rekening bank untuk pencatatan payroll.</p>
+                            <p class="text-xs text-neutral-500">Manage team profiles, employment statuses, and banking details for seamless payroll logging.</p>
                         </div>
                         <div class="flex gap-2">
                             <button onclick="exportCSV('employees')" class="px-3.5 py-2 border border-neutral-200 text-neutral-700 rounded-xl text-xs font-semibold hover:bg-neutral-50 transition-all flex items-center gap-1.5">
-                                <i class="fa-solid fa-download"></i> Export CSV
+                                <i class="fa-solid fa-download"></i> Export Data
                             </button>
                             <button onclick="toggleEmployeeForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
                                 <i class="fa-solid fa-plus mr-1.5"></i> Add Employee
@@ -422,7 +422,7 @@
                             <input type="hidden" id="edit-employee-id" value="">
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Full Name</label>
-                                <input type="text" id="emp-name" placeholder="Nama Karyawan..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                <input type="text" id="emp-name" placeholder="Employee Name..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Employment Type</label>
@@ -430,32 +430,32 @@
                                     <option value="Full-Time">Full-Time</option>
                                     <option value="Part-Time">Part-Time</option>
                                     <option value="Intern">Intern</option>
-                                    <option value="Contractor/Freelance">Contractor / Freelance</option>
+                                    <option value="Contractor / Freelance">Contractor / Freelance</option>
                                 </select>
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Status</label>
                                 <select id="emp-status" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                                     <option value="On-Going">On-Going (Active)</option>
-                                    <option value="Completed">Completed (Inactive/Resigned)</option>
+                                    <option value="Completed">Completed (Inactive / Resigned)</option>
                                     <option value="On-Leave">On-Leave</option>
                                 </select>
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Phone Number</label>
-                                <input type="text" id="emp-phone" placeholder="0812xxx / +82..." class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                <input type="text" id="emp-phone" placeholder="+82... / +62..." class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Email Address</label>
-                                <input type="email" id="emp-email" placeholder="email@vively.com" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                <input type="email" id="emp-email" placeholder="name@vively.com" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Bank Name</label>
-                                <input type="text" id="emp-bank" placeholder="e.g., BCA, Mandiri, KB Kookmin..." class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                <input type="text" id="emp-bank" placeholder="e.g., KB Kookmin, BCA, DBS..." class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Account Number (Rek No)</label>
-                                <input type="text" id="emp-account" placeholder="No Rekening..." class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Account Number</label>
+                                <input type="text" id="emp-account" placeholder="Account No..." class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
                             <div class="flex gap-2">
                                 <button type="submit" id="emp-submit-btn" class="flex-1 px-4 py-2 text-white accent-bg rounded-lg text-xs font-semibold hover:opacity-95 transition-all">Save Employee</button>
@@ -495,7 +495,7 @@
                         
                         <div class="flex items-center gap-3">
                             <button onclick="exportCSV('clients')" class="px-3.5 py-2 border border-neutral-200 text-neutral-700 rounded-xl text-xs font-semibold hover:bg-neutral-50 transition-all flex items-center gap-1.5">
-                                <i class="fa-solid fa-download"></i> Export CSV
+                                <i class="fa-solid fa-download"></i> Export Data
                             </button>
                             <div class="bg-neutral-100 p-1 rounded-xl flex gap-1 border border-neutral-200">
                                 <button onclick="setClientLayout('card')" id="layout-btn-card" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-black shadow-sm">
@@ -613,7 +613,7 @@
                         </div>
                         <div class="flex gap-2">
                             <button onclick="exportCSV('commissions')" class="px-3.5 py-2 border border-neutral-200 text-neutral-700 rounded-xl text-xs font-semibold hover:bg-neutral-50 transition-all flex items-center gap-1.5">
-                                <i class="fa-solid fa-download"></i> Export CSV
+                                <i class="fa-solid fa-download"></i> Export Data
                             </button>
                             <button onclick="toggleCommissionForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
                                 <i class="fa-solid fa-plus mr-1.5"></i> Log Payout / Salary
