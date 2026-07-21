@@ -244,14 +244,41 @@
                         </div>
                     </div>
 
-                    <!-- COA Financial Report Table (SEQUENTIALLY ORDERED & DYNAMIC TO COA ADD/DELETE) -->
+                    <!-- COA Financial Report Table (WITH CATEGORY FILTER & SORT OPTIONS) -->
                     <div class="border border-neutral-100 rounded-2xl p-6 bg-white shadow-sm space-y-4">
-                        <div class="flex justify-between items-center border-b border-neutral-100 pb-3">
-                            <h4 class="text-xs font-bold uppercase tracking-wider text-black flex items-center gap-2">
-                                <i class="fa-solid fa-list-check text-[#ff66c4]"></i> Chart of Accounts Financial Report
-                            </h4>
-                            <span class="text-[11px] text-neutral-400 font-medium">Sorted by Account Code. Dynamic with COA additions/deletions.</span>
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-neutral-100 pb-4">
+                            <div>
+                                <h4 class="text-xs font-bold uppercase tracking-wider text-black flex items-center gap-2">
+                                    <i class="fa-solid fa-list-check text-[#ff66c4]"></i> Chart of Accounts Financial Report
+                                </h4>
+                                <span class="text-[11px] text-neutral-400 font-medium">Dynamically updated based on COA Master list and month filter.</span>
+                            </div>
+                            
+                            <!-- Category Filter & Sort Control Bar -->
+                            <div class="flex flex-wrap items-center gap-3">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-semibold text-neutral-500">Category:</span>
+                                    <select id="report-category-filter" onchange="renderDashboardCOAReport()" class="bg-neutral-50 border border-neutral-200 text-black px-2.5 py-1.5 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 accent-ring">
+                                        <option value="ALL">All Categories</option>
+                                        <option value="Asset">Asset</option>
+                                        <option value="Liability">Liability</option>
+                                        <option value="Equity">Equity</option>
+                                        <option value="Revenue">Revenue</option>
+                                        <option value="Expense">Expense</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-semibold text-neutral-500">Sort By:</span>
+                                    <select id="report-sort-filter" onchange="renderDashboardCOAReport()" class="bg-neutral-50 border border-neutral-200 text-black px-2.5 py-1.5 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 accent-ring">
+                                        <option value="CODE_ASC">Code (Low -> High)</option>
+                                        <option value="CODE_DESC">Code (High -> Low)</option>
+                                        <option value="NAME_ASC">Name (A -> Z)</option>
+                                        <option value="AMOUNT_DESC">Amount (Highest First)</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
+
                         <div class="overflow-x-auto">
                             <table class="w-full text-left border-collapse text-xs">
                                 <thead>
@@ -751,6 +778,25 @@
                         </div>
                     </div>
 
+                    <!-- REVISI 2: GRAND SUMMARY CARDS FOR ALL PAID COLLAB BRANDS -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white border border-neutral-200 rounded-2xl p-5 shadow-sm">
+                            <span class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Total Contract Value (All Paid Brands)</span>
+                            <h3 class="text-xl font-bold text-black mt-2" id="sum-paid-contract">0</h3>
+                            <p class="text-[10px] text-neutral-400 mt-1">Accumulated Paid Campaign Contracts</p>
+                        </div>
+                        <div class="bg-white border border-neutral-200 rounded-2xl p-5 shadow-sm">
+                            <span class="text-[10px] font-bold text-emerald-500 uppercase tracking-wider">Total Paid Amount Received</span>
+                            <h3 class="text-xl font-bold text-emerald-600 mt-2" id="sum-paid-received">0</h3>
+                            <p class="text-[10px] text-neutral-400 mt-1">Verified Received Revenue</p>
+                        </div>
+                        <div class="bg-white border border-neutral-200 rounded-2xl p-5 shadow-sm">
+                            <span class="text-[10px] font-bold text-rose-500 uppercase tracking-wider">Total Remaining Balance (Sisa Pembayaran)</span>
+                            <h3 class="text-xl font-bold text-rose-600 mt-2" id="sum-paid-remaining">0</h3>
+                            <p class="text-[10px] text-neutral-400 mt-1">Outstanding Receivable Balance</p>
+                        </div>
+                    </div>
+
                     <!-- Payment Modal Form -->
                     <div id="payment-schedule-form-card" class="hidden bg-neutral-50 border border-neutral-100 rounded-2xl p-6 space-y-4">
                         <h3 class="text-xs font-bold text-black uppercase tracking-wider text-neutral-500" id="payment-schedule-form-title">Log Payment Term</h3>
@@ -1106,7 +1152,7 @@
             localStorage.setItem("vively_standalone_db_v1", JSON.stringify(appState));
         }
 
-        /* FUZZY MATCHING HELPER TO FIND CORRECT REVENUE COA CATEGORY */
+        /* RESOLVE REVENUE CATEGORY FUZZY MATCH */
         function resolveRevenueCategory(rawServiceName) {
             if (!rawServiceName) return "KOL Seeding Revenue";
             
@@ -1115,15 +1161,12 @@
                 name = `${name} Revenue`;
             }
 
-            // Look for existing COA match
             const exactMatch = appState.coa.find(c => c.name.toLowerCase() === name.toLowerCase());
             if (exactMatch) return exactMatch.name;
 
-            // Partial match (e.g., "KOL Seeding" -> "KOL Seeding Revenue")
             const partialMatch = appState.coa.find(c => c.category === "Revenue" && c.name.toLowerCase().includes(rawServiceName.toLowerCase()));
             if (partialMatch) return partialMatch.name;
 
-            // Auto-Add new COA Revenue account if entirely new
             const newCoa = {
                 id: Date.now(),
                 code: '4' + Math.floor(100 + Math.random() * 899),
@@ -1225,7 +1268,7 @@
             let formOpts = "";
             let filterOpts = `<option value="ALL">All Categories</option>`;
 
-            const sortedCOA = [...appState.coa].sort((a, b) => a.code.localeCompare(b.code));
+            const sortedCOA = [...appState.coa].sort((a, b) => parseInt(a.code) - parseInt(b.code));
 
             sortedCOA.forEach(c => {
                 formOpts += `<option value="${c.name}">${c.name} (${c.category})</option>`;
@@ -1444,27 +1487,28 @@
             renderClientsView();
             renderPaymentScheduleHub();
             renderCommissionsTable();
-            renderDashboardCOAReport(); // REVISI 1: ORDERED & DYNAMIC TO COA MASTER
+            renderDashboardCOAReport();
             renderCharts();
         }
 
-        /* REVISI 1: DYNAMIC & ORDERED COA FINANCIAL REPORT */
+        /* REVISI 1: STRICTLY SORTED & FILTERABLE COA REPORT TABLE */
         function renderDashboardCOAReport() {
             const tbody = document.getElementById("dashboard-coa-report-body");
             if (!tbody) return;
             tbody.innerHTML = "";
 
             const monthFilter = document.getElementById("dashboard-month-filter").value;
+            const categoryFilter = document.getElementById("report-category-filter") ? document.getElementById("report-category-filter").value : "ALL";
+            const sortMode = document.getElementById("report-sort-filter") ? document.getElementById("report-sort-filter").value : "CODE_ASC";
+
             const coaTotals = {};
 
-            // 1. DYNAMIC: Read directly from appState.coa Master List so additions/deletions reflect immediately
-            const sortedMasterCOA = [...appState.coa].sort((a, b) => a.code.localeCompare(b.code));
-
-            sortedMasterCOA.forEach(c => {
-                coaTotals[c.name] = { code: c.code, category: c.category, amountKRW: 0 };
+            // Always read directly from master appState.coa
+            appState.coa.forEach(c => {
+                coaTotals[c.name] = { id: c.id, code: c.code, category: c.category, amountKRW: 0 };
             });
 
-            // 2. Accumulate from All Transactions
+            // 1. Accumulate from All Transactions
             appState.transactions.forEach(t => {
                 const txMonth = t.date.split('-')[1];
                 if (monthFilter === "ALL" || monthFilter === txMonth) {
@@ -1474,7 +1518,7 @@
                 }
             });
 
-            // 3. Accumulate from Payroll Payouts
+            // 2. Accumulate from Payroll Payouts
             appState.commissions.forEach(c => {
                 if (c.status === "Paid") {
                     const comMonth = c.date.split('-')[1];
@@ -1490,15 +1534,40 @@
                 }
             });
 
+            // Filter by Category
+            let reportList = appState.coa.filter(c => {
+                if (categoryFilter !== "ALL" && c.category !== categoryFilter) return false;
+                return true;
+            }).map(c => {
+                return {
+                    code: c.code,
+                    name: c.name,
+                    category: c.category,
+                    amountKRW: coaTotals[c.name] ? coaTotals[c.name].amountKRW : 0
+                };
+            });
+
+            // Strict Sorting Logic
+            reportList.sort((a, b) => {
+                if (sortMode === "CODE_ASC") return parseInt(a.code) - parseInt(b.code);
+                if (sortMode === "CODE_DESC") return parseInt(b.code) - parseInt(a.code);
+                if (sortMode === "NAME_ASC") return a.name.localeCompare(b.name);
+                if (sortMode === "AMOUNT_DESC") return b.amountKRW - a.amountKRW;
+                return parseInt(a.code) - parseInt(b.code);
+            });
+
             const currencySymbol = getCurrencySymbol();
             const currKey = document.getElementById("global-currency-select").value;
 
-            // Render sequentially by Account Code
-            sortedMasterCOA.forEach(c => {
-                const acc = coaTotals[c.name] || { code: c.code, category: c.category, amountKRW: 0 };
-                const converted = getConvertedVal(acc.amountKRW);
-                const badgeColor = acc.category === "Revenue" ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
-                                  (acc.category === "Expense" ? "bg-rose-50 text-rose-600 border-rose-100" : "bg-neutral-50 text-neutral-600 border-neutral-100");
+            if (reportList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-neutral-400 italic">No accounts match category filter.</td></tr>`;
+                return;
+            }
+
+            reportList.forEach(c => {
+                const converted = getConvertedVal(c.amountKRW);
+                const badgeColor = c.category === "Revenue" ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                                  (c.category === "Expense" ? "bg-rose-50 text-rose-600 border-rose-100" : "bg-neutral-50 text-neutral-600 border-neutral-100");
 
                 const row = `
                     <tr class="hover:bg-neutral-50 transition-all">
@@ -1638,7 +1707,7 @@
             const tbody = document.getElementById("coa-table-body");
             tbody.innerHTML = "";
 
-            const sortedCOA = [...appState.coa].sort((a, b) => a.code.localeCompare(b.code));
+            const sortedCOA = [...appState.coa].sort((a, b) => parseInt(a.code) - parseInt(b.code));
 
             sortedCOA.forEach(c => {
                 const catBadge = c.category === "Revenue" ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
@@ -1676,7 +1745,6 @@
             document.getElementById("coa-side").value = item.side;
         }
 
-        /* REVISI 1: Delete COA also deletes it immediately from Dashboard Report */
         function triggerDeleteCOA(id) {
             showConfirmationModal("Delete COA Account", "Remove this account from Chart of Accounts?", false, () => {
                 appState.coa = appState.coa.filter(c => c.id !== id);
@@ -2055,7 +2123,7 @@
             });
         }
 
-        /* --- CLIENT PAYMENT HUB --- */
+        /* --- CLIENT PAYMENT HUB WITH GRAND SUMMARY CARDS --- */
         function calculatePaymentAmount() {
             const pct = parseFloat(document.getElementById("pay-percentage").value) || 0;
             const total = parseFloat(document.getElementById("pay-client-total-value").value) || 0;
@@ -2068,6 +2136,33 @@
             container.innerHTML = "";
 
             const paidClients = appState.clients.filter(c => c.dealType === "Paid Campaign");
+
+            // REVISI 2: Calculate Grand Aggregated Totals for ALL Paid Collab Clients
+            let grandTotalContractKRW = 0;
+            let grandTotalPaidKRW = 0;
+
+            paidClients.forEach(client => {
+                const clientPayments = appState.clientPayments.filter(p => p.clientName === client.name);
+                
+                const clientRate = getExchangeRateOnDate(client.currency, client.campaignStart || '2026-01-01');
+                grandTotalContractKRW += (client.originalValue || 0) * clientRate;
+
+                clientPayments.forEach(p => {
+                    if (p.status === "Paid") {
+                        grandTotalPaidKRW += parseFloat(p.amountInKRW || 0);
+                    }
+                });
+            });
+
+            const grandRemainingKRW = Math.max(0, grandTotalContractKRW - grandTotalPaidKRW);
+
+            const currencySymbol = getCurrencySymbol();
+            const currKey = document.getElementById("global-currency-select").value;
+
+            // Render Summary Cards
+            document.getElementById("sum-paid-contract").innerText = `${currencySymbol} ${getConvertedVal(grandTotalContractKRW).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
+            document.getElementById("sum-paid-received").innerText = `${currencySymbol} ${getConvertedVal(grandTotalPaidKRW).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
+            document.getElementById("sum-paid-remaining").innerText = `${currencySymbol} ${getConvertedVal(grandRemainingKRW).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
 
             if (paidClients.length === 0) {
                 container.innerHTML = `
@@ -2666,7 +2761,6 @@
             }
 
             const encodedUri = encodeURI(csvContent);
-            const link = document.getElementById("a");
             const a = document.createElement("a");
             a.setAttribute("href", encodedUri);
             a.setAttribute("download", filename);
