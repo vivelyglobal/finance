@@ -129,7 +129,11 @@
                             </button>
                             <button onclick="switchTab('transactions')" id="btn-transactions" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 hover:bg-neutral-50 hover:text-black border-l-4 border-transparent">
                                 <i class="fa-solid fa-receipt text-neutral-400"></i>
-                                Transaction Log
+                                Expense & Revenue Tracker
+                            </button>
+                            <button onclick="switchTab('coa')" id="btn-coa" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 hover:bg-neutral-50 hover:text-black border-l-4 border-transparent">
+                                <i class="fa-solid fa-book-bookmark text-neutral-400"></i>
+                                Chart of Accounts
                             </button>
                             <button onclick="switchTab('employees')" id="btn-employees" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 hover:bg-neutral-50 hover:text-black border-l-4 border-transparent">
                                 <i class="fa-solid fa-users text-neutral-400"></i>
@@ -235,7 +239,7 @@
                                 <span class="p-1.5 bg-neutral-50 text-black border border-neutral-100 rounded-lg text-xs"><i class="fa-solid fa-arrow-trend-down text-rose-500"></i></span>
                             </div>
                             <h3 class="text-2xl font-bold text-black" id="metric-expenses">0</h3>
-                            <p class="text-[10px] text-neutral-500 mt-2">Salaries, Payouts, Software</p>
+                            <p class="text-[10px] text-neutral-500 mt-2">Salaries, Payouts, Software & Tools</p>
                         </div>
 
                         <div class="bg-white border border-neutral-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all">
@@ -274,11 +278,11 @@
                     </div>
                 </section>
 
-                <!-- Tab 2: Transaction Manager -->
+                <!-- Tab 2: Expense & Revenue Tracker (REVISED NAME) -->
                 <section id="tab-transactions" class="hidden space-y-8 animate-fade-in">
                     <div class="flex justify-between items-center border-b border-neutral-100 pb-5">
                         <div>
-                            <h2 class="text-xl font-bold tracking-tight">Daily Expenses & Transaction Log</h2>
+                            <h2 class="text-xl font-bold tracking-tight">Expense & Revenue Tracker</h2>
                             <p class="text-xs text-neutral-500">Track, manage, and edit individual ledger items including physical proofs of purchase.</p>
                         </div>
                         <div class="flex gap-2">
@@ -340,14 +344,9 @@
                                 <input type="text" id="form-details" placeholder="Specific notes or purpose..." class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Expense Category</label>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Account Category (From COA)</label>
                                 <select id="form-category" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
-                                    <option value="Revenue">Revenue (Income)</option>
-                                    <option value="Salaries & Wages">Salaries & Wages</option>
-                                    <option value="KOL / Creator Payouts">KOL / Creator Payouts</option>
-                                    <option value="Software & Tools">Software & Tools</option>
-                                    <option value="PM Commissions">PM Commissions</option>
-                                    <option value="Misc / Other">Misc / Other</option>
+                                    <!-- Populated dynamically from COA -->
                                 </select>
                             </div>
                             <div>
@@ -381,12 +380,6 @@
                                 <span class="text-xs font-semibold text-neutral-500">Category Filter:</span>
                                 <select id="table-category-filter" onchange="renderTransactionsTable()" class="bg-white border border-neutral-200 text-black px-3 py-1.5 rounded-lg text-xs font-medium focus:outline-none focus:ring-1 accent-ring">
                                     <option value="ALL">All Categories</option>
-                                    <option value="Revenue">Revenue (Income)</option>
-                                    <option value="Salaries & Wages">Salaries & Wages</option>
-                                    <option value="KOL / Creator Payouts">KOL / Creator Payouts</option>
-                                    <option value="Software & Tools">Software & Tools</option>
-                                    <option value="PM Commissions">PM Commissions</option>
-                                    <option value="Misc / Other">Misc / Other</option>
                                 </select>
                             </div>
                             <div class="flex items-center gap-2">
@@ -430,6 +423,78 @@
                                 </tbody>
                             </table>
                         </div>
+                    </div>
+                </section>
+
+                <!-- TAB BARU: Chart of Accounts (COA) -->
+                <section id="tab-coa" class="hidden space-y-8 animate-fade-in">
+                    <div class="flex justify-between items-center border-b border-neutral-100 pb-5">
+                        <div>
+                            <h2 class="text-xl font-bold tracking-tight">Chart of Accounts (COA)</h2>
+                            <p class="text-xs text-neutral-500">Manage financial account structures, categories, and normal balances for accounting standards.</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="exportCSV('coa')" class="px-3.5 py-2 border border-neutral-200 text-neutral-700 rounded-xl text-xs font-semibold hover:bg-neutral-50 transition-all flex items-center gap-1.5">
+                                <i class="fa-solid fa-download"></i> Export
+                            </button>
+                            <button onclick="toggleCOAForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
+                                <i class="fa-solid fa-plus mr-1.5"></i> Add COA
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- COA Form Card -->
+                    <div id="coa-form-card" class="hidden bg-neutral-50 border border-neutral-100 rounded-2xl p-6 space-y-4">
+                        <h3 class="text-xs font-bold text-black uppercase tracking-wider text-neutral-500" id="coa-form-title">Add New Account</h3>
+                        <form id="new-coa-form" onsubmit="addManualCOA(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                            <input type="hidden" id="edit-coa-id" value="">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Account Code</label>
+                                <input type="text" id="coa-code" placeholder="e.g. 1010, 5010..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Account Name</label>
+                                <input type="text" id="coa-name" placeholder="e.g. Software & Tools..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Category Type</label>
+                                <select id="coa-category" onchange="autoSetNormalBalance()" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                    <option value="Asset">Asset</option>
+                                    <option value="Liability">Liability</option>
+                                    <option value="Equity">Equity</option>
+                                    <option value="Revenue">Revenue</option>
+                                    <option value="Expense" selected>Expense</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Normal Balance Side</label>
+                                <select id="coa-side" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                    <option value="Debit">Debit Side</option>
+                                    <option value="Credit">Credit Side</option>
+                                </select>
+                            </div>
+                            <div class="md:col-span-4 flex justify-end gap-2 pt-2 border-t border-neutral-100">
+                                <button type="button" onclick="cancelCOAForm()" class="px-4 py-2 border border-neutral-200 rounded-lg text-xs font-semibold hover:bg-white transition-all">Cancel</button>
+                                <button type="submit" id="coa-submit-btn" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-bold hover:opacity-95 transition-all">Save Account</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- COA Table -->
+                    <div class="border border-neutral-100 rounded-2xl overflow-hidden shadow-sm bg-white">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-neutral-50 border-b border-neutral-100 text-neutral-500 font-bold uppercase tracking-wider text-[10px]">
+                                    <th class="p-4">Account Code</th>
+                                    <th class="p-4">Account Name</th>
+                                    <th class="p-4">Category</th>
+                                    <th class="p-4">Normal Balance Side</th>
+                                    <th class="p-4 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="coa-table-body" class="divide-y divide-neutral-100 text-neutral-800">
+                            </tbody>
+                        </table>
                     </div>
                 </section>
 
@@ -705,9 +770,9 @@
                                 </select>
                                 <input type="text" id="comm-status-custom" placeholder="Type custom status..." class="hidden mt-1.5 w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
-                            <div class="md:col-span-4 flex justify-end gap-2 pt-2">
-                                <button type="submit" id="comm-submit-btn" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-semibold hover:opacity-95 transition-all">Save Record</button>
+                            <div class="md:col-span-4 flex justify-end gap-2 pt-2 border-t border-neutral-100">
                                 <button type="button" onclick="cancelCommissionForm()" class="px-4 py-2 border border-neutral-200 rounded-lg text-xs font-semibold hover:bg-white transition-all">Cancel</button>
+                                <button type="submit" id="comm-submit-btn" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-semibold hover:opacity-95 transition-all">Save Record</button>
                             </div>
                         </form>
                     </div>
@@ -835,11 +900,28 @@
             return baseRate * variation;
         }
 
+        // DEFAULT STANDARDIZED CHART OF ACCOUNTS FOR VIVELY GLOBAL
+        const defaultCOA = [
+            { id: 101, code: '1010', name: 'Cash & Bank (KRW)', category: 'Asset', side: 'Debit' },
+            { id: 102, code: '1200', name: 'Accounts Receivable (Piutang)', category: 'Asset', side: 'Debit' },
+            { id: 201, code: '2010', name: 'Accounts Payable (Hutang)', category: 'Liability', side: 'Credit' },
+            { id: 301, code: '3010', name: "Owner's Capital", category: 'Equity', side: 'Credit' },
+            { id: 401, code: '4010', name: 'KOL Seeding Revenue', category: 'Revenue', side: 'Credit' },
+            { id: 402, code: '4020', name: 'Consulting & Campaign Revenue', category: 'Revenue', side: 'Credit' },
+            { id: 501, code: '5010', name: 'Salaries & Wages', category: 'Expense', side: 'Debit' },
+            { id: 502, code: '5020', name: 'KOL / Creator Payouts', category: 'Expense', side: 'Debit' },
+            { id: 503, code: '5030', name: 'Software & Tools', category: 'Expense', side: 'Debit' },
+            { id: 504, code: '5040', name: 'PM Commissions', category: 'Expense', side: 'Debit' },
+            { id: 505, code: '5050', name: 'Marketing & Seeding Expenses', category: 'Expense', side: 'Debit' },
+            { id: 506, code: '5990', name: 'Misc / Other Expenses', category: 'Expense', side: 'Debit' }
+        ];
+
         const defaultData = {
             transactions: [],
             clients: [],
             commissions: [],
             employees: [],
+            coa: defaultCOA,
             clientLayout: 'card',
             customDealTypes: ["Paid Campaign", "Free Trial"],
             customCommTypes: ["Salary", "Discretionary Commission", "Bonus Payout"],
@@ -861,6 +943,7 @@
                 if (!appState.transactions) appState.transactions = [];
                 if (!appState.clients) appState.clients = [];
                 if (!appState.commissions) appState.commissions = [];
+                if (!appState.coa || appState.coa.length === 0) appState.coa = [...defaultCOA];
             } else {
                 appState = JSON.parse(JSON.stringify(defaultData));
                 saveState();
@@ -869,6 +952,7 @@
             renderForexSidebar();
             populateDynamicSelects();
             populateEmployeeDropdowns();
+            populateCOADropdowns();
             updateUI();
         }
 
@@ -910,6 +994,22 @@
             if (currentVal) select.value = currentVal;
         }
 
+        function populateCOADropdowns() {
+            const formCatSelect = document.getElementById("form-category");
+            const tableCatFilter = document.getElementById("table-category-filter");
+            
+            let formOpts = "";
+            let filterOpts = `<option value="ALL">All Categories</option>`;
+
+            appState.coa.forEach(c => {
+                formOpts += `<option value="${c.name}">${c.name} (${c.category})</option>`;
+                filterOpts += `<option value="${c.name}">${c.name}</option>`;
+            });
+
+            formCatSelect.innerHTML = formOpts;
+            tableCatFilter.innerHTML = filterOpts;
+        }
+
         function toggleCustomInput(selectId, inputId) {
             const selectEl = document.getElementById(selectId);
             const inputEl = document.getElementById(inputId);
@@ -930,6 +1030,7 @@
             saveState();
             populateDynamicSelects();
             populateEmployeeDropdowns();
+            populateCOADropdowns();
             updateUI();
             showToast("Workspace database cleared!", "success");
         }
@@ -996,7 +1097,7 @@
 
         function switchTab(tabId) {
             currentTabId = tabId;
-            const tabs = ['dashboard', 'transactions', 'employees', 'clients', 'commissions'];
+            const tabs = ['dashboard', 'transactions', 'coa', 'employees', 'clients', 'commissions'];
             tabs.forEach(t => {
                 const element = document.getElementById(`tab-${t}`);
                 if (element) element.classList.add('hidden');
@@ -1034,12 +1135,14 @@
             return "";
         }
 
+        /* --- UPDATE EXECUTIVE DASHBOARD (INCLUDES BOTH TRANSACTIONS & PAID PAYROLL) --- */
         function updateUI() {
             let totalRevenue = 0;
             let totalExpenses = 0;
 
             const selectedMonthFilter = document.getElementById("dashboard-month-filter").value;
 
+            // 1. Transactions Expense/Revenue
             appState.transactions.forEach(t => {
                 const txMonth = t.date.split('-')[1];
                 if (selectedMonthFilter === "ALL" || selectedMonthFilter === txMonth) {
@@ -1047,6 +1150,16 @@
                         totalRevenue += parseFloat(t.amountInKRW);
                     } else {
                         totalExpenses += parseFloat(t.amountInKRW);
+                    }
+                }
+            });
+
+            // 2. Paid Payroll Payouts Auto-Added to Dashboard Expenses
+            appState.commissions.forEach(c => {
+                if (c.status === "Paid") {
+                    const cMonth = c.date.split('-')[1];
+                    if (selectedMonthFilter === "ALL" || selectedMonthFilter === cMonth) {
+                        totalExpenses += parseFloat(c.amountInKRW);
                     }
                 }
             });
@@ -1063,13 +1176,14 @@
             document.getElementById("metric-margin").innerText = `${margin}%`;
 
             renderTransactionsTable();
+            renderCOATable();
             renderEmployeesTable();
             renderClientsView();
             renderCommissionsTable();
             renderCharts();
         }
 
-        /* --- TRANSACTION MANAGER WITH GUARANTEED STRING DATE SORTING --- */
+        /* --- TRANSACTION MANAGER WITH STRICT DATE SORTING --- */
         function renderTransactionsTable() {
             const tbody = document.getElementById("transactions-table-body");
             tbody.innerHTML = "";
@@ -1081,11 +1195,8 @@
             let filteredIncomeKRW = 0;
             let filteredExpenseKRW = 0;
 
-            // OTOMATIS SORTING TANGGAL (DESCENDING: TERBARU KE TERLAMA SEPERTI 2026-06-25 DULU BARU 2026-06-24)
             const sortedTransactions = [...appState.transactions].sort((a, b) => {
-                if (b.date !== a.date) {
-                    return b.date.localeCompare(a.date);
-                }
+                if (b.date !== a.date) return b.date.localeCompare(a.date);
                 return b.id - a.id;
             });
 
@@ -1147,6 +1258,114 @@
             document.getElementById("table-filtered-counter").innerText = `Showing ${count} transaction${count !== 1 ? 's' : ''}`;
         }
 
+        /* --- CHART OF ACCOUNTS (COA) LOGIC --- */
+        function toggleCOAForm() {
+            document.getElementById("coa-form-card").classList.toggle("hidden");
+            document.getElementById("coa-form-title").innerText = "Add New Account";
+            document.getElementById("edit-coa-id").value = "";
+            document.getElementById("new-coa-form").reset();
+            autoSetNormalBalance();
+        }
+
+        function cancelCOAForm() {
+            document.getElementById("coa-form-card").classList.add("hidden");
+            document.getElementById("new-coa-form").reset();
+            document.getElementById("edit-coa-id").value = "";
+        }
+
+        function autoSetNormalBalance() {
+            const cat = document.getElementById("coa-category").value;
+            const sideSelect = document.getElementById("coa-side");
+            if (cat === "Asset" || cat === "Expense") {
+                sideSelect.value = "Debit";
+            } else {
+                sideSelect.value = "Credit";
+            }
+        }
+
+        function addManualCOA(e) {
+            e.preventDefault();
+            const editId = document.getElementById("edit-coa-id").value;
+            const code = document.getElementById("coa-code").value.trim();
+            const name = document.getElementById("coa-name").value.trim();
+            const category = document.getElementById("coa-category").value;
+            const side = document.getElementById("coa-side").value;
+
+            const coaData = {
+                id: editId ? parseInt(editId) : Date.now(),
+                code, name, category, side
+            };
+
+            if (editId) {
+                appState.coa = appState.coa.map(c => c.id === parseInt(editId) ? coaData : c);
+                showToast("Account updated!", "success");
+            } else {
+                appState.coa.push(coaData);
+                showToast("New account added to COA!", "success");
+            }
+
+            saveState();
+            populateCOADropdowns();
+            renderCOATable();
+            cancelCOAForm();
+        }
+
+        function renderCOATable() {
+            const tbody = document.getElementById("coa-table-body");
+            tbody.innerHTML = "";
+
+            const sortedCOA = [...appState.coa].sort((a, b) => a.code.localeCompare(b.code));
+
+            sortedCOA.forEach(c => {
+                const catBadge = c.category === "Revenue" ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                                 (c.category === "Expense" ? "bg-rose-50 text-rose-600 border-rose-100" :
+                                 "bg-neutral-50 text-neutral-700 border-neutral-200");
+
+                const row = `
+                    <tr class="hover:bg-neutral-50 transition-all">
+                        <td class="p-4 font-mono font-bold text-black">${c.code}</td>
+                        <td class="p-4 font-semibold text-black">${c.name}</td>
+                        <td class="p-4"><span class="px-2 py-0.5 rounded border text-[10px] font-semibold ${catBadge}">${c.category}</span></td>
+                        <td class="p-4 font-medium text-neutral-600">${c.side} Side</td>
+                        <td class="p-4 text-center">
+                            <div class="flex justify-center gap-2">
+                                <button onclick="loadCOAForEdit(${c.id})" class="text-neutral-400 hover:text-black p-1.5"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button onclick="triggerDeleteCOA(${c.id})" class="text-neutral-400 hover:text-rose-600 p-1.5"><i class="fa-solid fa-trash-can"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        }
+
+        function loadCOAForEdit(id) {
+            const item = appState.coa.find(c => c.id === id);
+            if (!item) return;
+
+            document.getElementById("coa-form-card").classList.remove("hidden");
+            document.getElementById("coa-form-title").innerText = "Revise Account Details";
+            document.getElementById("edit-coa-id").value = item.id;
+            document.getElementById("coa-code").value = item.code;
+            document.getElementById("coa-name").value = item.name;
+            document.getElementById("coa-category").value = item.category;
+            document.getElementById("coa-side").value = item.side;
+        }
+
+        function triggerDeleteCOA(id) {
+            showConfirmationModal(
+                "Delete COA Account",
+                "Are you sure you want to remove this account from Chart of Accounts?",
+                () => {
+                    appState.coa = appState.coa.filter(c => c.id !== id);
+                    saveState();
+                    populateCOADropdowns();
+                    renderCOATable();
+                    showToast("Account removed from COA", "success");
+                }
+            );
+        }
+
         /* --- EMPLOYEES LOGIC --- */
         function toggleEmployeeForm() {
             document.getElementById("employee-form-card").classList.toggle("hidden");
@@ -1174,13 +1393,7 @@
 
             const empData = {
                 id: editId ? parseInt(editId) : Date.now(),
-                name,
-                type,
-                status,
-                phone,
-                email,
-                bank,
-                account
+                name, type, status, phone, email, bank, account
             };
 
             if (editId) {
@@ -1346,7 +1559,7 @@
             });
         }
 
-        /* --- PAYROLL HUB WITH STRICT DATE SORTING --- */
+        /* --- PAYROLL HUB WITH FIXED EDIT FUNCTION & DATE SORTING --- */
         function renderCommissionsTable() {
             const tbody = document.getElementById("commissions-table-body");
             tbody.innerHTML = "";
@@ -1354,11 +1567,8 @@
             const monthFilter = document.getElementById("payroll-month-filter").value;
             let hasRecords = false;
 
-            // OTOMATIS SORTING TANGGAL (DESCENDING: TERBARU KE TERLAMA)
             const sortedCommissions = [...appState.commissions].sort((a, b) => {
-                if (b.date !== a.date) {
-                    return b.date.localeCompare(a.date);
-                }
+                if (b.date !== a.date) return b.date.localeCompare(a.date);
                 return b.id - a.id;
             });
 
@@ -1381,8 +1591,8 @@
                         <td class="p-4 text-center"><span class="px-2 py-0.5 rounded border text-[9px] font-bold ${badge}">${com.status}</span></td>
                         <td class="p-4 text-center">
                             <div class="flex items-center justify-center gap-2">
-                                <button onclick="loadCommissionForEdit(${com.id})" class="text-neutral-400 hover:text-neutral-900 p-1.5"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
-                                <button onclick="triggerDeleteCommission(${com.id})" class="text-neutral-400 hover:text-rose-600 p-1.5"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                                <button onclick="loadCommissionForEdit(${com.id})" class="text-neutral-400 hover:text-neutral-900 transition-all p-1.5" title="Edit Payout"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                                <button onclick="triggerDeleteCommission(${com.id})" class="text-neutral-400 hover:text-rose-600 transition-all p-1.5" title="Delete Payout"><i class="fa-solid fa-trash-can text-xs"></i></button>
                             </div>
                         </td>
                     </tr>
@@ -1393,6 +1603,46 @@
             if (!hasRecords) {
                 tbody.innerHTML = `<tr><td colspan="9" class="p-8 text-center text-neutral-400 italic">No payroll payouts logged.</td></tr>`;
             }
+        }
+
+        /* --- LOAD PAYROLL FOR EDIT (FIXED BUG) --- */
+        function loadCommissionForEdit(id) {
+            const com = appState.commissions.find(c => c.id === id);
+            if (!com) return;
+
+            document.getElementById("commission-form-card").classList.remove('hidden');
+            document.getElementById("commissions-form-title").innerText = "Revise Payout Details";
+            document.getElementById("edit-commission-id").value = com.id;
+            
+            document.getElementById("comm-date").value = com.date;
+            document.getElementById("comm-project").value = com.project;
+            document.getElementById("comm-manager-select").value = com.manager;
+            document.getElementById("comm-client").value = com.client || "";
+            document.getElementById("comm-currency").value = com.currency;
+            document.getElementById("comm-val").value = com.val;
+
+            if (!appState.customCommTypes.includes(com.type)) appState.customCommTypes.push(com.type);
+            if (!appState.customCommStatuses.includes(com.status)) appState.customCommStatuses.push(com.status);
+            populateDynamicSelects();
+
+            document.getElementById("comm-type").value = com.type;
+            document.getElementById("comm-status").value = com.status;
+
+            document.getElementById("comm-submit-btn").innerText = "Save Revisions";
+            document.getElementById("commission-form-card").scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function triggerDeleteCommission(id) {
+            showConfirmationModal(
+                "Delete Payroll Log",
+                "Permanently delete this payroll/salary entry?",
+                () => {
+                    appState.commissions = appState.commissions.filter(c => c.id !== id);
+                    saveState();
+                    updateUI();
+                    showToast("Payroll record deleted!", "success");
+                }
+            );
         }
 
         function renderCharts() {
@@ -1408,11 +1658,22 @@
                 const monthlyRevenue = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                 const monthlyExpenses = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
+                // Add Transaction Revenue & Expenses to Charts
                 appState.transactions.forEach(t => {
                     const monthIdx = new Date(t.date).getMonth();
                     if (monthIdx >= 0 && monthIdx < 12) {
                         if (t.type === "CREDIT") monthlyRevenue[monthIdx] += getConvertedVal(parseFloat(t.amountInKRW));
                         else monthlyExpenses[monthIdx] += getConvertedVal(parseFloat(t.amountInKRW));
+                    }
+                });
+
+                // Add Paid Payroll Expenses to Charts
+                appState.commissions.forEach(c => {
+                    if (c.status === "Paid") {
+                        const monthIdx = new Date(c.date).getMonth();
+                        if (monthIdx >= 0 && monthIdx < 12) {
+                            monthlyExpenses[monthIdx] += getConvertedVal(parseFloat(c.amountInKRW));
+                        }
                     }
                 });
 
@@ -1436,6 +1697,15 @@
                     if (t.type === "DEBIT") {
                         const value = getConvertedVal(parseFloat(t.amountInKRW));
                         categories[t.category] = (categories[t.category] || 0) + value;
+                    }
+                });
+
+                // Include Salaries category from Paid Payrolls
+                appState.commissions.forEach(c => {
+                    if (c.status === "Paid") {
+                        const val = getConvertedVal(parseFloat(c.amountInKRW));
+                        const cat = c.type || "Salaries & Wages";
+                        categories[cat] = (categories[cat] || 0) + val;
                     }
                 });
 
@@ -1463,7 +1733,11 @@
             const category = document.getElementById("form-category").value;
             const amount = parseFloat(document.getElementById("form-amount").value);
             const currency = document.getElementById("form-currency").value;
-            const type = category === "Revenue" ? "CREDIT" : "DEBIT";
+            
+            // Auto-detect Credit / Debit based on COA Category
+            const coaMatch = appState.coa.find(c => c.name === category);
+            const type = (coaMatch && coaMatch.category === "Revenue") ? "CREDIT" : "DEBIT";
+
             const fileInput = document.getElementById("form-picture");
 
             const handleNewTxInsertion = (pictureBase64) => {
@@ -1549,11 +1823,15 @@
 
         function toggleCommissionForm() {
             document.getElementById("commission-form-card").classList.toggle('hidden');
+            document.getElementById("commissions-form-title").innerText = "Log Payout Details";
+            document.getElementById("edit-commission-id").value = "";
+            document.getElementById("comm-submit-btn").innerText = "Save Record";
         }
 
         function cancelCommissionForm() {
             document.getElementById("commission-form-card").classList.add('hidden');
             document.getElementById("new-commission-form").reset();
+            document.getElementById("edit-commission-id").value = "";
         }
 
         function addManualCommission(e) {
@@ -1588,9 +1866,10 @@
             showToast("Payroll entry saved!", "success");
         }
 
-        /* --- EXPORT CSV FEATURE (SORTED BY DATE) --- */
+        /* --- EXPORT CSV FEATURE --- */
         function exportCurrentTabCSV() {
             if (currentTabId === 'transactions' || currentTabId === 'dashboard') exportCSV('transactions');
+            else if (currentTabId === 'coa') exportCSV('coa');
             else if (currentTabId === 'employees') exportCSV('employees');
             else if (currentTabId === 'clients') exportCSV('clients');
             else if (currentTabId === 'commissions') exportCSV('commissions');
@@ -1608,6 +1887,11 @@
                 });
                 sortedTx.forEach(t => {
                     csvContent += `"${t.date}","${t.description}","${t.details || ''}","${t.category}",${t.amount},"${t.currency}",${t.amountInKRW},"${t.type}"\n`;
+                });
+            } else if (type === 'coa') {
+                csvContent += "AccountCode,AccountName,Category,NormalBalanceSide\n";
+                appState.coa.forEach(c => {
+                    csvContent += `"${c.code}","${c.name}","${c.category}","${c.side}"\n`;
                 });
             } else if (type === 'employees') {
                 csvContent += "FullName,Type,Status,Phone,Email,Bank,AccountNumber\n";
