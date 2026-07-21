@@ -129,7 +129,7 @@
                             </button>
                             <button onclick="switchTab('transactions')" id="btn-transactions" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 hover:bg-neutral-50 hover:text-black border-l-4 border-transparent">
                                 <i class="fa-solid fa-receipt text-neutral-400"></i>
-                                Expense & Revenue Tracker
+                                Transaction Tracker
                             </button>
                             <button onclick="switchTab('coa')" id="btn-coa" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 hover:bg-neutral-50 hover:text-black border-l-4 border-transparent">
                                 <i class="fa-solid fa-book-bookmark text-neutral-400"></i>
@@ -278,11 +278,11 @@
                     </div>
                 </section>
 
-                <!-- Tab 2: Expense & Revenue Tracker (REVISED NAME) -->
+                <!-- Tab 2: Transaction Tracker -->
                 <section id="tab-transactions" class="hidden space-y-8 animate-fade-in">
                     <div class="flex justify-between items-center border-b border-neutral-100 pb-5">
                         <div>
-                            <h2 class="text-xl font-bold tracking-tight">Expense & Revenue Tracker</h2>
+                            <h2 class="text-xl font-bold tracking-tight">Transaction Tracker</h2>
                             <p class="text-xs text-neutral-500">Track, manage, and edit individual ledger items including physical proofs of purchase.</p>
                         </div>
                         <div class="flex gap-2">
@@ -346,7 +346,6 @@
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Account Category (From COA)</label>
                                 <select id="form-category" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
-                                    <!-- Populated dynamically from COA -->
                                 </select>
                             </div>
                             <div>
@@ -426,7 +425,7 @@
                     </div>
                 </section>
 
-                <!-- TAB BARU: Chart of Accounts (COA) -->
+                <!-- TAB: Chart of Accounts (COA) -->
                 <section id="tab-coa" class="hidden space-y-8 animate-fade-in">
                     <div class="flex justify-between items-center border-b border-neutral-100 pb-5">
                         <div>
@@ -704,7 +703,7 @@
                     </div>
                 </section>
 
-                <!-- Tab 4: Unified Compensation, Payouts & Salaries -->
+                <!-- Tab 4: Unified Compensation, Payouts & Salaries (PAYROLL HAS PROOF ATTACHMENT) -->
                 <section id="tab-commissions" class="hidden space-y-8 animate-fade-in">
                     <div class="flex justify-between items-center border-b border-neutral-100 pb-5">
                         <div>
@@ -721,7 +720,7 @@
                         </div>
                     </div>
 
-                    <!-- PM Commission / Salary Form -->
+                    <!-- PM Commission / Salary Form (DENGAN INPUT FILE PROOF) -->
                     <div id="commission-form-card" class="hidden bg-neutral-50 border border-neutral-100 rounded-2xl p-6 space-y-4">
                         <h3 class="text-xs font-bold text-black uppercase tracking-wider text-neutral-500" id="commissions-form-title">Log Payout Details</h3>
                         <form id="new-commission-form" onsubmit="addManualCommission(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
@@ -740,7 +739,6 @@
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Item / Project Name</label>
                                 <input type="text" id="comm-project" placeholder="e.g. Creator Launch Campaign / June Salary" required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
-                            <!-- RECIPIENT DROPDOWN INTEGRATION FROM EMPLOYEE DATA -->
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Recipient Name</label>
                                 <select id="comm-manager-select" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
@@ -769,6 +767,10 @@
                                 <select id="comm-status" onchange="toggleCustomInput('comm-status', 'comm-status-custom')" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                                 </select>
                                 <input type="text" id="comm-status-custom" placeholder="Type custom status..." class="hidden mt-1.5 w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div class="md:col-span-4">
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Payment Proof Image</label>
+                                <input type="file" id="comm-picture" accept="image/*" class="w-full text-xs px-2 py-1.5 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
                             <div class="md:col-span-4 flex justify-end gap-2 pt-2 border-t border-neutral-100">
                                 <button type="button" onclick="cancelCommissionForm()" class="px-4 py-2 border border-neutral-200 rounded-lg text-xs font-semibold hover:bg-white transition-all">Cancel</button>
@@ -810,6 +812,7 @@
                                     <th class="p-4 text-right">Flat Value (Orig)</th>
                                     <th class="p-4 text-right">Value (KRW Base)</th>
                                     <th class="p-4 text-center">Status</th>
+                                    <th class="p-4 text-center">Receipt / Proof</th>
                                     <th class="p-4 text-center">Action</th>
                                 </tr>
                             </thead>
@@ -900,7 +903,6 @@
             return baseRate * variation;
         }
 
-        // DEFAULT STANDARDIZED CHART OF ACCOUNTS FOR VIVELY GLOBAL
         const defaultCOA = [
             { id: 101, code: '1010', name: 'Cash & Bank (KRW)', category: 'Asset', side: 'Debit' },
             { id: 102, code: '1200', name: 'Accounts Receivable (Piutang)', category: 'Asset', side: 'Debit' },
@@ -1135,14 +1137,12 @@
             return "";
         }
 
-        /* --- UPDATE EXECUTIVE DASHBOARD (INCLUDES BOTH TRANSACTIONS & PAID PAYROLL) --- */
         function updateUI() {
             let totalRevenue = 0;
             let totalExpenses = 0;
 
             const selectedMonthFilter = document.getElementById("dashboard-month-filter").value;
 
-            // 1. Transactions Expense/Revenue
             appState.transactions.forEach(t => {
                 const txMonth = t.date.split('-')[1];
                 if (selectedMonthFilter === "ALL" || selectedMonthFilter === txMonth) {
@@ -1154,7 +1154,6 @@
                 }
             });
 
-            // 2. Paid Payroll Payouts Auto-Added to Dashboard Expenses
             appState.commissions.forEach(c => {
                 if (c.status === "Paid") {
                     const cMonth = c.date.split('-')[1];
@@ -1183,7 +1182,7 @@
             renderCharts();
         }
 
-        /* --- TRANSACTION MANAGER WITH STRICT DATE SORTING --- */
+        /* --- TRANSACTION TRACKER --- */
         function renderTransactionsTable() {
             const tbody = document.getElementById("transactions-table-body");
             tbody.innerHTML = "";
@@ -1559,7 +1558,7 @@
             });
         }
 
-        /* --- PAYROLL HUB WITH FIXED EDIT FUNCTION & DATE SORTING --- */
+        /* --- PAYROLL HUB WITH PROOF IMAGE & EDIT FUNCTION --- */
         function renderCommissionsTable() {
             const tbody = document.getElementById("commissions-table-body");
             tbody.innerHTML = "";
@@ -1579,6 +1578,10 @@
                 hasRecords = true;
                 const badge = com.status === "Paid" ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-amber-50 text-amber-600 border-amber-100";
                 
+                const attachmentButton = com.picture ? 
+                    `<button onclick="openReceiptModal('${com.picture}')" class="text-[#ff66c4] hover:text-black transition-all p-1.5 font-bold"><i class="fa-solid fa-image text-sm mr-1"></i> View Proof</button>` : 
+                    `<span class="text-neutral-400 text-[10px] italic">No proof</span>`;
+
                 const row = `
                     <tr class="hover:bg-neutral-50 transition-all">
                         <td class="p-4 text-neutral-500 font-mono">${com.date}</td>
@@ -1589,6 +1592,7 @@
                         <td class="p-4 text-right font-semibold">${parseFloat(com.val).toLocaleString()} ${com.currency}</td>
                         <td class="p-4 text-right text-neutral-800 font-bold">₩ ${parseFloat(com.amountInKRW).toLocaleString()}</td>
                         <td class="p-4 text-center"><span class="px-2 py-0.5 rounded border text-[9px] font-bold ${badge}">${com.status}</span></td>
+                        <td class="p-4 text-center">${attachmentButton}</td>
                         <td class="p-4 text-center">
                             <div class="flex items-center justify-center gap-2">
                                 <button onclick="loadCommissionForEdit(${com.id})" class="text-neutral-400 hover:text-neutral-900 transition-all p-1.5" title="Edit Payout"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
@@ -1601,11 +1605,10 @@
             });
 
             if (!hasRecords) {
-                tbody.innerHTML = `<tr><td colspan="9" class="p-8 text-center text-neutral-400 italic">No payroll payouts logged.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-neutral-400 italic">No payroll payouts logged.</td></tr>`;
             }
         }
 
-        /* --- LOAD PAYROLL FOR EDIT (FIXED BUG) --- */
         function loadCommissionForEdit(id) {
             const com = appState.commissions.find(c => c.id === id);
             if (!com) return;
@@ -1658,7 +1661,6 @@
                 const monthlyRevenue = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                 const monthlyExpenses = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-                // Add Transaction Revenue & Expenses to Charts
                 appState.transactions.forEach(t => {
                     const monthIdx = new Date(t.date).getMonth();
                     if (monthIdx >= 0 && monthIdx < 12) {
@@ -1667,7 +1669,6 @@
                     }
                 });
 
-                // Add Paid Payroll Expenses to Charts
                 appState.commissions.forEach(c => {
                     if (c.status === "Paid") {
                         const monthIdx = new Date(c.date).getMonth();
@@ -1700,7 +1701,6 @@
                     }
                 });
 
-                // Include Salaries category from Paid Payrolls
                 appState.commissions.forEach(c => {
                     if (c.status === "Paid") {
                         const val = getConvertedVal(parseFloat(c.amountInKRW));
@@ -1723,7 +1723,7 @@
             } catch (err) { console.error(err); }
         }
 
-        /* --- ADD / EDIT TRANSACTION WITH DETAILS FIELD --- */
+        /* --- ADD / EDIT TRANSACTION --- */
         function addManualTransaction(e) {
             e.preventDefault();
             const editId = document.getElementById("edit-transaction-id").value;
@@ -1734,7 +1734,6 @@
             const amount = parseFloat(document.getElementById("form-amount").value);
             const currency = document.getElementById("form-currency").value;
             
-            // Auto-detect Credit / Debit based on COA Category
             const coaMatch = appState.coa.find(c => c.name === category);
             const type = (coaMatch && coaMatch.category === "Revenue") ? "CREDIT" : "DEBIT";
 
@@ -1834,6 +1833,7 @@
             document.getElementById("edit-commission-id").value = "";
         }
 
+        /* --- ADD / EDIT PAYROLL WITH PROOF IMAGE --- */
         function addManualCommission(e) {
             e.preventDefault();
             const editId = document.getElementById("edit-commission-id").value;
@@ -1845,25 +1845,43 @@
             const currency = document.getElementById("comm-currency").value;
             const type = document.getElementById("comm-type").value;
             const status = document.getElementById("comm-status").value;
+            const fileInput = document.getElementById("comm-picture");
 
-            const rate = getExchangeRateOnDate(currency, date);
-            const amountInKRW = val * rate;
+            const handleNewCommInsertion = (pictureBase64) => {
+                const rate = getExchangeRateOnDate(currency, date);
+                const amountInKRW = val * rate;
 
-            const comData = {
-                id: editId ? parseInt(editId) : Date.now(),
-                date, project, manager, client, val, currency, amountInKRW, type, status
+                const comData = {
+                    id: editId ? parseInt(editId) : Date.now(),
+                    date, project, manager, client, val, currency, amountInKRW, type, status,
+                    picture: pictureBase64 || ""
+                };
+
+                if (editId) {
+                    const targetId = parseInt(editId);
+                    const existing = appState.commissions.find(c => c.id === targetId);
+                    if (!pictureBase64 && existing && existing.picture) {
+                        comData.picture = existing.picture;
+                    }
+                    appState.commissions = appState.commissions.map(c => c.id === targetId ? comData : c);
+                    showToast("Payroll record updated!", "success");
+                } else {
+                    appState.commissions.push(comData);
+                    showToast("Payroll entry saved!", "success");
+                }
+
+                saveState();
+                updateUI();
+                cancelCommissionForm();
             };
 
-            if (editId) {
-                appState.commissions = appState.commissions.map(c => c.id === parseInt(editId) ? comData : c);
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (event) { handleNewCommInsertion(event.target.result); };
+                reader.readAsDataURL(fileInput.files[0]);
             } else {
-                appState.commissions.push(comData);
+                handleNewCommInsertion("");
             }
-
-            saveState();
-            updateUI();
-            cancelCommissionForm();
-            showToast("Payroll entry saved!", "success");
         }
 
         /* --- EXPORT CSV FEATURE --- */
