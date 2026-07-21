@@ -291,7 +291,7 @@
                         </div>
                     </div>
 
-                    <!-- TRANSACTION SUMMARY MODULE (BARU) -->
+                    <!-- TRANSACTION SUMMARY MODULE -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="bg-neutral-50 border border-neutral-100 rounded-2xl p-4 flex items-center justify-between">
                             <div>
@@ -322,18 +322,22 @@
                         </div>
                     </div>
 
-                    <!-- Transaction Form Card -->
+                    <!-- Transaction Form Card (TAMBAHAN FIELD DETAILS) -->
                     <div id="transaction-form-card" class="hidden bg-neutral-50 border border-neutral-100 rounded-2xl p-6 space-y-4">
                         <h3 class="text-xs font-bold text-black uppercase tracking-wider text-neutral-500" id="transaction-form-title">New Transaction Details</h3>
-                        <form id="new-transaction-form" onsubmit="addManualTransaction(event)" class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+                        <form id="new-transaction-form" onsubmit="addManualTransaction(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                             <input type="hidden" id="edit-transaction-id" value="">
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Transaction Date</label>
                                 <input type="date" id="form-date" required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Item Description</label>
-                                <input type="text" id="form-desc" placeholder="e.g., Campaign seeding payout..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Item Description (Summary)</label>
+                                <input type="text" id="form-desc" placeholder="e.g., Campaign Seeding..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Details / Explanation</label>
+                                <input type="text" id="form-details" placeholder="Specific notes or purpose..." class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Expense Category</label>
@@ -359,11 +363,11 @@
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Amount</label>
                                 <input type="number" step="any" id="form-amount" placeholder="Amount..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
-                            <div>
+                            <div class="md:col-span-2">
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Receipt Image Proof</label>
                                 <input type="file" id="form-picture" accept="image/*" class="w-full text-xs px-2 py-1.5 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
-                            <div class="md:col-span-3 flex justify-end gap-2 pt-2 border-t border-neutral-100">
+                            <div class="md:col-span-4 flex justify-end gap-2 pt-2 border-t border-neutral-100">
                                 <button type="button" onclick="cancelTransactionForm()" class="px-4 py-2 border border-neutral-200 rounded-lg text-xs font-semibold hover:bg-white transition-all">Cancel</button>
                                 <button type="submit" id="form-tx-submit" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-bold hover:opacity-95 transition-all">Submit Entry</button>
                             </div>
@@ -1084,7 +1088,6 @@
 
                 count++;
                 
-                // Summing filtered totals
                 if (t.type === "CREDIT") {
                     filteredIncomeKRW += parseFloat(t.amountInKRW);
                 } else {
@@ -1095,10 +1098,15 @@
                     `<button onclick="openReceiptModal('${t.picture}')" class="text-[#ff66c4] hover:text-black transition-all p-1.5 font-bold"><i class="fa-solid fa-image text-sm mr-1"></i> View Proof</button>` : 
                     `<span class="text-neutral-400 text-[10px] italic">No proof</span>`;
 
+                const detailsHtml = t.details ? `<div class="text-[10px] text-neutral-400 font-normal mt-0.5">${t.details}</div>` : '';
+
                 const row = `
                     <tr class="hover:bg-neutral-50 transition-all">
                         <td class="p-4 font-mono text-neutral-500">${t.date}</td>
-                        <td class="p-4 font-semibold text-black">${t.description}</td>
+                        <td class="p-4">
+                            <div class="font-semibold text-black">${t.description}</div>
+                            ${detailsHtml}
+                        </td>
                         <td class="p-4">
                             <span class="px-2 py-0.5 rounded-md border text-[10px] font-medium bg-neutral-50 text-neutral-600">${t.category}</span>
                         </td>
@@ -1120,7 +1128,6 @@
                 tbody.insertAdjacentHTML('beforeend', row);
             });
 
-            // Update Transaction Summary Cards Dynamically
             const currencySymbol = getCurrencySymbol();
             const currKey = document.getElementById("global-currency-select").value;
             const netBalanceKRW = filteredIncomeKRW - filteredExpenseKRW;
@@ -1429,11 +1436,13 @@
             } catch (err) { console.error(err); }
         }
 
+        /* --- ADD / EDIT TRANSACTION WITH DETAILS FIELD --- */
         function addManualTransaction(e) {
             e.preventDefault();
             const editId = document.getElementById("edit-transaction-id").value;
             const date = document.getElementById("form-date").value;
-            const desc = document.getElementById("form-desc").value;
+            const desc = document.getElementById("form-desc").value.trim();
+            const details = document.getElementById("form-details").value.trim();
             const category = document.getElementById("form-category").value;
             const amount = parseFloat(document.getElementById("form-amount").value);
             const currency = document.getElementById("form-currency").value;
@@ -1448,6 +1457,7 @@
                     id: editId ? parseInt(editId) : Date.now(),
                     date,
                     description: desc,
+                    details: details,
                     category,
                     amount,
                     currency,
@@ -1486,6 +1496,7 @@
             document.getElementById("edit-transaction-id").value = tx.id;
             document.getElementById("form-date").value = tx.date;
             document.getElementById("form-desc").value = tx.description;
+            document.getElementById("form-details").value = tx.details || "";
             document.getElementById("form-category").value = tx.category;
             document.getElementById("form-currency").value = tx.currency;
             document.getElementById("form-amount").value = tx.amount;
@@ -1573,9 +1584,9 @@
             let filename = `vively_${type}_${new Date().toISOString().slice(0,10)}.csv`;
 
             if (type === 'transactions') {
-                csvContent += "Date,Description,Category,Amount,Currency,AmountInKRW,Type\n";
+                csvContent += "Date,Description,Details,Category,Amount,Currency,AmountInKRW,Type\n";
                 appState.transactions.forEach(t => {
-                    csvContent += `"${t.date}","${t.description}","${t.category}",${t.amount},"${t.currency}",${t.amountInKRW},"${t.type}"\n`;
+                    csvContent += `"${t.date}","${t.description}","${t.details || ''}","${t.category}",${t.amount},"${t.currency}",${t.amountInKRW},"${t.type}"\n`;
                 });
             } else if (type === 'employees') {
                 csvContent += "FullName,Type,Status,Phone,Email,Bank,AccountNumber\n";
