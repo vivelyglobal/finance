@@ -322,7 +322,7 @@
                         </div>
                     </div>
 
-                    <!-- Transaction Form Card (TAMBAHAN FIELD DETAILS) -->
+                    <!-- Transaction Form Card -->
                     <div id="transaction-form-card" class="hidden bg-neutral-50 border border-neutral-100 rounded-2xl p-6 space-y-4">
                         <h3 class="text-xs font-bold text-black uppercase tracking-wider text-neutral-500" id="transaction-form-title">New Transaction Details</h3>
                         <form id="new-transaction-form" onsubmit="addManualTransaction(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
@@ -1069,7 +1069,7 @@
             renderCharts();
         }
 
-        /* --- TRANSACTION MANAGER & DYNAMIC SUMMARY --- */
+        /* --- TRANSACTION MANAGER WITH AUTOMATIC DATE SORTING --- */
         function renderTransactionsTable() {
             const tbody = document.getElementById("transactions-table-body");
             tbody.innerHTML = "";
@@ -1081,7 +1081,10 @@
             let filteredIncomeKRW = 0;
             let filteredExpenseKRW = 0;
 
-            appState.transactions.forEach(t => {
+            // OTOMATIS SORTING TANGGAL (DESCENDING: TERBARU KE TERLAMA)
+            const sortedTransactions = [...appState.transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            sortedTransactions.forEach(t => {
                 const txMonth = t.date.split('-')[1];
                 if (catFilter !== "ALL" && t.category !== catFilter) return;
                 if (monthFilter !== "ALL" && txMonth !== monthFilter) return;
@@ -1338,6 +1341,7 @@
             });
         }
 
+        /* --- PAYROLL HUB WITH AUTOMATIC DATE SORTING --- */
         function renderCommissionsTable() {
             const tbody = document.getElementById("commissions-table-body");
             tbody.innerHTML = "";
@@ -1345,7 +1349,10 @@
             const monthFilter = document.getElementById("payroll-month-filter").value;
             let hasRecords = false;
 
-            appState.commissions.forEach(com => {
+            // OTOMATIS SORTING TANGGAL (DESCENDING: TERBARU KE TERLAMA)
+            const sortedCommissions = [...appState.commissions].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            sortedCommissions.forEach(com => {
                 const comMonth = com.date.split('-')[1];
                 if (monthFilter !== "ALL" && comMonth !== monthFilter) return;
 
@@ -1571,7 +1578,7 @@
             showToast("Payroll entry saved!", "success");
         }
 
-        /* --- EXPORT CSV FEATURE --- */
+        /* --- EXPORT CSV FEATURE (SORTED BY DATE) --- */
         function exportCurrentTabCSV() {
             if (currentTabId === 'transactions' || currentTabId === 'dashboard') exportCSV('transactions');
             else if (currentTabId === 'employees') exportCSV('employees');
@@ -1585,7 +1592,8 @@
 
             if (type === 'transactions') {
                 csvContent += "Date,Description,Details,Category,Amount,Currency,AmountInKRW,Type\n";
-                appState.transactions.forEach(t => {
+                const sortedTx = [...appState.transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+                sortedTx.forEach(t => {
                     csvContent += `"${t.date}","${t.description}","${t.details || ''}","${t.category}",${t.amount},"${t.currency}",${t.amountInKRW},"${t.type}"\n`;
                 });
             } else if (type === 'employees') {
@@ -1600,7 +1608,8 @@
                 });
             } else if (type === 'commissions') {
                 csvContent += "Date,ProjectName,Recipient,Type,ClientCompany,Value,Currency,ValueInKRW,Status\n";
-                appState.commissions.forEach(c => {
+                const sortedComm = [...appState.commissions].sort((a, b) => new Date(b.date) - new Date(a.date));
+                sortedComm.forEach(c => {
                     csvContent += `"${c.date}","${c.project}","${c.manager}","${c.type}","${c.client}",${c.val},"${c.currency}",${c.amountInKRW},"${c.status}"\n`;
                 });
             }
