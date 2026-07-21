@@ -584,7 +584,7 @@
                     </div>
                 </section>
 
-                <!-- Tab 3: Key Client Portfolio -->
+                <!-- Tab 3: Key Client Portfolio (REVISED CLIENT FORM & VIEWS) -->
                 <section id="tab-clients" class="hidden space-y-8 animate-fade-in">
                     <div class="flex justify-between items-center border-b border-neutral-100 pb-5">
                         <div>
@@ -625,7 +625,16 @@
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Primary Service Line</label>
-                                <input type="text" id="client-service" placeholder="KOL Seeding..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                <select id="client-service" onchange="toggleCustomInput('client-service', 'client-service-custom')" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                    <option value="KOL Seeding">KOL Seeding</option>
+                                    <option value="Group Purchase">Group Purchase</option>
+                                    <option value="Sales Program">Sales Program</option>
+                                    <option value="Localization Consulting">Localization Consulting</option>
+                                    <option value="Live Host">Live Host</option>
+                                    <option value="Legal Registration">Legal Registration</option>
+                                    <option value="CUSTOM_VAL">+ Add Custom...</option>
+                                </select>
+                                <input type="text" id="client-service-custom" placeholder="Type custom service..." class="hidden mt-1.5 w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Deal Type</label>
@@ -647,10 +656,6 @@
                                 <input type="number" id="client-value-raw" placeholder="e.g. 1500000" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Account Owner (PM)</label>
-                                <input type="text" id="client-owner" placeholder="PM Name..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
-                            </div>
-                            <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Status</label>
                                 <select id="client-status" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                                     <option value="Active">Active</option>
@@ -667,11 +672,17 @@
                                 <input type="date" id="client-start-date" required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Campaign End Date</label>
-                                <input type="date" id="client-end-date" required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="block text-[11px] font-semibold text-neutral-700">Campaign End Date</label>
+                                    <label class="inline-flex items-center gap-1 cursor-pointer text-[10px] text-neutral-500 font-medium">
+                                        <input type="checkbox" id="client-no-enddate" onchange="toggleOngoingCampaign()" class="rounded text-[#ff66c4] focus:ring-0">
+                                        <span>Ongoing</span>
+                                    </label>
+                                </div>
+                                <input type="date" id="client-end-date" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
-                            <div class="flex gap-2">
-                                <button type="submit" class="flex-1 px-4 py-2 text-white accent-bg rounded-lg text-xs font-semibold hover:opacity-95 transition-all">Save Changes</button>
+                            <div class="md:col-span-2 flex justify-end gap-2 pt-2">
+                                <button type="submit" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-semibold hover:opacity-95 transition-all">Save Changes</button>
                                 <button type="button" onclick="cancelClientForm()" class="px-4 py-2 border border-neutral-200 rounded-lg text-xs font-semibold hover:bg-white transition-all">Cancel</button>
                             </div>
                         </form>
@@ -692,7 +703,6 @@
                                     <th class="p-4 text-right">Contract Value</th>
                                     <th class="p-4 text-center">Creators Seeding</th>
                                     <th class="p-4 text-center">Campaign Timeline</th>
-                                    <th class="p-4">Account Owner</th>
                                     <th class="p-4">Status</th>
                                     <th class="p-4 text-center">Actions</th>
                                 </tr>
@@ -703,7 +713,7 @@
                     </div>
                 </section>
 
-                <!-- Tab 4: Payroll & Payout Hub -->
+                <!-- Tab 4: Unified Compensation, Payouts & Salaries -->
                 <section id="tab-commissions" class="hidden space-y-8 animate-fade-in">
                     <div class="flex justify-between items-center border-b border-neutral-100 pb-5">
                         <div>
@@ -1456,21 +1466,40 @@
             });
         }
 
-        /* --- CLIENTS MANAGEMENT LOGIC --- */
+        /* --- CLIENTS MANAGEMENT LOGIC (REVISED FOR NEW REQUIREMENTS) --- */
         function toggleClientForm() {
             const card = document.getElementById("client-form-card");
             card.classList.toggle('hidden');
             document.getElementById("client-form-title").innerText = "New Client Registration";
             document.getElementById("edit-client-id").value = "";
             document.getElementById("new-client-form").reset();
+            
+            const endDateInput = document.getElementById("client-end-date");
+            endDateInput.disabled = false;
+            endDateInput.value = "";
+            document.getElementById("client-no-enddate").checked = false;
         }
 
         function cancelClientForm() {
             document.getElementById("client-form-card").classList.add('hidden');
             document.getElementById("new-client-form").reset();
             document.getElementById("edit-client-id").value = "";
-            const customInput = document.getElementById("client-dealtype-custom");
-            if (customInput) customInput.classList.add("hidden");
+            
+            const serviceCustom = document.getElementById("client-service-custom");
+            if (serviceCustom) serviceCustom.classList.add("hidden");
+            const dealCustom = document.getElementById("client-dealtype-custom");
+            if (dealCustom) dealCustom.classList.add("hidden");
+        }
+
+        function toggleOngoingCampaign() {
+            const isOngoing = document.getElementById("client-no-enddate").checked;
+            const endDateInput = document.getElementById("client-end-date");
+            if (isOngoing) {
+                endDateInput.value = "";
+                endDateInput.disabled = true;
+            } else {
+                endDateInput.disabled = false;
+            }
         }
 
         function setClientLayout(layout) {
@@ -1503,13 +1532,15 @@
 
             if (appState.clients.length === 0) {
                 cardContainer.innerHTML = `<div class="col-span-full py-12 text-center text-neutral-400 italic text-xs bg-neutral-50 rounded-2xl border border-dashed border-neutral-200">No clients registered yet.</div>`;
-                listBody.innerHTML = `<tr><td colspan="9" class="p-8 text-center text-neutral-400 italic">No registered clients available.</td></tr>`;
+                listBody.innerHTML = `<tr><td colspan="8" class="p-8 text-center text-neutral-400 italic">No registered clients available.</td></tr>`;
                 return;
             }
 
             appState.clients.forEach(c => {
                 const statusColor = c.status === "Active" ? "bg-emerald-50 text-emerald-600 border-emerald-100" : (c.status === "Pending" ? "bg-amber-50 text-amber-600 border-amber-100" : "bg-neutral-50 text-neutral-600 border-neutral-100");
                 const formattedVal = typeof c.originalValue === 'number' ? c.originalValue.toLocaleString() : c.originalValue;
+
+                const timelineDisplay = c.isOngoing ? `${c.campaignStart || 'N/A'} ~ Ongoing` : `${c.campaignStart || 'N/A'} ~ ${c.campaignEnd || 'N/A'}`;
 
                 const card = `
                     <div class="bg-white border border-neutral-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between hover:shadow-md transition-all relative">
@@ -1525,7 +1556,9 @@
                             <div class="grid grid-cols-2 gap-y-2 text-[11px] text-neutral-500 pt-3 border-t border-neutral-100">
                                 <span class="font-medium text-neutral-400">Industry:</span><span class="text-black font-semibold text-right">${c.industry}</span>
                                 <span class="font-medium text-neutral-400">Service Line:</span><span class="text-black font-semibold text-right">${c.service}</span>
-                                <span class="font-medium text-neutral-400">Owner (PM):</span><span class="text-black font-semibold text-right">${c.owner}</span>
+                                <span class="font-medium text-neutral-400">Deal Model:</span><span class="text-black font-semibold text-right">${c.dealType}</span>
+                                <span class="font-medium text-[#ff66c4] font-bold">Creators Seeding:</span><span class="text-black font-bold text-right">${c.creatorsSeeding || 0} creators</span>
+                                <span class="font-medium text-neutral-400">Campaign Timeline:</span><span class="text-neutral-800 font-medium text-right text-[10px]">${timelineDisplay}</span>
                             </div>
                         </div>
                         <div class="pt-4 mt-4 border-t border-neutral-100 flex justify-between items-center text-xs">
@@ -1543,8 +1576,7 @@
                         <td class="p-4">${c.service}</td>
                         <td class="p-4 text-right font-semibold">${formattedVal} ${c.currency}</td>
                         <td class="p-4 text-center font-bold text-[#ff66c4]">${c.creatorsSeeding || 0}</td>
-                        <td class="p-4 text-center font-mono text-[10px] text-neutral-500">${c.campaignStart || 'N/A'} ~ ${c.campaignEnd || 'N/A'}</td>
-                        <td class="p-4 font-semibold text-neutral-600">${c.owner}</td>
+                        <td class="p-4 text-center font-mono text-[10px] text-neutral-500">${timelineDisplay}</td>
                         <td class="p-4"><span class="px-2 py-0.5 rounded text-[9px] font-semibold border ${statusColor}">${c.status}</span></td>
                         <td class="p-4 text-center">
                             <div class="flex justify-center gap-1">
@@ -1568,8 +1600,16 @@
             
             document.getElementById("client-name").value = client.name || "";
             document.getElementById("client-industry").value = client.industry || "";
-            document.getElementById("client-service").value = client.service || "";
             
+            const standardServices = ["KOL Seeding", "Group Purchase", "Sales Program", "Localization Consulting", "Live Host", "Legal Registration"];
+            if (client.service && !standardServices.includes(client.service)) {
+                document.getElementById("client-service").value = "CUSTOM_VAL";
+                toggleCustomInput('client-service', 'client-service-custom');
+                document.getElementById("client-service-custom").value = client.service;
+            } else {
+                document.getElementById("client-service").value = client.service || "KOL Seeding";
+            }
+
             if (client.dealType && !appState.customDealTypes.includes(client.dealType)) {
                 appState.customDealTypes.push(client.dealType);
                 populateDynamicSelects();
@@ -1578,11 +1618,20 @@
 
             document.getElementById("client-currency").value = client.currency || "KRW";
             document.getElementById("client-value-raw").value = client.originalValue || 0;
-            document.getElementById("client-owner").value = client.owner || "";
             document.getElementById("client-status").value = client.status || "Active";
             document.getElementById("client-creators").value = client.creatorsSeeding || 0;
             document.getElementById("client-start-date").value = client.campaignStart || "";
-            document.getElementById("client-end-date").value = client.campaignEnd || "";
+            
+            const isOngoing = !!client.isOngoing;
+            document.getElementById("client-no-enddate").checked = isOngoing;
+            const endDateInput = document.getElementById("client-end-date");
+            if (isOngoing) {
+                endDateInput.value = "";
+                endDateInput.disabled = true;
+            } else {
+                endDateInput.disabled = false;
+                endDateInput.value = client.campaignEnd || "";
+            }
 
             document.getElementById("client-form-card").scrollIntoView({ behavior: 'smooth' });
         }
@@ -1592,14 +1641,19 @@
             const editId = document.getElementById("edit-client-id").value;
             const name = document.getElementById("client-name").value.trim();
             const industry = document.getElementById("client-industry").value.trim();
-            const service = document.getElementById("client-service").value.trim();
             const currency = document.getElementById("client-currency").value;
             const rawVal = parseFloat(document.getElementById("client-value-raw").value) || 0;
-            const owner = document.getElementById("client-owner").value.trim();
             const status = document.getElementById("client-status").value;
             const creatorsSeeding = parseInt(document.getElementById("client-creators").value) || 0;
             const campaignStart = document.getElementById("client-start-date").value;
-            const campaignEnd = document.getElementById("client-end-date").value;
+            const isOngoing = document.getElementById("client-no-enddate").checked;
+            const campaignEnd = isOngoing ? "" : document.getElementById("client-end-date").value;
+
+            let service = document.getElementById("client-service").value;
+            if (service === "CUSTOM_VAL") {
+                const customVal = document.getElementById("client-service-custom").value.trim();
+                if (customVal) service = customVal;
+            }
 
             let dealType = document.getElementById("client-dealtype").value;
             if (dealType === "CUSTOM_VAL") {
@@ -1622,10 +1676,10 @@
                 currency,
                 value: rawVal.toLocaleString() + " " + currency,
                 status,
-                owner,
                 creatorsSeeding,
                 campaignStart,
-                campaignEnd
+                campaignEnd,
+                isOngoing
             };
 
             if (editId) {
@@ -2007,9 +2061,9 @@
                     csvContent += `"${e.name}","${e.type}","${e.status}","${e.phone}","${e.email}","${e.bank}","${e.account}"\n`;
                 });
             } else if (type === 'clients') {
-                csvContent += "CompanyName,Industry,Service,DealType,ContractValue,Currency,Owner,Status,CreatorsSeeding\n";
+                csvContent += "CompanyName,Industry,Service,DealType,ContractValue,Currency,Status,CreatorsSeeding,CampaignStart,CampaignEnd,IsOngoing\n";
                 appState.clients.forEach(c => {
-                    csvContent += `"${c.name}","${c.industry}","${c.service}","${c.dealType}",${c.originalValue},"${c.currency}","${c.owner}","${c.status}",${c.creatorsSeeding}\n`;
+                    csvContent += `"${c.name}","${c.industry}","${c.service}","${c.dealType}",${c.originalValue},"${c.currency}","${c.status}",${c.creatorsSeeding},"${c.campaignStart}","${c.campaignEnd}",${c.isOngoing}\n`;
                 });
             } else if (type === 'commissions') {
                 csvContent += "Date,ProjectName,Recipient,Type,ClientCompany,Value,Currency,ValueInKRW,Status\n";
