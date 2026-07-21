@@ -244,38 +244,27 @@
                         </div>
                     </div>
 
-                    <!-- COA Financial Report Table (WITH CATEGORY FILTER & SORT OPTIONS) -->
+                    <!-- REVISI 1: COA FINANCIAL REPORT (SORTED BY ACCOUNT CODE & CATEGORY FILTER) -->
                     <div class="border border-neutral-100 rounded-2xl p-6 bg-white shadow-sm space-y-4">
                         <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-neutral-100 pb-4">
                             <div>
                                 <h4 class="text-xs font-bold uppercase tracking-wider text-black flex items-center gap-2">
                                     <i class="fa-solid fa-list-check text-[#ff66c4]"></i> Chart of Accounts Financial Report
                                 </h4>
-                                <span class="text-[11px] text-neutral-400 font-medium">Dynamically updated based on COA Master list and month filter.</span>
+                                <span class="text-[11px] text-neutral-400 font-medium">Sorted numerically by Account Code. Dynamic with COA additions and deletions.</span>
                             </div>
                             
-                            <!-- Category Filter & Sort Control Bar -->
-                            <div class="flex flex-wrap items-center gap-3">
-                                <div class="flex items-center gap-2">
-                                    <span class="text-xs font-semibold text-neutral-500">Category:</span>
-                                    <select id="report-category-filter" onchange="renderDashboardCOAReport()" class="bg-neutral-50 border border-neutral-200 text-black px-2.5 py-1.5 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 accent-ring">
-                                        <option value="ALL">All Categories</option>
-                                        <option value="Asset">Asset</option>
-                                        <option value="Liability">Liability</option>
-                                        <option value="Equity">Equity</option>
-                                        <option value="Revenue">Revenue</option>
-                                        <option value="Expense">Expense</option>
-                                    </select>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-xs font-semibold text-neutral-500">Sort By:</span>
-                                    <select id="report-sort-filter" onchange="renderDashboardCOAReport()" class="bg-neutral-50 border border-neutral-200 text-black px-2.5 py-1.5 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 accent-ring">
-                                        <option value="CODE_ASC">Code (Low -> High)</option>
-                                        <option value="CODE_DESC">Code (High -> Low)</option>
-                                        <option value="NAME_ASC">Name (A -> Z)</option>
-                                        <option value="AMOUNT_DESC">Amount (Highest First)</option>
-                                    </select>
-                                </div>
+                            <!-- Category Filter Dropdown -->
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-semibold text-neutral-500">Category Filter:</span>
+                                <select id="report-category-filter" onchange="renderDashboardCOAReport()" class="bg-neutral-50 border border-neutral-200 text-black px-3 py-1.5 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 accent-ring">
+                                    <option value="ALL">All Categories</option>
+                                    <option value="Asset">Asset</option>
+                                    <option value="Liability">Liability</option>
+                                    <option value="Equity">Equity</option>
+                                    <option value="Revenue">Revenue</option>
+                                    <option value="Expense">Expense</option>
+                                </select>
                             </div>
                         </div>
 
@@ -1491,7 +1480,7 @@
             renderCharts();
         }
 
-        /* REVISI 1: STRICTLY SORTED & FILTERABLE COA REPORT TABLE */
+        /* REVISI 1: STRICTLY NUMERICALLY SORTED & FILTERABLE COA REPORT TABLE */
         function renderDashboardCOAReport() {
             const tbody = document.getElementById("dashboard-coa-report-body");
             if (!tbody) return;
@@ -1499,7 +1488,6 @@
 
             const monthFilter = document.getElementById("dashboard-month-filter").value;
             const categoryFilter = document.getElementById("report-category-filter") ? document.getElementById("report-category-filter").value : "ALL";
-            const sortMode = document.getElementById("report-sort-filter") ? document.getElementById("report-sort-filter").value : "CODE_ASC";
 
             const coaTotals = {};
 
@@ -1547,14 +1535,8 @@
                 };
             });
 
-            // Strict Sorting Logic
-            reportList.sort((a, b) => {
-                if (sortMode === "CODE_ASC") return parseInt(a.code) - parseInt(b.code);
-                if (sortMode === "CODE_DESC") return parseInt(b.code) - parseInt(a.code);
-                if (sortMode === "NAME_ASC") return a.name.localeCompare(b.name);
-                if (sortMode === "AMOUNT_DESC") return b.amountKRW - a.amountKRW;
-                return parseInt(a.code) - parseInt(b.code);
-            });
+            // STRICT NUMERICAL SORT BY ACCOUNT CODE
+            reportList.sort((a, b) => parseInt(a.code) - parseInt(b.code));
 
             const currencySymbol = getCurrencySymbol();
             const currKey = document.getElementById("global-currency-select").value;
