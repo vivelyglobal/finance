@@ -117,7 +117,7 @@
         <!-- Main Content Layout -->
         <div class="flex flex-1">
             
-            <!-- Sidebar Navigation -->
+            <!-- Sidebar Navigation (WITH CLIENT PAYMENT SCHEDULE ADDED) -->
             <aside class="w-64 border-r border-neutral-100 p-6 flex flex-col justify-between bg-white">
                 <div class="space-y-8">
                     <div>
@@ -142,6 +142,10 @@
                             <button onclick="switchTab('clients')" id="btn-clients" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 hover:bg-neutral-50 hover:text-black border-l-4 border-transparent">
                                 <i class="fa-solid fa-address-book text-neutral-400"></i>
                                 Key Client Portfolio
+                            </button>
+                            <button onclick="switchTab('client-payments')" id="btn-client-payments" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 hover:bg-neutral-50 hover:text-black border-l-4 border-transparent">
+                                <i class="fa-solid fa-file-invoice-dollar text-neutral-400"></i>
+                                Client Payment Schedule
                             </button>
                             <button onclick="switchTab('commissions')" id="btn-commissions" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 hover:bg-neutral-50 hover:text-black border-l-4 border-transparent">
                                 <i class="fa-solid fa-wallet text-neutral-400"></i>
@@ -584,7 +588,7 @@
                     </div>
                 </section>
 
-                <!-- Tab 3: Key Client Portfolio (REVISED CLIENT FORM & VIEWS) -->
+                <!-- Tab 3: Key Client Portfolio (WITH MULTI-FILTERS & CONTRACT FILE UPLOAD) -->
                 <section id="tab-clients" class="hidden space-y-8 animate-fade-in">
                     <div class="flex justify-between items-center border-b border-neutral-100 pb-5">
                         <div>
@@ -610,7 +614,37 @@
                         </div>
                     </div>
 
-                    <!-- Client Form Card -->
+                    <!-- Client Multi-Filter Panel -->
+                    <div class="flex flex-wrap gap-4 items-center justify-between bg-neutral-50 p-4 rounded-xl border border-neutral-100">
+                        <div class="flex flex-wrap gap-4 items-center">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-semibold text-neutral-500">Deal Model:</span>
+                                <select id="client-filter-deal" onchange="renderClientsView()" class="bg-white border border-neutral-200 text-black px-3 py-1.5 rounded-lg text-xs font-medium focus:outline-none focus:ring-1 accent-ring">
+                                    <option value="ALL">All Deal Models</option>
+                                    <option value="Paid Campaign">Paid Campaign</option>
+                                    <option value="Free Trial">Free Trial</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-semibold text-neutral-500">Industry:</span>
+                                <select id="client-filter-industry" onchange="renderClientsView()" class="bg-white border border-neutral-200 text-black px-3 py-1.5 rounded-lg text-xs font-medium focus:outline-none focus:ring-1 accent-ring">
+                                    <option value="ALL">All Industries</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-semibold text-neutral-500">Status:</span>
+                                <select id="client-filter-status" onchange="renderClientsView()" class="bg-white border border-neutral-200 text-black px-3 py-1.5 rounded-lg text-xs font-medium focus:outline-none focus:ring-1 accent-ring">
+                                    <option value="ALL">All Statuses</option>
+                                    <option value="Active">Active</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
+                            </div>
+                        </div>
+                        <span class="text-xs text-neutral-500 font-semibold" id="client-filtered-counter">Showing 0 clients</span>
+                    </div>
+
+                    <!-- Client Form Card (WITH SIGNED CONTRACT FILE UPLOAD) -->
                     <div id="client-form-card" class="hidden bg-neutral-50 border border-neutral-100 rounded-2xl p-6 space-y-4">
                         <h3 class="text-xs font-bold text-black uppercase tracking-wider text-neutral-500" id="client-form-title">New Client Registration</h3>
                         <form id="new-client-form" onsubmit="addManualClient(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
@@ -681,7 +715,11 @@
                                 </div>
                                 <input type="date" id="client-end-date" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
-                            <div class="md:col-span-2 flex justify-end gap-2 pt-2">
+                            <div class="md:col-span-2">
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Signed Contract File (PDF/Image)</label>
+                                <input type="file" id="client-contract-file" accept="image/*,.pdf" class="w-full text-xs px-2 py-1.5 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div class="md:col-span-4 flex justify-end gap-2 pt-2 border-t border-neutral-100">
                                 <button type="submit" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-semibold hover:opacity-95 transition-all">Save Changes</button>
                                 <button type="button" onclick="cancelClientForm()" class="px-4 py-2 border border-neutral-200 rounded-lg text-xs font-semibold hover:bg-white transition-all">Cancel</button>
                             </div>
@@ -703,11 +741,101 @@
                                     <th class="p-4 text-right">Contract Value</th>
                                     <th class="p-4 text-center">Creators Seeding</th>
                                     <th class="p-4 text-center">Campaign Timeline</th>
+                                    <th class="p-4 text-center">Signed Contract</th>
                                     <th class="p-4">Status</th>
                                     <th class="p-4 text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="clients-list-body" class="divide-y divide-neutral-100 text-neutral-800">
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- TAB BARU: Client Payment Schedule (MILESTONE PAYMENTS FOR PAID CAMPAIGNS) -->
+                <section id="tab-client-payments" class="hidden space-y-8 animate-fade-in">
+                    <div class="flex justify-between items-center border-b border-neutral-100 pb-5">
+                        <div>
+                            <h2 class="text-xl font-bold tracking-tight">Client Payment Schedule & Milestones</h2>
+                            <p class="text-xs text-neutral-500">Track installment payments for Paid Campaigns. Paid milestones automatically reflect into Revenue.</p>
+                        </div>
+                        <button onclick="togglePaymentScheduleForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
+                            <i class="fa-solid fa-plus mr-1.5"></i> Add Payment Term
+                        </button>
+                    </div>
+
+                    <!-- Add Payment Milestone Form -->
+                    <div id="payment-schedule-form-card" class="hidden bg-neutral-50 border border-neutral-100 rounded-2xl p-6 space-y-4">
+                        <h3 class="text-xs font-bold text-black uppercase tracking-wider text-neutral-500" id="payment-schedule-form-title">Log Payment Milestone</h3>
+                        <form id="new-payment-schedule-form" onsubmit="addManualPaymentSchedule(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                            <input type="hidden" id="edit-payment-schedule-id" value="">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Select Paid Client</label>
+                                <select id="pay-client-select" onchange="autoFillClientContractValue()" required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                    <!-- Populated with Paid Campaign Clients -->
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Term Description</label>
+                                <input type="text" id="pay-term-desc" placeholder="e.g. Down Payment 50%, Final 50%..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Due Date</label>
+                                <input type="date" id="pay-due-date" required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Payment Date (If Paid)</label>
+                                <input type="date" id="pay-paid-date" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Milestone Currency</label>
+                                <select id="pay-currency" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                    <option value="KRW">KRW (₩)</option>
+                                    <option value="SGD">SGD (S$)</option>
+                                    <option value="USD">USD ($)</option>
+                                    <option value="IDR">IDR (Rp)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Milestone Amount</label>
+                                <input type="number" id="pay-amount" placeholder="e.g. 750000" required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Payment Status</label>
+                                <select id="pay-status" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                    <option value="Paid">Paid (Added to Revenue)</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Overdue">Overdue</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Proof of Payment Image</label>
+                                <input type="file" id="pay-picture" accept="image/*" class="w-full text-xs px-2 py-1.5 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div class="md:col-span-4 flex justify-end gap-2 pt-2 border-t border-neutral-100">
+                                <button type="submit" id="pay-submit-btn" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-semibold hover:opacity-95 transition-all">Save Term Record</button>
+                                <button type="button" onclick="cancelPaymentScheduleForm()" class="px-4 py-2 border border-neutral-200 rounded-lg text-xs font-semibold hover:bg-white transition-all">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Payment Schedule Table -->
+                    <div class="border border-neutral-100 rounded-2xl overflow-hidden shadow-sm bg-white">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-neutral-50 border-b border-neutral-100 text-neutral-500 font-bold uppercase tracking-wider text-[10px]">
+                                    <th class="p-4">Due Date</th>
+                                    <th class="p-4">Paid Date</th>
+                                    <th class="p-4">Client Name</th>
+                                    <th class="p-4">Term Milestone</th>
+                                    <th class="p-4 text-right">Original Value</th>
+                                    <th class="p-4 text-right">Value (KRW Base)</th>
+                                    <th class="p-4 text-center">Payment Proof</th>
+                                    <th class="p-4 text-center">Status</th>
+                                    <th class="p-4 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="payment-schedule-table-body" class="divide-y divide-neutral-100 text-neutral-800">
                             </tbody>
                         </table>
                     </div>
@@ -841,7 +969,7 @@
     <div id="receipt-modal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-neutral-900 bg-opacity-70 flex items-center justify-center p-4">
         <div class="bg-white border border-neutral-100 rounded-2xl p-6 max-w-lg w-full space-y-4 shadow-2xl relative">
             <button onclick="closeReceiptModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-black transition-all p-1.5 text-lg"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="text-sm font-bold text-black uppercase tracking-wider">Receipt / Transaction Proof Image</h3>
+            <h3 class="text-sm font-bold text-black uppercase tracking-wider">Proof Image / Document Viewer</h3>
             <div class="flex justify-center border border-neutral-100 rounded-xl overflow-hidden bg-neutral-50 p-2">
                 <img id="receipt-image-view" class="max-h-[400px] object-contain rounded-lg" src="" alt="Proof View">
             </div>
@@ -931,6 +1059,7 @@
         const defaultData = {
             transactions: [],
             clients: [],
+            clientPayments: [],
             commissions: [],
             employees: [],
             coa: defaultCOA,
@@ -954,6 +1083,7 @@
                 if (!appState.employees) appState.employees = [];
                 if (!appState.transactions) appState.transactions = [];
                 if (!appState.clients) appState.clients = [];
+                if (!appState.clientPayments) appState.clientPayments = [];
                 if (!appState.commissions) appState.commissions = [];
                 if (!appState.coa || appState.coa.length === 0) appState.coa = [...defaultCOA];
             } else {
@@ -965,6 +1095,8 @@
             populateDynamicSelects();
             populateEmployeeDropdowns();
             populateCOADropdowns();
+            populateClientDropdowns();
+            populateClientIndustryFilter();
             updateUI();
         }
 
@@ -1022,6 +1154,29 @@
             tableCatFilter.innerHTML = filterOpts;
         }
 
+        function populateClientDropdowns() {
+            const select = document.getElementById("pay-client-select");
+            let opts = `<option value="">-- Select Paid Client --</option>`;
+            
+            appState.clients.filter(c => c.dealType === "Paid Campaign").forEach(c => {
+                opts += `<option value="${c.name}">${c.name} (${c.currency} ${parseFloat(c.originalValue).toLocaleString()})</option>`;
+            });
+            select.innerHTML = opts;
+        }
+
+        function populateClientIndustryFilter() {
+            const select = document.getElementById("client-filter-industry");
+            const currentVal = select.value;
+            const industries = [...new Set(appState.clients.map(c => c.industry).filter(Boolean))];
+            
+            let opts = `<option value="ALL">All Industries</option>`;
+            industries.forEach(ind => {
+                opts += `<option value="${ind}">${ind}</option>`;
+            });
+            select.innerHTML = opts;
+            if (currentVal) select.value = currentVal;
+        }
+
         function toggleCustomInput(selectId, inputId) {
             const selectEl = document.getElementById(selectId);
             const inputEl = document.getElementById(inputId);
@@ -1043,6 +1198,8 @@
             populateDynamicSelects();
             populateEmployeeDropdowns();
             populateCOADropdowns();
+            populateClientDropdowns();
+            populateClientIndustryFilter();
             updateUI();
             showToast("Workspace database cleared!", "success");
         }
@@ -1109,7 +1266,7 @@
 
         function switchTab(tabId) {
             currentTabId = tabId;
-            const tabs = ['dashboard', 'transactions', 'coa', 'employees', 'clients', 'commissions'];
+            const tabs = ['dashboard', 'transactions', 'coa', 'employees', 'clients', 'client-payments', 'commissions'];
             tabs.forEach(t => {
                 const element = document.getElementById(`tab-${t}`);
                 if (element) element.classList.add('hidden');
@@ -1147,28 +1304,39 @@
             return "";
         }
 
+        /* --- UPDATE EXECUTIVE DASHBOARD (TRANSACTIONS + PAID PAYROLL + PAID CLIENT MILESTONES) --- */
         function updateUI() {
             let totalRevenue = 0;
             let totalExpenses = 0;
 
             const selectedMonthFilter = document.getElementById("dashboard-month-filter").value;
 
+            // 1. Transaction Tracker Log
             appState.transactions.forEach(t => {
                 const txMonth = t.date.split('-')[1];
                 if (selectedMonthFilter === "ALL" || selectedMonthFilter === txMonth) {
-                    if (t.type === "CREDIT") {
-                        totalRevenue += parseFloat(t.amountInKRW);
-                    } else {
-                        totalExpenses += parseFloat(t.amountInKRW);
-                    }
+                    if (t.type === "CREDIT") totalRevenue += parseFloat(t.amountInKRW);
+                    else totalExpenses += parseFloat(t.amountInKRW);
                 }
             });
 
+            // 2. Paid Payroll Payouts
             appState.commissions.forEach(c => {
                 if (c.status === "Paid") {
                     const cMonth = c.date.split('-')[1];
                     if (selectedMonthFilter === "ALL" || selectedMonthFilter === cMonth) {
                         totalExpenses += parseFloat(c.amountInKRW);
+                    }
+                }
+            });
+
+            // 3. Paid Client Payment Schedule Milestones Auto-Added to Revenue
+            appState.clientPayments.forEach(p => {
+                if (p.status === "Paid") {
+                    const pDate = p.paidDate || p.dueDate;
+                    const pMonth = pDate.split('-')[1];
+                    if (selectedMonthFilter === "ALL" || selectedMonthFilter === pMonth) {
+                        totalRevenue += parseFloat(p.amountInKRW);
                     }
                 }
             });
@@ -1188,6 +1356,7 @@
             renderCOATable();
             renderEmployeesTable();
             renderClientsView();
+            renderPaymentScheduleTable();
             renderCommissionsTable();
             renderCharts();
         }
@@ -1466,7 +1635,7 @@
             });
         }
 
-        /* --- CLIENTS MANAGEMENT LOGIC (REVISED FOR NEW REQUIREMENTS) --- */
+        /* --- CLIENTS MANAGEMENT LOGIC --- */
         function toggleClientForm() {
             const card = document.getElementById("client-form-card");
             card.classList.toggle('hidden');
@@ -1530,17 +1699,26 @@
             cardContainer.innerHTML = "";
             listBody.innerHTML = "";
 
-            if (appState.clients.length === 0) {
-                cardContainer.innerHTML = `<div class="col-span-full py-12 text-center text-neutral-400 italic text-xs bg-neutral-50 rounded-2xl border border-dashed border-neutral-200">No clients registered yet.</div>`;
-                listBody.innerHTML = `<tr><td colspan="8" class="p-8 text-center text-neutral-400 italic">No registered clients available.</td></tr>`;
-                return;
-            }
+            const dealFilter = document.getElementById("client-filter-deal") ? document.getElementById("client-filter-deal").value : "ALL";
+            const indFilter = document.getElementById("client-filter-industry") ? document.getElementById("client-filter-industry").value : "ALL";
+            const statusFilter = document.getElementById("client-filter-status") ? document.getElementById("client-filter-status").value : "ALL";
+
+            let count = 0;
 
             appState.clients.forEach(c => {
+                if (dealFilter !== "ALL" && c.dealType !== dealFilter) return;
+                if (indFilter !== "ALL" && c.industry !== indFilter) return;
+                if (statusFilter !== "ALL" && c.status !== statusFilter) return;
+
+                count++;
                 const statusColor = c.status === "Active" ? "bg-emerald-50 text-emerald-600 border-emerald-100" : (c.status === "Pending" ? "bg-amber-50 text-amber-600 border-amber-100" : "bg-neutral-50 text-neutral-600 border-neutral-100");
                 const formattedVal = typeof c.originalValue === 'number' ? c.originalValue.toLocaleString() : c.originalValue;
 
                 const timelineDisplay = c.isOngoing ? `${c.campaignStart || 'N/A'} ~ Ongoing` : `${c.campaignStart || 'N/A'} ~ ${c.campaignEnd || 'N/A'}`;
+
+                const contractButton = c.contractFile ? 
+                    `<button onclick="openReceiptModal('${c.contractFile}')" class="text-[#ff66c4] hover:text-black font-bold text-[11px]"><i class="fa-solid fa-file-contract mr-1"></i> View Contract</button>` : 
+                    `<span class="text-neutral-400 text-[10px] italic">No Contract</span>`;
 
                 const card = `
                     <div class="bg-white border border-neutral-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between hover:shadow-md transition-all relative">
@@ -1559,6 +1737,7 @@
                                 <span class="font-medium text-neutral-400">Deal Model:</span><span class="text-black font-semibold text-right">${c.dealType}</span>
                                 <span class="font-medium text-[#ff66c4] font-bold">Creators Seeding:</span><span class="text-black font-bold text-right">${c.creatorsSeeding || 0} creators</span>
                                 <span class="font-medium text-neutral-400">Campaign Timeline:</span><span class="text-neutral-800 font-medium text-right text-[10px]">${timelineDisplay}</span>
+                                <span class="font-medium text-neutral-400">Signed Contract:</span><span class="text-right">${contractButton}</span>
                             </div>
                         </div>
                         <div class="pt-4 mt-4 border-t border-neutral-100 flex justify-between items-center text-xs">
@@ -1577,6 +1756,7 @@
                         <td class="p-4 text-right font-semibold">${formattedVal} ${c.currency}</td>
                         <td class="p-4 text-center font-bold text-[#ff66c4]">${c.creatorsSeeding || 0}</td>
                         <td class="p-4 text-center font-mono text-[10px] text-neutral-500">${timelineDisplay}</td>
+                        <td class="p-4 text-center">${contractButton}</td>
                         <td class="p-4"><span class="px-2 py-0.5 rounded text-[9px] font-semibold border ${statusColor}">${c.status}</span></td>
                         <td class="p-4 text-center">
                             <div class="flex justify-center gap-1">
@@ -1588,6 +1768,14 @@
                 `;
                 listBody.insertAdjacentHTML('beforeend', row);
             });
+
+            if (count === 0) {
+                cardContainer.innerHTML = `<div class="col-span-full py-12 text-center text-neutral-400 italic text-xs bg-neutral-50 rounded-2xl border border-dashed border-neutral-200">No clients matched the filter.</div>`;
+                listBody.innerHTML = `<tr><td colspan="9" class="p-8 text-center text-neutral-400 italic">No registered clients available.</td></tr>`;
+            }
+
+            const counterEl = document.getElementById("client-filtered-counter");
+            if (counterEl) counterEl.innerText = `Showing ${count} client${count !== 1 ? 's' : ''}`;
         }
 
         function loadClientForEdit(id) {
@@ -1648,6 +1836,7 @@
             const campaignStart = document.getElementById("client-start-date").value;
             const isOngoing = document.getElementById("client-no-enddate").checked;
             const campaignEnd = isOngoing ? "" : document.getElementById("client-end-date").value;
+            const contractFileInput = document.getElementById("client-contract-file");
 
             let service = document.getElementById("client-service").value;
             if (service === "CUSTOM_VAL") {
@@ -1666,47 +1855,194 @@
                 }
             }
 
-            const clientData = {
-                id: editId ? parseInt(editId) : Date.now(),
-                name,
-                industry,
-                service,
-                dealType,
-                originalValue: rawVal,
-                currency,
-                value: rawVal.toLocaleString() + " " + currency,
-                status,
-                creatorsSeeding,
-                campaignStart,
-                campaignEnd,
-                isOngoing
+            const saveClientData = (contractFileBase64) => {
+                const clientData = {
+                    id: editId ? parseInt(editId) : Date.now(),
+                    name, industry, service, dealType,
+                    originalValue: rawVal, currency,
+                    value: rawVal.toLocaleString() + " " + currency,
+                    status, creatorsSeeding, campaignStart, campaignEnd, isOngoing,
+                    contractFile: contractFileBase64 || ""
+                };
+
+                if (editId) {
+                    const targetId = parseInt(editId);
+                    const existing = appState.clients.find(c => c.id === targetId);
+                    if (!clientData.contractFile && existing) clientData.contractFile = existing.contractFile || "";
+                    appState.clients = appState.clients.map(c => c.id === targetId ? clientData : c);
+                    showToast("Client profile revised!", "success");
+                } else {
+                    appState.clients.unshift(clientData);
+                    showToast("New client registered!", "success");
+                }
+
+                saveState();
+                populateDynamicSelects();
+                populateClientDropdowns();
+                populateClientIndustryFilter();
+                renderClientsView();
+                cancelClientForm();
             };
 
-            if (editId) {
-                appState.clients = appState.clients.map(c => c.id === parseInt(editId) ? clientData : c);
-                showToast("Client profile revised!", "success");
+            if (contractFileInput.files && contractFileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (event) { saveClientData(event.target.result); };
+                reader.readAsDataURL(contractFileInput.files[0]);
             } else {
-                appState.clients.unshift(clientData);
-                showToast("New client registered!", "success");
+                saveClientData("");
             }
-
-            saveState();
-            populateDynamicSelects();
-            renderClientsView();
-            cancelClientForm();
         }
 
         function triggerDeleteClient(id) {
-            showConfirmationModal(
-                "Delete Client Profile",
-                "Permanently remove this client and their corresponding metadata?",
-                () => {
-                    appState.clients = appState.clients.filter(c => c.id !== id);
-                    saveState();
-                    renderClientsView();
-                    showToast("Client profile deleted!", "success");
+            showConfirmationModal("Delete Client Profile", "Remove this client and metadata?", () => {
+                appState.clients = appState.clients.filter(c => c.id !== id);
+                saveState();
+                populateClientDropdowns();
+                populateClientIndustryFilter();
+                renderClientsView();
+                showToast("Client profile deleted!", "success");
+            });
+        }
+
+        /* --- CLIENT PAYMENT SCHEDULE (MILESTONE PAYMENTS) LOGIC --- */
+        function togglePaymentScheduleForm() {
+            document.getElementById("payment-schedule-form-card").classList.toggle("hidden");
+            document.getElementById("payment-schedule-form-title").innerText = "Log Payment Milestone";
+            document.getElementById("edit-payment-schedule-id").value = "";
+            document.getElementById("new-payment-schedule-form").reset();
+        }
+
+        function cancelPaymentScheduleForm() {
+            document.getElementById("payment-schedule-form-card").classList.add("hidden");
+            document.getElementById("new-payment-schedule-form").reset();
+            document.getElementById("edit-payment-schedule-id").value = "";
+        }
+
+        function autoFillClientContractValue() {
+            const selectedClientName = document.getElementById("pay-client-select").value;
+            const client = appState.clients.find(c => c.name === selectedClientName);
+            if (client) {
+                document.getElementById("pay-currency").value = client.currency || "KRW";
+            }
+        }
+
+        function addManualPaymentSchedule(e) {
+            e.preventDefault();
+            const editId = document.getElementById("edit-payment-schedule-id").value;
+            const clientName = document.getElementById("pay-client-select").value;
+            const termDesc = document.getElementById("pay-term-desc").value.trim();
+            const dueDate = document.getElementById("pay-due-date").value;
+            const paidDate = document.getElementById("pay-paid-date").value;
+            const currency = document.getElementById("pay-currency").value;
+            const amount = parseFloat(document.getElementById("pay-amount").value);
+            const status = document.getElementById("pay-status").value;
+            const fileInput = document.getElementById("pay-picture");
+
+            const handleSavePayment = (pictureBase64) => {
+                const rate = getExchangeRateOnDate(currency, paidDate || dueDate);
+                const amountInKRW = amount * rate;
+
+                const payData = {
+                    id: editId ? parseInt(editId) : Date.now(),
+                    clientName, termDesc, dueDate, paidDate, currency, amount,
+                    amountInKRW, status, picture: pictureBase64 || ""
+                };
+
+                if (editId) {
+                    const targetId = parseInt(editId);
+                    const existing = appState.clientPayments.find(p => p.id === targetId);
+                    if (!payData.picture && existing) payData.picture = existing.picture || "";
+                    appState.clientPayments = appState.clientPayments.map(p => p.id === targetId ? payData : p);
+                    showToast("Payment milestone updated!", "success");
+                } else {
+                    appState.clientPayments.unshift(payData);
+                    showToast("Payment milestone logged!", "success");
                 }
-            );
+
+                saveState();
+                updateUI();
+                cancelPaymentScheduleForm();
+            };
+
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (event) { handleSavePayment(event.target.result); };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                handleSavePayment("");
+            }
+        }
+
+        function renderPaymentScheduleTable() {
+            const tbody = document.getElementById("payment-schedule-table-body");
+            tbody.innerHTML = "";
+
+            if (appState.clientPayments.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" class="p-8 text-center text-neutral-400 italic">No client payment milestones logged yet.</td></tr>`;
+                return;
+            }
+
+            const sortedPayments = [...appState.clientPayments].sort((a, b) => {
+                const dateA = a.paidDate || a.dueDate;
+                const dateB = b.paidDate || b.dueDate;
+                return dateB.localeCompare(dateA);
+            });
+
+            sortedPayments.forEach(p => {
+                const statusBadge = p.status === "Paid" ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                                   (p.status === "Overdue" ? "bg-rose-50 text-rose-600 border-rose-100" :
+                                   "bg-amber-50 text-amber-600 border-amber-100");
+
+                const attachmentButton = p.picture ? 
+                    `<button onclick="openReceiptModal('${p.picture}')" class="text-[#ff66c4] hover:text-black transition-all p-1.5 font-bold"><i class="fa-solid fa-image text-sm mr-1"></i> View Proof</button>` : 
+                    `<span class="text-neutral-400 text-[10px] italic">No proof</span>`;
+
+                const row = `
+                    <tr class="hover:bg-neutral-50 transition-all">
+                        <td class="p-4 font-mono text-neutral-500">${p.dueDate}</td>
+                        <td class="p-4 font-mono text-neutral-700">${p.paidDate || '-'}</td>
+                        <td class="p-4 font-bold text-black">${p.clientName}</td>
+                        <td class="p-4 font-semibold text-neutral-700">${p.termDesc}</td>
+                        <td class="p-4 text-right font-semibold text-neutral-600">${parseFloat(p.amount).toLocaleString()} ${p.currency}</td>
+                        <td class="p-4 text-right font-bold text-emerald-600">₩ ${parseFloat(p.amountInKRW).toLocaleString()}</td>
+                        <td class="p-4 text-center">${attachmentButton}</td>
+                        <td class="p-4 text-center"><span class="px-2 py-0.5 rounded border text-[9px] font-bold ${statusBadge}">${p.status}</span></td>
+                        <td class="p-4 text-center">
+                            <div class="flex justify-center gap-2">
+                                <button onclick="loadPaymentScheduleForEdit(${p.id})" class="text-neutral-400 hover:text-black p-1.5"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button onclick="triggerDeletePaymentSchedule(${p.id})" class="text-neutral-400 hover:text-rose-600 p-1.5"><i class="fa-solid fa-trash-can"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        }
+
+        function loadPaymentScheduleForEdit(id) {
+            const p = appState.clientPayments.find(item => item.id === id);
+            if (!p) return;
+
+            document.getElementById("payment-schedule-form-card").classList.remove("hidden");
+            document.getElementById("payment-schedule-form-title").innerText = "Revise Payment Milestone";
+            document.getElementById("edit-payment-schedule-id").value = p.id;
+
+            document.getElementById("pay-client-select").value = p.clientName;
+            document.getElementById("pay-term-desc").value = p.termDesc;
+            document.getElementById("pay-due-date").value = p.dueDate;
+            document.getElementById("pay-paid-date").value = p.paidDate || "";
+            document.getElementById("pay-currency").value = p.currency;
+            document.getElementById("pay-amount").value = p.amount;
+            document.getElementById("pay-status").value = p.status;
+        }
+
+        function triggerDeletePaymentSchedule(id) {
+            showConfirmationModal("Delete Payment Milestone", "Remove this milestone record?", () => {
+                appState.clientPayments = appState.clientPayments.filter(p => p.id !== id);
+                saveState();
+                updateUI();
+                showToast("Milestone record removed", "success");
+            });
         }
 
         /* --- PAYROLL HUB WITH PROOF ATTACHMENT DISPLAY --- */
@@ -1747,7 +2083,7 @@
                         <td class="p-4 text-center">
                             <div class="flex items-center justify-center gap-2">
                                 <button onclick="loadCommissionForEdit(${com.id})" class="text-neutral-400 hover:text-neutral-900 p-1.5" title="Edit Payout"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
-                                <button onclick="triggerDeleteCommission(${com.id})" class="text-neutral-400 hover:text-rose-600 p-1.5" title="Delete Payout"><i class="fa-solid fa-trash text-xs"></i></button>
+                                <button onclick="triggerDeleteCommission(${com.id})" class="text-neutral-400 hover:text-rose-600 p-1.5" title="Delete Payout"><i class="fa-solid fa-trash-can text-xs"></i></button>
                             </div>
                         </td>
                     </tr>
@@ -1813,6 +2149,16 @@
                     if (monthIdx >= 0 && monthIdx < 12) {
                         if (t.type === "CREDIT") monthlyRevenue[monthIdx] += getConvertedVal(parseFloat(t.amountInKRW));
                         else monthlyExpenses[monthIdx] += getConvertedVal(parseFloat(t.amountInKRW));
+                    }
+                });
+
+                appState.clientPayments.forEach(p => {
+                    if (p.status === "Paid") {
+                        const pDate = p.paidDate || p.dueDate;
+                        const monthIdx = new Date(pDate).getMonth();
+                        if (monthIdx >= 0 && monthIdx < 12) {
+                            monthlyRevenue[monthIdx] += getConvertedVal(parseFloat(p.amountInKRW));
+                        }
                     }
                 });
 
@@ -2034,6 +2380,7 @@
             else if (currentTabId === 'coa') exportCSV('coa');
             else if (currentTabId === 'employees') exportCSV('employees');
             else if (currentTabId === 'clients') exportCSV('clients');
+            else if (currentTabId === 'client-payments') exportCSV('client-payments');
             else if (currentTabId === 'commissions') exportCSV('commissions');
         }
 
@@ -2064,6 +2411,11 @@
                 csvContent += "CompanyName,Industry,Service,DealType,ContractValue,Currency,Status,CreatorsSeeding,CampaignStart,CampaignEnd,IsOngoing\n";
                 appState.clients.forEach(c => {
                     csvContent += `"${c.name}","${c.industry}","${c.service}","${c.dealType}",${c.originalValue},"${c.currency}","${c.status}",${c.creatorsSeeding},"${c.campaignStart}","${c.campaignEnd}",${c.isOngoing}\n`;
+                });
+            } else if (type === 'client-payments') {
+                csvContent += "DueDate,PaidDate,ClientName,TermDesc,Amount,Currency,AmountInKRW,Status\n";
+                appState.clientPayments.forEach(p => {
+                    csvContent += `"${p.dueDate}","${p.paidDate || ''}","${p.clientName}","${p.termDesc}",${p.amount},"${p.currency}",${p.amountInKRW},"${p.status}"\n`;
                 });
             } else if (type === 'commissions') {
                 csvContent += "Date,ProjectName,Recipient,Type,ClientCompany,Value,Currency,ValueInKRW,Status\n";
