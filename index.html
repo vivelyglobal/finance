@@ -117,7 +117,7 @@
         <!-- Main Content Layout -->
         <div class="flex flex-1">
             
-            <!-- Sidebar Navigation -->
+            <!-- Sidebar Navigation (REVISED ITEM NAME FOR RAPIER DISPLAY) -->
             <aside class="w-64 border-r border-neutral-100 p-6 flex flex-col justify-between bg-white">
                 <div class="space-y-8">
                     <div>
@@ -703,7 +703,7 @@
                     </div>
                 </section>
 
-                <!-- Tab 4: Unified Compensation, Payouts & Salaries (PAYROLL HAS PROOF ATTACHMENT) -->
+                <!-- Tab 4: Payroll & Payout Hub (WITH PROOF ATTACHMENT ADDED) -->
                 <section id="tab-commissions" class="hidden space-y-8 animate-fade-in">
                     <div class="flex justify-between items-center border-b border-neutral-100 pb-5">
                         <div>
@@ -720,7 +720,7 @@
                         </div>
                     </div>
 
-                    <!-- PM Commission / Salary Form (DENGAN INPUT FILE PROOF) -->
+                    <!-- PM Commission / Salary Form -->
                     <div id="commission-form-card" class="hidden bg-neutral-50 border border-neutral-100 rounded-2xl p-6 space-y-4">
                         <h3 class="text-xs font-bold text-black uppercase tracking-wider text-neutral-500" id="commissions-form-title">Log Payout Details</h3>
                         <form id="new-commission-form" onsubmit="addManualCommission(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
@@ -768,11 +768,11 @@
                                 </select>
                                 <input type="text" id="comm-status-custom" placeholder="Type custom status..." class="hidden mt-1.5 w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
-                            <div class="md:col-span-4">
+                            <div class="md:col-span-2">
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Payment Proof Image</label>
                                 <input type="file" id="comm-picture" accept="image/*" class="w-full text-xs px-2 py-1.5 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
-                            <div class="md:col-span-4 flex justify-end gap-2 pt-2 border-t border-neutral-100">
+                            <div class="md:col-span-2 flex justify-end gap-2 pt-2">
                                 <button type="button" onclick="cancelCommissionForm()" class="px-4 py-2 border border-neutral-200 rounded-lg text-xs font-semibold hover:bg-white transition-all">Cancel</button>
                                 <button type="submit" id="comm-submit-btn" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-semibold hover:opacity-95 transition-all">Save Record</button>
                             </div>
@@ -811,8 +811,8 @@
                                     <th class="p-4">Associated Client</th>
                                     <th class="p-4 text-right">Flat Value (Orig)</th>
                                     <th class="p-4 text-right">Value (KRW Base)</th>
+                                    <th class="p-4 text-center">Receipt Proof</th>
                                     <th class="p-4 text-center">Status</th>
-                                    <th class="p-4 text-center">Receipt / Proof</th>
                                     <th class="p-4 text-center">Action</th>
                                 </tr>
                             </thead>
@@ -1182,7 +1182,7 @@
             renderCharts();
         }
 
-        /* --- TRANSACTION TRACKER --- */
+        /* --- TRANSACTION TRACKER TABLE --- */
         function renderTransactionsTable() {
             const tbody = document.getElementById("transactions-table-body");
             tbody.innerHTML = "";
@@ -1257,7 +1257,7 @@
             document.getElementById("table-filtered-counter").innerText = `Showing ${count} transaction${count !== 1 ? 's' : ''}`;
         }
 
-        /* --- CHART OF ACCOUNTS (COA) LOGIC --- */
+        /* --- CHART OF ACCOUNTS LOGIC --- */
         function toggleCOAForm() {
             document.getElementById("coa-form-card").classList.toggle("hidden");
             document.getElementById("coa-form-title").innerText = "Add New Account";
@@ -1275,11 +1275,8 @@
         function autoSetNormalBalance() {
             const cat = document.getElementById("coa-category").value;
             const sideSelect = document.getElementById("coa-side");
-            if (cat === "Asset" || cat === "Expense") {
-                sideSelect.value = "Debit";
-            } else {
-                sideSelect.value = "Credit";
-            }
+            if (cat === "Asset" || cat === "Expense") sideSelect.value = "Debit";
+            else sideSelect.value = "Credit";
         }
 
         function addManualCOA(e) {
@@ -1290,10 +1287,7 @@
             const category = document.getElementById("coa-category").value;
             const side = document.getElementById("coa-side").value;
 
-            const coaData = {
-                id: editId ? parseInt(editId) : Date.now(),
-                code, name, category, side
-            };
+            const coaData = { id: editId ? parseInt(editId) : Date.now(), code, name, category, side };
 
             if (editId) {
                 appState.coa = appState.coa.map(c => c.id === parseInt(editId) ? coaData : c);
@@ -1352,17 +1346,13 @@
         }
 
         function triggerDeleteCOA(id) {
-            showConfirmationModal(
-                "Delete COA Account",
-                "Are you sure you want to remove this account from Chart of Accounts?",
-                () => {
-                    appState.coa = appState.coa.filter(c => c.id !== id);
-                    saveState();
-                    populateCOADropdowns();
-                    renderCOATable();
-                    showToast("Account removed from COA", "success");
-                }
-            );
+            showConfirmationModal("Delete COA Account", "Remove this account from Chart of Accounts?", () => {
+                appState.coa = appState.coa.filter(c => c.id !== id);
+                saveState();
+                populateCOADropdowns();
+                renderCOATable();
+                showToast("Account removed", "success");
+            });
         }
 
         /* --- EMPLOYEES LOGIC --- */
@@ -1390,10 +1380,7 @@
             const bank = document.getElementById("emp-bank").value.trim();
             const account = document.getElementById("emp-account").value.trim();
 
-            const empData = {
-                id: editId ? parseInt(editId) : Date.now(),
-                name, type, status, phone, email, bank, account
-            };
+            const empData = { id: editId ? parseInt(editId) : Date.now(), name, type, status, phone, email, bank, account };
 
             if (editId) {
                 appState.employees = appState.employees.map(emp => emp.id === parseInt(editId) ? empData : emp);
@@ -1460,17 +1447,13 @@
         }
 
         function triggerDeleteEmployee(id) {
-            showConfirmationModal(
-                "Delete Employee Record",
-                "Are you sure you want to remove this staff member from directory?",
-                () => {
-                    appState.employees = appState.employees.filter(e => e.id !== id);
-                    saveState();
-                    populateEmployeeDropdowns();
-                    renderEmployeesTable();
-                    showToast("Employee removed", "success");
-                }
-            );
+            showConfirmationModal("Delete Employee Record", "Remove this staff member?", () => {
+                appState.employees = appState.employees.filter(e => e.id !== id);
+                saveState();
+                populateEmployeeDropdowns();
+                renderEmployeesTable();
+                showToast("Employee removed", "success");
+            });
         }
 
         function setClientLayout(layout) {
@@ -1558,7 +1541,7 @@
             });
         }
 
-        /* --- PAYROLL HUB WITH PROOF IMAGE & EDIT FUNCTION --- */
+        /* --- PAYROLL HUB WITH PROOF ATTACHMENT DISPLAY --- */
         function renderCommissionsTable() {
             const tbody = document.getElementById("commissions-table-body");
             tbody.innerHTML = "";
@@ -1591,12 +1574,12 @@
                         <td class="p-4 text-neutral-500">${com.client || 'Internal'}</td>
                         <td class="p-4 text-right font-semibold">${parseFloat(com.val).toLocaleString()} ${com.currency}</td>
                         <td class="p-4 text-right text-neutral-800 font-bold">₩ ${parseFloat(com.amountInKRW).toLocaleString()}</td>
-                        <td class="p-4 text-center"><span class="px-2 py-0.5 rounded border text-[9px] font-bold ${badge}">${com.status}</span></td>
                         <td class="p-4 text-center">${attachmentButton}</td>
+                        <td class="p-4 text-center"><span class="px-2 py-0.5 rounded border text-[9px] font-bold ${badge}">${com.status}</span></td>
                         <td class="p-4 text-center">
                             <div class="flex items-center justify-center gap-2">
-                                <button onclick="loadCommissionForEdit(${com.id})" class="text-neutral-400 hover:text-neutral-900 transition-all p-1.5" title="Edit Payout"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
-                                <button onclick="triggerDeleteCommission(${com.id})" class="text-neutral-400 hover:text-rose-600 transition-all p-1.5" title="Delete Payout"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                                <button onclick="loadCommissionForEdit(${com.id})" class="text-neutral-400 hover:text-neutral-900 p-1.5" title="Edit Payout"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                                <button onclick="triggerDeleteCommission(${com.id})" class="text-neutral-400 hover:text-rose-600 p-1.5" title="Delete Payout"><i class="fa-solid fa-trash-can text-xs"></i></button>
                             </div>
                         </td>
                     </tr>
@@ -1636,16 +1619,12 @@
         }
 
         function triggerDeleteCommission(id) {
-            showConfirmationModal(
-                "Delete Payroll Log",
-                "Permanently delete this payroll/salary entry?",
-                () => {
-                    appState.commissions = appState.commissions.filter(c => c.id !== id);
-                    saveState();
-                    updateUI();
-                    showToast("Payroll record deleted!", "success");
-                }
-            );
+            showConfirmationModal("Delete Payroll Log", "Permanently delete this entry?", () => {
+                appState.commissions = appState.commissions.filter(c => c.id !== id);
+                saveState();
+                updateUI();
+                showToast("Payroll record deleted!", "success");
+            });
         }
 
         function renderCharts() {
@@ -1723,7 +1702,7 @@
             } catch (err) { console.error(err); }
         }
 
-        /* --- ADD / EDIT TRANSACTION --- */
+        /* --- ADD TRANSACTION --- */
         function addManualTransaction(e) {
             e.preventDefault();
             const editId = document.getElementById("edit-transaction-id").value;
@@ -1833,7 +1812,7 @@
             document.getElementById("edit-commission-id").value = "";
         }
 
-        /* --- ADD / EDIT PAYROLL WITH PROOF IMAGE --- */
+        /* --- ADD PAYROLL WITH PROOF ATTACHMENT --- */
         function addManualCommission(e) {
             e.preventDefault();
             const editId = document.getElementById("edit-commission-id").value;
@@ -1860,19 +1839,16 @@
                 if (editId) {
                     const targetId = parseInt(editId);
                     const existing = appState.commissions.find(c => c.id === targetId);
-                    if (!pictureBase64 && existing && existing.picture) {
-                        comData.picture = existing.picture;
-                    }
+                    if (!comData.picture && existing) comData.picture = existing.picture || "";
                     appState.commissions = appState.commissions.map(c => c.id === targetId ? comData : c);
-                    showToast("Payroll record updated!", "success");
                 } else {
                     appState.commissions.push(comData);
-                    showToast("Payroll entry saved!", "success");
                 }
 
                 saveState();
                 updateUI();
                 cancelCommissionForm();
+                showToast("Payroll entry saved!", "success");
             };
 
             if (fileInput.files && fileInput.files[0]) {
