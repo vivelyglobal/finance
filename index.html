@@ -1034,7 +1034,6 @@
             return baseRate * variation;
         }
 
-        /* REVISI 1: Standard COA Includes All Revenue Service Lines */
         const defaultCOA = [
             { id: 101, code: '1010', name: 'Cash & Bank (KRW)', category: 'Asset', side: 'Debit' },
             { id: 102, code: '1200', name: 'Accounts Receivable (Piutang)', category: 'Asset', side: 'Debit' },
@@ -1087,7 +1086,6 @@
                 if (!appState.clientPayments) appState.clientPayments = [];
                 if (!appState.coa || appState.coa.length === 0) appState.coa = [...defaultCOA];
                 
-                // Ensure default COA has all revenue service lines
                 defaultCOA.forEach(defCoa => {
                     if (!appState.coa.some(c => c.name === defCoa.name)) {
                         appState.coa.push(defCoa);
@@ -1103,11 +1101,67 @@
             populateEmployeeDropdowns();
             populateCOADropdowns();
             populateClientIndustryFilter();
+            
+            // Auto-Sync Retroactive Paid Client Payments
+            syncPaidPaymentsToTransactions();
             updateUI();
         }
 
         function saveState() {
             localStorage.setItem("vively_standalone_db_v1", JSON.stringify(appState));
+        }
+
+        /* AUTO-SYNC ALL PAID CLIENT PAYMENTS DIRECTLY TO TRANSACTIONS */
+        function syncPaidPaymentsToTransactions() {
+            if (!appState.clientPayments || appState.clientPayments.length === 0) return;
+
+            let updated = false;
+            appState.clientPayments.forEach(p => {
+                if (p.status === "Paid") {
+                    const alreadySynced = appState.transactions.some(t => t.linkedPaymentId === p.id);
+                    if (!alreadySynced) {
+                        const clientObj = appState.clients.find(c => c.name === p.clientName);
+                        let rawService = clientObj ? clientObj.service : "KOL Seeding Revenue";
+                        let serviceCategory = rawService.endsWith("Revenue") ? rawService : `${rawService} Revenue`;
+
+                        // Ensure category exists in COA
+                        if (!appState.coa.some(c => c.name === serviceCategory)) {
+                            appState.coa.push({
+                                id: Date.now(),
+                                code: '4' + Math.floor(100 + Math.random() * 900),
+                                name: serviceCategory,
+                                category: 'Revenue',
+                                side: 'Credit'
+                            });
+                        }
+
+                        const effectiveDate = p.paidDate || p.dueDate || new Date().toISOString().slice(0, 10);
+                        const rate = getExchangeRateOnDate(p.currency || 'KRW', effectiveDate);
+                        const amountInKRW = (p.amount || 0) * rate;
+
+                        const linkedTx = {
+                            id: Date.now() + Math.floor(Math.random() * 1000),
+                            date: effectiveDate,
+                            description: `[Payment Received] ${p.clientName} (${p.termDesc || 'Installment'})`,
+                            details: `Client Installment Payment for ${p.clientName}`,
+                            category: serviceCategory,
+                            amount: p.amount,
+                            currency: p.currency || 'KRW',
+                            amountInKRW: amountInKRW,
+                            type: 'CREDIT',
+                            picture: p.picture || "",
+                            linkedPaymentId: p.id
+                        };
+                        appState.transactions.push(linkedTx);
+                        updated = true;
+                    }
+                }
+            });
+
+            if (updated) {
+                saveState();
+                populateCOADropdowns();
+            }
         }
 
         function populateDynamicSelects() {
@@ -1325,12 +1379,14 @@
 
         /* --- UPDATE EXECUTIVE DASHBOARD --- */
         function updateUI() {
+            syncPaidPaymentsToTransactions();
+
             let totalRevenue = 0;
             let totalExpenses = 0;
 
             const selectedMonthFilter = document.getElementById("dashboard-month-filter").value;
 
-            // 1. Transaction Tracker Log (Calculates Revenue & Expenses)
+            // 1. Calculate from Transaction Tracker
             appState.transactions.forEach(t => {
                 const txMonth = t.date.split('-')[1];
                 if (selectedMonthFilter === "ALL" || selectedMonthFilter === txMonth) {
@@ -1339,7 +1395,7 @@
                 }
             });
 
-            // 2. Paid Payroll Payouts
+            // 2. Calculate from Payroll Payouts
             appState.commissions.forEach(c => {
                 if (c.status === "Paid") {
                     const cMonth = c.date.split('-')[1];
@@ -1366,11 +1422,11 @@
             renderClientsView();
             renderPaymentScheduleHub();
             renderCommissionsTable();
-            renderDashboardCOAReport(); // REVISI 3: Connected COA Financial Report
+            renderDashboardCOAReport();
             renderCharts();
         }
 
-        /* REVISI 3: Fully Linked COA Financial Report Table on Dashboard */
+        /* Fully Linked COA Financial Report Table on Dashboard */
         function renderDashboardCOAReport() {
             const tbody = document.getElementById("dashboard-coa-report-body");
             if (!tbody) return;
@@ -1379,26 +1435,24 @@
             const monthFilter = document.getElementById("dashboard-month-filter").value;
             const coaTotals = {};
 
-            // Initialize all COA items from COA master list
             appState.coa.forEach(c => {
                 coaTotals[c.name] = { code: c.code, category: c.category, amountKRW: 0 };
             });
 
-            // 1. Accumulate from All Transactions in Transaction Tracker
+            // 1. Accumulate from All Transactions
             appState.transactions.forEach(t => {
                 const txMonth = t.date.split('-')[1];
                 if (monthFilter === "ALL" || monthFilter === txMonth) {
                     if (coaTotals[t.category]) {
                         coaTotals[t.category].amountKRW += parseFloat(t.amountInKRW || 0);
                     } else {
-                        // Dynamically register if missing
                         const categoryType = t.type === "CREDIT" ? "Revenue" : "Expense";
-                        coaTotals[t.category] = { code: 'AUTO', category: categoryType, amountKRW: parseFloat(t.amountInKRW || 0) };
+                        coaTotals[t.category] = { code: '4000', category: categoryType, amountKRW: parseFloat(t.amountInKRW || 0) };
                     }
                 }
             });
 
-            // 2. Accumulate from Payroll Payouts (Paid status)
+            // 2. Accumulate from Payroll Payouts
             appState.commissions.forEach(c => {
                 if (c.status === "Paid") {
                     const comMonth = c.date.split('-')[1];
@@ -1417,7 +1471,6 @@
             const currencySymbol = getCurrencySymbol();
             const currKey = document.getElementById("global-currency-select").value;
 
-            // Render rows
             Object.keys(coaTotals).forEach(accName => {
                 const acc = coaTotals[accName];
                 const converted = getConvertedVal(acc.amountKRW);
@@ -1900,7 +1953,6 @@
             document.getElementById("client-form-card").scrollIntoView({ behavior: 'smooth' });
         }
 
-        /* REVISI 1: Service Line Linked to Revenue COA */
         function addManualClient(e) {
             e.preventDefault();
             const editId = document.getElementById("edit-client-id").value;
@@ -1921,10 +1973,8 @@
                 if (customVal) rawService = customVal;
             }
 
-            // Ensure "Revenue" suffix for COA Mapping
             const service = rawService.endsWith("Revenue") ? rawService : `${rawService} Revenue`;
 
-            // Auto-Add service to COA if missing
             if (!appState.coa.some(c => c.name === service)) {
                 appState.coa.push({
                     id: Date.now(),
@@ -2135,7 +2185,6 @@
             document.getElementById("edit-payment-schedule-id").value = "";
         }
 
-        /* REVISI 2: Paid Client Payments Automatically Link to Transaction Tracker */
         function addManualPaymentSchedule(e) {
             e.preventDefault();
             const editId = document.getElementById("edit-payment-schedule-id").value;
@@ -2166,20 +2215,18 @@
                 if (editId) {
                     const targetId = parseInt(editId);
                     appState.clientPayments = appState.clientPayments.map(p => p.id === targetId ? payData : p);
-                    
-                    // Remove old linked transaction if exists
                     appState.transactions = appState.transactions.filter(t => t.linkedPaymentId !== targetId);
                 } else {
                     appState.clientPayments.unshift(payData);
                 }
 
-                // AUTO-LINK TO TRANSACTION TRACKER IF PAID
                 if (status === "Paid") {
                     const clientObj = appState.clients.find(c => c.name === clientName);
-                    const serviceCategory = clientObj ? clientObj.service : 'KOL Seeding Revenue';
+                    let rawService = clientObj ? clientObj.service : 'KOL Seeding Revenue';
+                    let serviceCategory = rawService.endsWith("Revenue") ? rawService : `${rawService} Revenue`;
 
                     const linkedTx = {
-                        id: Date.now() + 1,
+                        id: Date.now() + Math.floor(Math.random() * 1000),
                         date: effectiveDate,
                         description: `[Payment Received] ${clientName} (${termDesc})`,
                         details: `Client Installment Payment (${termDesc}) for ${clientName}`,
@@ -2197,7 +2244,7 @@
                 saveState();
                 updateUI();
                 cancelPaymentScheduleForm();
-                showToast("Payment milestone logged & synced to transactions!", "success");
+                showToast("Payment term logged and synchronized to revenue!", "success");
             };
 
             if (fileInput.files && fileInput.files[0]) {
@@ -2525,7 +2572,6 @@
             document.getElementById("edit-commission-id").value = "";
         }
 
-        /* Add/Edit Payroll with Tax 3.3% Deduction and Proof Preservation */
         function addManualCommission(e) {
             e.preventDefault();
             const editId = document.getElementById("edit-commission-id").value;
