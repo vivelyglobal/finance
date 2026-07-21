@@ -143,7 +143,6 @@
                                 <i class="fa-solid fa-address-book text-neutral-400"></i>
                                 Key Client Portfolio
                             </button>
-                            <!-- REVISED SIDEBAR LABEL: Client Payment -->
                             <button onclick="switchTab('client-payments')" id="btn-client-payments" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 hover:bg-neutral-50 hover:text-black border-l-4 border-transparent">
                                 <i class="fa-solid fa-file-invoice-dollar text-neutral-400"></i>
                                 Client Payment
@@ -279,6 +278,30 @@
                             <div class="relative flex-1 w-full flex items-center justify-center" style="min-height: 280px;">
                                 <canvas id="chart-expenses-pie"></canvas>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- REVISI 1: COA Financial Report Table on Executive Dashboard -->
+                    <div class="border border-neutral-100 rounded-2xl p-6 bg-white shadow-sm space-y-4">
+                        <div class="flex justify-between items-center border-b border-neutral-100 pb-3">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-black flex items-center gap-2">
+                                <i class="fa-solid fa-list-check text-[#ff66c4]"></i> Chart of Accounts Financial Report
+                            </h4>
+                            <span class="text-[11px] text-neutral-400 font-medium">Accumulated totals based on selected month filter</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead>
+                                    <tr class="bg-neutral-50 border-b border-neutral-100 text-neutral-500 font-bold uppercase tracking-wider text-[10px]">
+                                        <th class="p-3">Account Code</th>
+                                        <th class="p-3">Account Name</th>
+                                        <th class="p-3">Category</th>
+                                        <th class="p-3 text-right">Total Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashboard-coa-report-body" class="divide-y divide-neutral-100 text-neutral-800">
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </section>
@@ -753,7 +776,7 @@
                     </div>
                 </section>
 
-                <!-- TAB: Client Payment (LINKED TO PAID COLLAB CLIENTS) -->
+                <!-- TAB: Client Payment -->
                 <section id="tab-client-payments" class="hidden space-y-8 animate-fade-in">
                     <div class="flex justify-between items-center border-b border-neutral-100 pb-5">
                         <div>
@@ -775,7 +798,7 @@
                                 <input type="hidden" id="pay-client-name">
                             </div>
                             
-                            <!-- PERCENTAGE INPUT (Auto-calculates amount) -->
+                            <!-- PERCENTAGE INPUT -->
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Payment Percentage (%)</label>
                                 <input type="number" id="pay-percentage" placeholder="e.g., 50" oninput="calculatePaymentAmount()" required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
@@ -824,7 +847,7 @@
                         </form>
                     </div>
 
-                    <!-- Cards Container for Paid Collab Clients (DASHBOARD) -->
+                    <!-- Cards Container for Paid Collab Clients -->
                     <div id="paid-clients-payment-container" class="space-y-6">
                     </div>
                 </section>
@@ -888,6 +911,15 @@
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Flat Payment Value</label>
                                 <input type="number" id="comm-val" placeholder="Direct payout..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
+                            
+                            <!-- REVISI 4: TAX CHECKBOX 3.3% -->
+                            <div class="flex items-center gap-2 py-2">
+                                <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-semibold text-neutral-700">
+                                    <input type="checkbox" id="comm-tax-deduct" class="rounded text-[#ff66c4] focus:ring-0 w-4 h-4">
+                                    <span>Deduct 3.3% Tax (PPh)</span>
+                                </label>
+                            </div>
+
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Status</label>
                                 <select id="comm-status" onchange="toggleCustomInput('comm-status', 'comm-status-custom')" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
@@ -967,11 +999,19 @@
         </div>
     </div>
 
+    <!-- REVISI 3: CONFIRM MODAL WITH PASSWORD FOR CLEAR DATA -->
     <div id="confirm-modal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-neutral-900 bg-opacity-50 flex items-center justify-center p-4">
         <div class="bg-white border border-neutral-100 rounded-2xl p-6 max-w-sm w-full space-y-4 shadow-xl">
             <h3 class="text-sm font-bold text-black uppercase tracking-wider" id="confirm-modal-title">Confirm Action</h3>
             <p class="text-xs text-neutral-500 leading-relaxed" id="confirm-modal-desc">Are you sure you want to proceed?</p>
-            <div class="flex gap-2 justify-end">
+            
+            <div id="confirm-password-container" class="hidden space-y-2 pt-1">
+                <label class="block text-[11px] font-bold text-neutral-700">Enter Admin Password to confirm:</label>
+                <input type="password" id="confirm-password-input" placeholder="••••••••" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-xl focus:outline-none focus:ring-1 accent-ring bg-neutral-50 font-mono">
+                <p id="confirm-password-error" class="text-[10px] text-rose-500 font-semibold hidden"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Incorrect password!</p>
+            </div>
+
+            <div class="flex gap-2 justify-end pt-2">
                 <button id="confirm-btn-cancel" class="px-4 py-2 border border-neutral-200 rounded-lg text-xs font-semibold text-neutral-700 hover:bg-neutral-50 transition-all">Cancel</button>
                 <button id="confirm-btn-ok" class="px-4 py-2 text-white accent-bg rounded-lg text-xs font-semibold hover:opacity-90 transition-all">Yes, Proceed</button>
             </div>
@@ -1208,18 +1248,31 @@
             }, 3000);
         }
 
+        /* REVISI 3: Clear confirmation with password "20260619" */
         function triggerClearConfirmation() {
             showConfirmationModal(
                 "Clear Ledger Database",
-                "Are you sure you want to permanently delete all localized entries?",
+                "Are you sure you want to permanently delete all localized entries? Action requires administrative confirmation.",
+                true,
                 () => { resetToDefaultData(); }
             );
         }
 
-        function showConfirmationModal(title, desc, onConfirm) {
+        function showConfirmationModal(title, desc, requiresPassword, onConfirm) {
             const modal = document.getElementById("confirm-modal");
             document.getElementById("confirm-modal-title").innerText = title;
             document.getElementById("confirm-modal-desc").innerText = desc;
+            
+            const passContainer = document.getElementById("confirm-password-container");
+            const passInput = document.getElementById("confirm-password-input");
+            const passError = document.getElementById("confirm-password-error");
+            
+            passInput.value = "";
+            passError.classList.add("hidden");
+
+            if (requiresPassword) passContainer.classList.remove("hidden");
+            else passContainer.classList.add("hidden");
+
             modal.classList.remove("hidden");
             
             const btnOk = document.getElementById("confirm-btn-ok");
@@ -1230,15 +1283,26 @@
                 btnCancel.replaceWith(btnCancel.cloneNode(true));
             };
 
-            document.getElementById("confirm-btn-ok").addEventListener("click", () => {
-                onConfirm();
+            document.getElementById("confirm-btn-ok").onclick = () => {
+                if (requiresPassword) {
+                    if (passInput.value === "20260619") {
+                        onConfirm();
+                        modal.classList.add("hidden");
+                        clearEvents();
+                    } else {
+                        passError.classList.remove("hidden");
+                    }
+                } else {
+                    onConfirm();
+                    modal.classList.add("hidden");
+                    clearEvents();
+                }
+            };
+
+            document.getElementById("confirm-btn-cancel").onclick = () => {
                 modal.classList.add("hidden");
                 clearEvents();
-            });
-            document.getElementById("confirm-btn-cancel").addEventListener("click", () => {
-                modal.classList.add("hidden");
-                clearEvents();
-            });
+            };
         }
 
         function switchTab(tabId) {
@@ -1335,7 +1399,72 @@
             renderClientsView();
             renderPaymentScheduleHub();
             renderCommissionsTable();
+            renderDashboardCOAReport(); // REVISI 1: COA Report Table
             renderCharts();
+        }
+
+        /* REVISI 1: Render COA Report Table on Dashboard */
+        function renderDashboardCOAReport() {
+            const tbody = document.getElementById("dashboard-coa-report-body");
+            if (!tbody) return;
+            tbody.innerHTML = "";
+
+            const monthFilter = document.getElementById("dashboard-month-filter").value;
+            const coaTotals = {};
+
+            // Initialize all COA items
+            appState.coa.forEach(c => {
+                coaTotals[c.name] = { code: c.code, category: c.category, amountKRW: 0 };
+            });
+
+            // Accumulate from Transactions
+            appState.transactions.forEach(t => {
+                const txMonth = t.date.split('-')[1];
+                if (monthFilter === "ALL" || monthFilter === txMonth) {
+                    if (coaTotals[t.category]) {
+                        coaTotals[t.category].amountKRW += parseFloat(t.amountInKRW || 0);
+                    } else {
+                        coaTotals[t.category] = { code: '-', category: 'Other', amountKRW: parseFloat(t.amountInKRW || 0) };
+                    }
+                }
+            });
+
+            // Accumulate from Payroll Payouts (Paid status)
+            appState.commissions.forEach(c => {
+                if (c.status === "Paid") {
+                    const comMonth = c.date.split('-')[1];
+                    if (monthFilter === "ALL" || monthFilter === comMonth) {
+                        const targetCategory = c.type || "Salaries & Wages";
+                        if (coaTotals[targetCategory]) {
+                            coaTotals[targetCategory].amountKRW += parseFloat(c.amountInKRW || 0);
+                        } else {
+                            // Find match or default
+                            const matchKey = Object.keys(coaTotals).find(k => k.toLowerCase().includes('salary')) || "Salaries & Wages";
+                            if (coaTotals[matchKey]) coaTotals[matchKey].amountKRW += parseFloat(c.amountInKRW || 0);
+                        }
+                    }
+                }
+            });
+
+            const currencySymbol = getCurrencySymbol();
+            const currKey = document.getElementById("global-currency-select").value;
+
+            Object.keys(coaTotals).forEach(accName => {
+                const acc = coaTotals[accName];
+                const converted = getConvertedVal(acc.amountKRW);
+                const badgeColor = acc.category === "Revenue" ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                                  (acc.category === "Expense" ? "bg-rose-50 text-rose-600 border-rose-100" : "bg-neutral-50 text-neutral-600 border-neutral-100");
+
+                const row = `
+                    <tr class="hover:bg-neutral-50 transition-all">
+                        <td class="p-3 font-mono font-bold text-neutral-500">${acc.code}</td>
+                        <td class="p-3 font-semibold text-black">${accName}</td>
+                        <td class="p-3"><span class="px-2 py-0.5 rounded border text-[10px] font-semibold ${badgeColor}">${acc.category}</span></td>
+                        <td class="p-3 text-right font-bold text-black">${currencySymbol} ${converted.toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}</td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
         }
 
         /* --- TRANSACTION TRACKER TABLE --- */
@@ -1502,7 +1631,7 @@
         }
 
         function triggerDeleteCOA(id) {
-            showConfirmationModal("Delete COA Account", "Remove this account from Chart of Accounts?", () => {
+            showConfirmationModal("Delete COA Account", "Remove this account from Chart of Accounts?", false, () => {
                 appState.coa = appState.coa.filter(c => c.id !== id);
                 saveState();
                 populateCOADropdowns();
@@ -1603,7 +1732,7 @@
         }
 
         function triggerDeleteEmployee(id) {
-            showConfirmationModal("Delete Employee Record", "Remove this staff member?", () => {
+            showConfirmationModal("Delete Employee Record", "Remove this staff member?", false, () => {
                 appState.employees = appState.employees.filter(e => e.id !== id);
                 saveState();
                 populateEmployeeDropdowns();
@@ -1801,6 +1930,7 @@
             document.getElementById("client-form-card").scrollIntoView({ behavior: 'smooth' });
         }
 
+        /* REVISI 2: Edit Client preserves existing proof */
         function addManualClient(e) {
             e.preventDefault();
             const editId = document.getElementById("edit-client-id").value;
@@ -1832,6 +1962,8 @@
                 }
             }
 
+            const existingObj = editId ? appState.clients.find(c => c.id === parseInt(editId)) : null;
+
             const saveClientData = (contractFileBase64) => {
                 const clientData = {
                     id: editId ? parseInt(editId) : Date.now(),
@@ -1839,13 +1971,11 @@
                     originalValue: rawVal, currency,
                     value: rawVal.toLocaleString() + " " + currency,
                     status, creatorsSeeding, campaignStart, campaignEnd, isOngoing,
-                    contractFile: contractFileBase64 || ""
+                    contractFile: contractFileBase64 || (existingObj ? existingObj.contractFile : "")
                 };
 
                 if (editId) {
                     const targetId = parseInt(editId);
-                    const existing = appState.clients.find(c => c.id === targetId);
-                    if (!clientData.contractFile && existing) clientData.contractFile = existing.contractFile || "";
                     appState.clients = appState.clients.map(c => c.id === targetId ? clientData : c);
                     showToast("Client profile revised!", "success");
                 } else {
@@ -1871,7 +2001,7 @@
         }
 
         function triggerDeleteClient(id) {
-            showConfirmationModal("Delete Client Profile", "Remove this client and metadata?", () => {
+            showConfirmationModal("Delete Client Profile", "Remove this client and metadata?", false, () => {
                 appState.clients = appState.clients.filter(c => c.id !== id);
                 saveState();
                 populateClientIndustryFilter();
@@ -1881,14 +2011,12 @@
             });
         }
 
-        /* --- CLIENT PAYMENT HUB (PER-BRAND PAYMENT SCHEDULE & MULTI-INSTALLMENTS) --- */
-        
-        // Auto-Calculate amount based on percentage
+        /* --- CLIENT PAYMENT HUB --- */
         function calculatePaymentAmount() {
             const pct = parseFloat(document.getElementById("pay-percentage").value) || 0;
             const total = parseFloat(document.getElementById("pay-client-total-value").value) || 0;
             const amount = total * (pct / 100);
-            document.getElementById("pay-amount").value = amount; // no fractions needed mostly, but allowed
+            document.getElementById("pay-amount").value = amount;
         }
 
         function renderPaymentScheduleHub() {
@@ -1909,7 +2037,6 @@
             paidClients.forEach(client => {
                 const clientPayments = appState.clientPayments.filter(p => p.clientName === client.name);
                 
-                // Calculate based on the client's original currency for the dashboard UI
                 let totalPaidNative = 0;
                 clientPayments.forEach(p => {
                     if (p.status === "Paid") totalPaidNative += parseFloat(p.amount);
@@ -2023,18 +2150,21 @@
             document.getElementById("edit-payment-schedule-id").value = "";
         }
 
+        /* REVISI 2: Edit Payment Schedule preserves existing proof */
         function addManualPaymentSchedule(e) {
             e.preventDefault();
             const editId = document.getElementById("edit-payment-schedule-id").value;
             const clientName = document.getElementById("pay-client-name").value;
             const percentage = parseFloat(document.getElementById("pay-percentage").value) || 0;
-            const termDesc = percentage + "%"; // Stored for display purposes
+            const termDesc = percentage + "%";
             const dueDate = document.getElementById("pay-due-date").value;
             const paidDate = document.getElementById("pay-paid-date").value;
             const currency = document.getElementById("pay-currency").value;
             const amount = parseFloat(document.getElementById("pay-amount").value);
             const status = document.getElementById("pay-status").value;
             const fileInput = document.getElementById("pay-picture");
+
+            const existingObj = editId ? appState.clientPayments.find(p => p.id === parseInt(editId)) : null;
 
             const handleSavePayment = (pictureBase64) => {
                 const rate = getExchangeRateOnDate(currency, paidDate || dueDate);
@@ -2043,13 +2173,11 @@
                 const payData = {
                     id: editId ? parseInt(editId) : Date.now(),
                     clientName, percentage, termDesc, dueDate, paidDate, currency, amount,
-                    amountInKRW, status, picture: pictureBase64 || ""
+                    amountInKRW, status, picture: pictureBase64 || (existingObj ? existingObj.picture : "")
                 };
 
                 if (editId) {
                     const targetId = parseInt(editId);
-                    const existing = appState.clientPayments.find(p => p.id === targetId);
-                    if (!payData.picture && existing) payData.picture = existing.picture || "";
                     appState.clientPayments = appState.clientPayments.map(p => p.id === targetId ? payData : p);
                     showToast("Payment milestone updated!", "success");
                 } else {
@@ -2095,7 +2223,7 @@
         }
 
         function triggerDeletePaymentSchedule(id) {
-            showConfirmationModal("Delete Payment Milestone", "Remove this milestone record?", () => {
+            showConfirmationModal("Delete Payment Milestone", "Remove this milestone record?", false, () => {
                 appState.clientPayments = appState.clientPayments.filter(p => p.id !== id);
                 saveState();
                 updateUI();
@@ -2103,7 +2231,7 @@
             });
         }
 
-        /* --- PAYROLL HUB WITH PROOF ATTACHMENT DISPLAY --- */
+        /* --- PAYROLL HUB --- */
         function renderCommissionsTable() {
             const tbody = document.getElementById("commissions-table-body");
             tbody.innerHTML = "";
@@ -2127,6 +2255,8 @@
                     `<button onclick="openReceiptModal('${com.picture}')" class="text-[#ff66c4] hover:text-black transition-all p-1.5 font-bold"><i class="fa-solid fa-image text-sm mr-1"></i> View Proof</button>` : 
                     `<span class="text-neutral-400 text-[10px] italic">No proof</span>`;
 
+                const taxBadge = com.isTaxDeducted ? `<span class="block text-[9px] text-rose-500 font-semibold">(Net -3.3% Tax)</span>` : '';
+
                 const row = `
                     <tr class="hover:bg-neutral-50 transition-all">
                         <td class="p-4 text-neutral-500 font-mono">${com.date}</td>
@@ -2134,7 +2264,10 @@
                         <td class="p-4 font-semibold text-neutral-800">${com.manager}</td>
                         <td class="p-4"><span class="px-2 py-0.5 rounded border text-[10px] bg-neutral-50 text-neutral-600 font-medium">${com.type || 'Salary'}</span></td>
                         <td class="p-4 text-neutral-500">${com.client || 'Internal'}</td>
-                        <td class="p-4 text-right font-semibold">${parseFloat(com.val).toLocaleString()} ${com.currency}</td>
+                        <td class="p-4 text-right font-semibold">
+                            ${parseFloat(com.val).toLocaleString()} ${com.currency}
+                            ${taxBadge}
+                        </td>
                         <td class="p-4 text-right text-neutral-800 font-bold">₩ ${parseFloat(com.amountInKRW).toLocaleString()}</td>
                         <td class="p-4 text-center">${attachmentButton}</td>
                         <td class="p-4 text-center"><span class="px-2 py-0.5 rounded border text-[9px] font-bold ${badge}">${com.status}</span></td>
@@ -2167,7 +2300,8 @@
             document.getElementById("comm-manager-select").value = com.manager;
             document.getElementById("comm-client").value = com.client || "";
             document.getElementById("comm-currency").value = com.currency;
-            document.getElementById("comm-val").value = com.val;
+            document.getElementById("comm-val").value = com.rawVal || com.val;
+            document.getElementById("comm-tax-deduct").checked = !!com.isTaxDeducted;
 
             if (!appState.customCommTypes.includes(com.type)) appState.customCommTypes.push(com.type);
             if (!appState.customCommStatuses.includes(com.status)) appState.customCommStatuses.push(com.status);
@@ -2181,7 +2315,7 @@
         }
 
         function triggerDeleteCommission(id) {
-            showConfirmationModal("Delete Payroll Log", "Permanently delete this entry?", () => {
+            showConfirmationModal("Delete Payroll Log", "Permanently delete this entry?", false, () => {
                 appState.commissions = appState.commissions.filter(c => c.id !== id);
                 saveState();
                 updateUI();
@@ -2189,6 +2323,7 @@
             });
         }
 
+        /* REVISI 1: Harmony & Varied Color Palette for Operating Expenses Pie Chart */
         function renderCharts() {
             try {
                 if (perfChart) perfChart.destroy();
@@ -2260,13 +2395,26 @@
                     }
                 });
 
+                // Soft, elegant, pastel-toned colors (Pink, Lavender, Slate, Coral, Mint, Indigo)
+                const pastelColors = [
+                    '#ff66c4', // Vively Pink
+                    '#8b5cf6', // Lavender / Violet
+                    '#3b82f6', // Soft Blue
+                    '#10b981', // Mint Green
+                    '#f59e0b', // Warm Amber
+                    '#ec4899', // Rose
+                    '#6366f1', // Indigo
+                    '#14b8a6', // Teal
+                    '#64748b'  // Slate
+                ];
+
                 pieChart = new Chart(canvasPie, {
                     type: 'doughnut',
                     data: {
                         labels: Object.keys(categories).length > 0 ? Object.keys(categories) : ['No Expenses'],
                         datasets: [{
                             data: Object.values(categories).length > 0 ? Object.values(categories) : [1],
-                            backgroundColor: ['#000000', '#ff66c4', '#404040', '#737373', '#e5e5e5']
+                            backgroundColor: Object.keys(categories).length > 0 ? pastelColors.slice(0, Object.keys(categories).length) : ['#e5e5e5']
                         }]
                     },
                     options: { responsive: true, maintainAspectRatio: false }
@@ -2274,7 +2422,7 @@
             } catch (err) { console.error(err); }
         }
 
-        /* --- ADD TRANSACTION --- */
+        /* REVISI 2: Edit Transaction preserves existing proof */
         function addManualTransaction(e) {
             e.preventDefault();
             const editId = document.getElementById("edit-transaction-id").value;
@@ -2289,6 +2437,7 @@
             const type = (coaMatch && coaMatch.category === "Revenue") ? "CREDIT" : "DEBIT";
 
             const fileInput = document.getElementById("form-picture");
+            const existingObj = editId ? appState.transactions.find(t => t.id === parseInt(editId)) : null;
 
             const handleNewTxInsertion = (pictureBase64) => {
                 const rate = getExchangeRateOnDate(currency, date);
@@ -2304,7 +2453,7 @@
                     currency,
                     amountInKRW,
                     type,
-                    picture: pictureBase64 || ""
+                    picture: pictureBase64 || (existingObj ? existingObj.picture : "")
                 };
 
                 if (editId) {
@@ -2350,7 +2499,7 @@
         }
 
         function triggerDeleteTransaction(id) {
-            showConfirmationModal("Delete Transaction", "Permanently delete this item?", () => {
+            showConfirmationModal("Delete Transaction", "Permanently delete this item?", false, () => {
                 appState.transactions = appState.transactions.filter(t => t.id !== id);
                 saveState();
                 updateUI();
@@ -2384,7 +2533,7 @@
             document.getElementById("edit-commission-id").value = "";
         }
 
-        /* --- ADD PAYROLL WITH PROOF ATTACHMENT --- */
+        /* REVISI 2 & 4: Add/Edit Payroll with Tax 3.3% Deduction and Proof Preservation */
         function addManualCommission(e) {
             e.preventDefault();
             const editId = document.getElementById("edit-commission-id").value;
@@ -2392,11 +2541,18 @@
             const project = document.getElementById("comm-project").value;
             const manager = document.getElementById("comm-manager-select").value;
             const client = document.getElementById("comm-client").value;
-            const val = parseFloat(document.getElementById("comm-val").value);
+            const rawVal = parseFloat(document.getElementById("comm-val").value);
+            const isTaxDeducted = document.getElementById("comm-tax-deduct").checked;
+            
+            // Deduct 3.3% if checked
+            const val = isTaxDeducted ? (rawVal * 0.967) : rawVal;
+
             const currency = document.getElementById("comm-currency").value;
             const type = document.getElementById("comm-type").value;
             const status = document.getElementById("comm-status").value;
             const fileInput = document.getElementById("comm-picture");
+
+            const existingObj = editId ? appState.commissions.find(c => c.id === parseInt(editId)) : null;
 
             const handleNewCommInsertion = (pictureBase64) => {
                 const rate = getExchangeRateOnDate(currency, date);
@@ -2404,14 +2560,12 @@
 
                 const comData = {
                     id: editId ? parseInt(editId) : Date.now(),
-                    date, project, manager, client, val, currency, amountInKRW, type, status,
-                    picture: pictureBase64 || ""
+                    date, project, manager, client, rawVal, val, isTaxDeducted, currency, amountInKRW, type, status,
+                    picture: pictureBase64 || (existingObj ? existingObj.picture : "")
                 };
 
                 if (editId) {
                     const targetId = parseInt(editId);
-                    const existing = appState.commissions.find(c => c.id === targetId);
-                    if (!comData.picture && existing) comData.picture = existing.picture || "";
                     appState.commissions = appState.commissions.map(c => c.id === targetId ? comData : c);
                 } else {
                     appState.commissions.push(comData);
@@ -2476,13 +2630,13 @@
                     csvContent += `"${p.clientName}","${p.termDesc}","${p.dueDate}","${p.paidDate || ''}",${p.amount},"${p.currency}",${p.amountInKRW},"${p.status}"\n`;
                 });
             } else if (type === 'commissions') {
-                csvContent += "Date,ProjectName,Recipient,Type,ClientCompany,Value,Currency,ValueInKRW,Status\n";
+                csvContent += "Date,ProjectName,Recipient,Type,ClientCompany,Value,IsTaxDeducted,Currency,ValueInKRW,Status\n";
                 const sortedComm = [...appState.commissions].sort((a, b) => {
                     if (b.date !== a.date) return b.date.localeCompare(a.date);
                     return b.id - a.id;
                 });
                 sortedComm.forEach(c => {
-                    csvContent += `"${c.date}","${c.project}","${c.manager}","${c.type}","${c.client}",${c.val},"${c.currency}",${c.amountInKRW},"${c.status}"\n`;
+                    csvContent += `"${c.date}","${c.project}","${c.manager}","${c.type}","${c.client}",${c.val},${!!c.isTaxDeducted},"${c.currency}",${c.amountInKRW},"${c.status}"\n`;
                 });
             }
 
