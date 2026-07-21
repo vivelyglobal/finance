@@ -117,7 +117,7 @@
         <!-- Main Content Layout -->
         <div class="flex flex-1">
             
-            <!-- Sidebar Navigation (REVISED ITEM NAME FOR RAPIER DISPLAY) -->
+            <!-- Sidebar Navigation -->
             <aside class="w-64 border-r border-neutral-100 p-6 flex flex-col justify-between bg-white">
                 <div class="space-y-8">
                     <div>
@@ -610,7 +610,7 @@
                         </div>
                     </div>
 
-                    <!-- Client Form -->
+                    <!-- Client Form Card -->
                     <div id="client-form-card" class="hidden bg-neutral-50 border border-neutral-100 rounded-2xl p-6 space-y-4">
                         <h3 class="text-xs font-bold text-black uppercase tracking-wider text-neutral-500" id="client-form-title">New Client Registration</h3>
                         <form id="new-client-form" onsubmit="addManualClient(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
@@ -703,7 +703,7 @@
                     </div>
                 </section>
 
-                <!-- Tab 4: Payroll & Payout Hub (WITH PROOF ATTACHMENT ADDED) -->
+                <!-- Tab 4: Payroll & Payout Hub -->
                 <section id="tab-commissions" class="hidden space-y-8 animate-fade-in">
                     <div class="flex justify-between items-center border-b border-neutral-100 pb-5">
                         <div>
@@ -1456,6 +1456,23 @@
             });
         }
 
+        /* --- CLIENTS MANAGEMENT LOGIC --- */
+        function toggleClientForm() {
+            const card = document.getElementById("client-form-card");
+            card.classList.toggle('hidden');
+            document.getElementById("client-form-title").innerText = "New Client Registration";
+            document.getElementById("edit-client-id").value = "";
+            document.getElementById("new-client-form").reset();
+        }
+
+        function cancelClientForm() {
+            document.getElementById("client-form-card").classList.add('hidden');
+            document.getElementById("new-client-form").reset();
+            document.getElementById("edit-client-id").value = "";
+            const customInput = document.getElementById("client-dealtype-custom");
+            if (customInput) customInput.classList.add("hidden");
+        }
+
         function setClientLayout(layout) {
             appState.clientLayout = layout;
             saveState();
@@ -1541,6 +1558,103 @@
             });
         }
 
+        function loadClientForEdit(id) {
+            const client = appState.clients.find(c => c.id === id);
+            if (!client) return;
+
+            document.getElementById("client-form-card").classList.remove('hidden');
+            document.getElementById("client-form-title").innerText = "Revise Client Details";
+            document.getElementById("edit-client-id").value = client.id;
+            
+            document.getElementById("client-name").value = client.name || "";
+            document.getElementById("client-industry").value = client.industry || "";
+            document.getElementById("client-service").value = client.service || "";
+            
+            if (client.dealType && !appState.customDealTypes.includes(client.dealType)) {
+                appState.customDealTypes.push(client.dealType);
+                populateDynamicSelects();
+            }
+            document.getElementById("client-dealtype").value = client.dealType || "";
+
+            document.getElementById("client-currency").value = client.currency || "KRW";
+            document.getElementById("client-value-raw").value = client.originalValue || 0;
+            document.getElementById("client-owner").value = client.owner || "";
+            document.getElementById("client-status").value = client.status || "Active";
+            document.getElementById("client-creators").value = client.creatorsSeeding || 0;
+            document.getElementById("client-start-date").value = client.campaignStart || "";
+            document.getElementById("client-end-date").value = client.campaignEnd || "";
+
+            document.getElementById("client-form-card").scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function addManualClient(e) {
+            e.preventDefault();
+            const editId = document.getElementById("edit-client-id").value;
+            const name = document.getElementById("client-name").value.trim();
+            const industry = document.getElementById("client-industry").value.trim();
+            const service = document.getElementById("client-service").value.trim();
+            const currency = document.getElementById("client-currency").value;
+            const rawVal = parseFloat(document.getElementById("client-value-raw").value) || 0;
+            const owner = document.getElementById("client-owner").value.trim();
+            const status = document.getElementById("client-status").value;
+            const creatorsSeeding = parseInt(document.getElementById("client-creators").value) || 0;
+            const campaignStart = document.getElementById("client-start-date").value;
+            const campaignEnd = document.getElementById("client-end-date").value;
+
+            let dealType = document.getElementById("client-dealtype").value;
+            if (dealType === "CUSTOM_VAL") {
+                const customVal = document.getElementById("client-dealtype-custom").value.trim();
+                if (customVal) {
+                    dealType = customVal;
+                    if (!appState.customDealTypes.includes(customVal)) {
+                        appState.customDealTypes.push(customVal);
+                    }
+                }
+            }
+
+            const clientData = {
+                id: editId ? parseInt(editId) : Date.now(),
+                name,
+                industry,
+                service,
+                dealType,
+                originalValue: rawVal,
+                currency,
+                value: rawVal.toLocaleString() + " " + currency,
+                status,
+                owner,
+                creatorsSeeding,
+                campaignStart,
+                campaignEnd
+            };
+
+            if (editId) {
+                appState.clients = appState.clients.map(c => c.id === parseInt(editId) ? clientData : c);
+                showToast("Client profile revised!", "success");
+            } else {
+                appState.clients.unshift(clientData);
+                showToast("New client registered!", "success");
+            }
+
+            saveState();
+            populateDynamicSelects();
+            renderClientsView();
+            cancelClientForm();
+        }
+
+        function triggerDeleteClient(id) {
+            showConfirmationModal(
+                "Delete Client Profile",
+                "Permanently remove this client and their corresponding metadata?",
+                () => {
+                    appState.clients = appState.clients.filter(c => c.id !== id);
+                    saveState();
+                    renderClientsView();
+                    showToast("Client profile deleted!", "success");
+                }
+            );
+        }
+
         /* --- PAYROLL HUB WITH PROOF ATTACHMENT DISPLAY --- */
         function renderCommissionsTable() {
             const tbody = document.getElementById("commissions-table-body");
@@ -1579,7 +1693,7 @@
                         <td class="p-4 text-center">
                             <div class="flex items-center justify-center gap-2">
                                 <button onclick="loadCommissionForEdit(${com.id})" class="text-neutral-400 hover:text-neutral-900 p-1.5" title="Edit Payout"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
-                                <button onclick="triggerDeleteCommission(${com.id})" class="text-neutral-400 hover:text-rose-600 p-1.5" title="Delete Payout"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                                <button onclick="triggerDeleteCommission(${com.id})" class="text-neutral-400 hover:text-rose-600 p-1.5" title="Delete Payout"><i class="fa-solid fa-trash text-xs"></i></button>
                             </div>
                         </td>
                     </tr>
