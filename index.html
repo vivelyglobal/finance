@@ -21,9 +21,7 @@
             background-color: #ffffff;
             color: #000000;
         }
-        .font-korean {
-            font-family: 'Noto Sans KR', sans-serif;
-        }
+        .font-korean { font-family: 'Noto Sans KR', sans-serif; }
         .accent-text { color: #ff66c4; }
         .accent-bg { background-color: #ff66c4; }
         .accent-border { border-color: #ff66c4; }
@@ -246,13 +244,13 @@
                         </div>
                     </div>
 
-                    <!-- COA Financial Report Table on Executive Dashboard -->
+                    <!-- COA Financial Report Table (SEQUENTIALLY ORDERED & DYNAMIC TO COA ADD/DELETE) -->
                     <div class="border border-neutral-100 rounded-2xl p-6 bg-white shadow-sm space-y-4">
                         <div class="flex justify-between items-center border-b border-neutral-100 pb-3">
                             <h4 class="text-xs font-bold uppercase tracking-wider text-black flex items-center gap-2">
                                 <i class="fa-solid fa-list-check text-[#ff66c4]"></i> Chart of Accounts Financial Report
                             </h4>
-                            <span class="text-[11px] text-neutral-400 font-medium">Accumulated totals based on selected month filter</span>
+                            <span class="text-[11px] text-neutral-400 font-medium">Sorted by Account Code. Dynamic with COA additions/deletions.</span>
                         </div>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left border-collapse text-xs">
@@ -279,6 +277,9 @@
                             <p class="text-xs text-neutral-500">Track, manage, and edit individual ledger items including physical proofs of purchase.</p>
                         </div>
                         <div class="flex gap-2">
+                            <button onclick="forceSyncAllPayments()" class="px-3.5 py-2 border border-emerald-200 text-emerald-700 bg-emerald-50 rounded-xl text-xs font-semibold hover:bg-emerald-100 transition-all flex items-center gap-1.5" title="Force sync paid client payments into transactions">
+                                <i class="fa-solid fa-arrows-rotate"></i> Sync All Paid Payments
+                            </button>
                             <button onclick="exportCSV('transactions')" class="px-3.5 py-2 border border-neutral-200 text-neutral-700 rounded-xl text-xs font-semibold hover:bg-neutral-50 transition-all flex items-center gap-1.5">
                                 <i class="fa-solid fa-download"></i> Export
                             </button>
@@ -649,12 +650,12 @@
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Primary Service Line (Revenue COA)</label>
                                 <select id="client-service" onchange="toggleCustomInput('client-service', 'client-service-custom')" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
-                                    <option value="KOL Seeding">KOL Seeding Revenue</option>
-                                    <option value="Group Purchase">Group Purchase Revenue</option>
-                                    <option value="Sales Program">Sales Program Revenue</option>
-                                    <option value="Localization Consulting">Localization Consulting Revenue</option>
-                                    <option value="Live Host">Live Host Revenue</option>
-                                    <option value="Legal Registration">Legal Registration Revenue</option>
+                                    <option value="KOL Seeding Revenue">KOL Seeding Revenue</option>
+                                    <option value="Group Purchase Revenue">Group Purchase Revenue</option>
+                                    <option value="Sales Program Revenue">Sales Program Revenue</option>
+                                    <option value="Localization Consulting Revenue">Localization Consulting Revenue</option>
+                                    <option value="Live Host Revenue">Live Host Revenue</option>
+                                    <option value="Legal Registration Revenue">Legal Registration Revenue</option>
                                     <option value="CUSTOM_VAL">+ Add Custom Revenue Service...</option>
                                 </select>
                                 <input type="text" id="client-service-custom" placeholder="Type custom service name..." class="hidden mt-1.5 w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
@@ -1085,12 +1086,6 @@
                 if (!appState.clients) appState.clients = [];
                 if (!appState.clientPayments) appState.clientPayments = [];
                 if (!appState.coa || appState.coa.length === 0) appState.coa = [...defaultCOA];
-                
-                defaultCOA.forEach(defCoa => {
-                    if (!appState.coa.some(c => c.name === defCoa.name)) {
-                        appState.coa.push(defCoa);
-                    }
-                });
             } else {
                 appState = JSON.parse(JSON.stringify(defaultData));
                 saveState();
@@ -1102,13 +1097,44 @@
             populateCOADropdowns();
             populateClientIndustryFilter();
             
-            // Auto-Sync Retroactive Paid Client Payments
+            // Retroactive Auto-Sync for Paid Client Payments
             syncPaidPaymentsToTransactions();
             updateUI();
         }
 
         function saveState() {
             localStorage.setItem("vively_standalone_db_v1", JSON.stringify(appState));
+        }
+
+        /* FUZZY MATCHING HELPER TO FIND CORRECT REVENUE COA CATEGORY */
+        function resolveRevenueCategory(rawServiceName) {
+            if (!rawServiceName) return "KOL Seeding Revenue";
+            
+            let name = rawServiceName.trim();
+            if (!name.toLowerCase().includes("revenue")) {
+                name = `${name} Revenue`;
+            }
+
+            // Look for existing COA match
+            const exactMatch = appState.coa.find(c => c.name.toLowerCase() === name.toLowerCase());
+            if (exactMatch) return exactMatch.name;
+
+            // Partial match (e.g., "KOL Seeding" -> "KOL Seeding Revenue")
+            const partialMatch = appState.coa.find(c => c.category === "Revenue" && c.name.toLowerCase().includes(rawServiceName.toLowerCase()));
+            if (partialMatch) return partialMatch.name;
+
+            // Auto-Add new COA Revenue account if entirely new
+            const newCoa = {
+                id: Date.now(),
+                code: '4' + Math.floor(100 + Math.random() * 899),
+                name: name,
+                category: 'Revenue',
+                side: 'Credit'
+            };
+            appState.coa.push(newCoa);
+            saveState();
+            populateCOADropdowns();
+            return newCoa.name;
         }
 
         /* AUTO-SYNC ALL PAID CLIENT PAYMENTS DIRECTLY TO TRANSACTIONS */
@@ -1118,50 +1144,44 @@
             let updated = false;
             appState.clientPayments.forEach(p => {
                 if (p.status === "Paid") {
-                    const alreadySynced = appState.transactions.some(t => t.linkedPaymentId === p.id);
-                    if (!alreadySynced) {
-                        const clientObj = appState.clients.find(c => c.name === p.clientName);
-                        let rawService = clientObj ? clientObj.service : "KOL Seeding Revenue";
-                        let serviceCategory = rawService.endsWith("Revenue") ? rawService : `${rawService} Revenue`;
+                    const existingTxIndex = appState.transactions.findIndex(t => t.linkedPaymentId === p.id);
+                    const clientObj = appState.clients.find(c => c.name === p.clientName);
+                    const serviceCategory = resolveRevenueCategory(clientObj ? clientObj.service : "KOL Seeding Revenue");
 
-                        // Ensure category exists in COA
-                        if (!appState.coa.some(c => c.name === serviceCategory)) {
-                            appState.coa.push({
-                                id: Date.now(),
-                                code: '4' + Math.floor(100 + Math.random() * 900),
-                                name: serviceCategory,
-                                category: 'Revenue',
-                                side: 'Credit'
-                            });
-                        }
+                    const effectiveDate = p.paidDate || p.dueDate || new Date().toISOString().slice(0, 10);
+                    const rate = getExchangeRateOnDate(p.currency || 'KRW', effectiveDate);
+                    const amountInKRW = (p.amount || 0) * rate;
 
-                        const effectiveDate = p.paidDate || p.dueDate || new Date().toISOString().slice(0, 10);
-                        const rate = getExchangeRateOnDate(p.currency || 'KRW', effectiveDate);
-                        const amountInKRW = (p.amount || 0) * rate;
+                    const txData = {
+                        id: existingTxIndex !== -1 ? appState.transactions[existingTxIndex].id : (Date.now() + Math.floor(Math.random() * 1000)),
+                        date: effectiveDate,
+                        description: `[Payment Received] ${p.clientName} (${p.termDesc || 'Installment'})`,
+                        details: `Client Installment Payment (${p.termDesc || ''}) for ${p.clientName}`,
+                        category: serviceCategory,
+                        amount: p.amount,
+                        currency: p.currency || 'KRW',
+                        amountInKRW: amountInKRW,
+                        type: 'CREDIT',
+                        picture: p.picture || "",
+                        linkedPaymentId: p.id
+                    };
 
-                        const linkedTx = {
-                            id: Date.now() + Math.floor(Math.random() * 1000),
-                            date: effectiveDate,
-                            description: `[Payment Received] ${p.clientName} (${p.termDesc || 'Installment'})`,
-                            details: `Client Installment Payment for ${p.clientName}`,
-                            category: serviceCategory,
-                            amount: p.amount,
-                            currency: p.currency || 'KRW',
-                            amountInKRW: amountInKRW,
-                            type: 'CREDIT',
-                            picture: p.picture || "",
-                            linkedPaymentId: p.id
-                        };
-                        appState.transactions.push(linkedTx);
-                        updated = true;
+                    if (existingTxIndex !== -1) {
+                        appState.transactions[existingTxIndex] = txData;
+                    } else {
+                        appState.transactions.push(txData);
                     }
+                    updated = true;
                 }
             });
 
-            if (updated) {
-                saveState();
-                populateCOADropdowns();
-            }
+            if (updated) saveState();
+        }
+
+        function forceSyncAllPayments() {
+            syncPaidPaymentsToTransactions();
+            updateUI();
+            showToast("Successfully synchronized all paid client payments to Revenue!", "success");
         }
 
         function populateDynamicSelects() {
@@ -1205,7 +1225,9 @@
             let formOpts = "";
             let filterOpts = `<option value="ALL">All Categories</option>`;
 
-            appState.coa.forEach(c => {
+            const sortedCOA = [...appState.coa].sort((a, b) => a.code.localeCompare(b.code));
+
+            sortedCOA.forEach(c => {
                 formOpts += `<option value="${c.name}">${c.name} (${c.category})</option>`;
                 filterOpts += `<option value="${c.name}">${c.name}</option>`;
             });
@@ -1422,11 +1444,11 @@
             renderClientsView();
             renderPaymentScheduleHub();
             renderCommissionsTable();
-            renderDashboardCOAReport();
+            renderDashboardCOAReport(); // REVISI 1: ORDERED & DYNAMIC TO COA MASTER
             renderCharts();
         }
 
-        /* Fully Linked COA Financial Report Table on Dashboard */
+        /* REVISI 1: DYNAMIC & ORDERED COA FINANCIAL REPORT */
         function renderDashboardCOAReport() {
             const tbody = document.getElementById("dashboard-coa-report-body");
             if (!tbody) return;
@@ -1435,24 +1457,24 @@
             const monthFilter = document.getElementById("dashboard-month-filter").value;
             const coaTotals = {};
 
-            appState.coa.forEach(c => {
+            // 1. DYNAMIC: Read directly from appState.coa Master List so additions/deletions reflect immediately
+            const sortedMasterCOA = [...appState.coa].sort((a, b) => a.code.localeCompare(b.code));
+
+            sortedMasterCOA.forEach(c => {
                 coaTotals[c.name] = { code: c.code, category: c.category, amountKRW: 0 };
             });
 
-            // 1. Accumulate from All Transactions
+            // 2. Accumulate from All Transactions
             appState.transactions.forEach(t => {
                 const txMonth = t.date.split('-')[1];
                 if (monthFilter === "ALL" || monthFilter === txMonth) {
                     if (coaTotals[t.category]) {
                         coaTotals[t.category].amountKRW += parseFloat(t.amountInKRW || 0);
-                    } else {
-                        const categoryType = t.type === "CREDIT" ? "Revenue" : "Expense";
-                        coaTotals[t.category] = { code: '4000', category: categoryType, amountKRW: parseFloat(t.amountInKRW || 0) };
                     }
                 }
             });
 
-            // 2. Accumulate from Payroll Payouts
+            // 3. Accumulate from Payroll Payouts
             appState.commissions.forEach(c => {
                 if (c.status === "Paid") {
                     const comMonth = c.date.split('-')[1];
@@ -1471,17 +1493,18 @@
             const currencySymbol = getCurrencySymbol();
             const currKey = document.getElementById("global-currency-select").value;
 
-            Object.keys(coaTotals).forEach(accName => {
-                const acc = coaTotals[accName];
+            // Render sequentially by Account Code
+            sortedMasterCOA.forEach(c => {
+                const acc = coaTotals[c.name] || { code: c.code, category: c.category, amountKRW: 0 };
                 const converted = getConvertedVal(acc.amountKRW);
                 const badgeColor = acc.category === "Revenue" ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
                                   (acc.category === "Expense" ? "bg-rose-50 text-rose-600 border-rose-100" : "bg-neutral-50 text-neutral-600 border-neutral-100");
 
                 const row = `
                     <tr class="hover:bg-neutral-50 transition-all">
-                        <td class="p-3 font-mono font-bold text-neutral-500">${acc.code}</td>
-                        <td class="p-3 font-semibold text-black">${accName}</td>
-                        <td class="p-3"><span class="px-2 py-0.5 rounded border text-[10px] font-semibold ${badgeColor}">${acc.category}</span></td>
+                        <td class="p-3 font-mono font-bold text-neutral-500">${c.code}</td>
+                        <td class="p-3 font-semibold text-black">${c.name}</td>
+                        <td class="p-3"><span class="px-2 py-0.5 rounded border text-[10px] font-semibold ${badgeColor}">${c.category}</span></td>
                         <td class="p-3 text-right font-bold text-black">${currencySymbol} ${converted.toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}</td>
                     </tr>
                 `;
@@ -1607,6 +1630,7 @@
             saveState();
             populateCOADropdowns();
             renderCOATable();
+            updateUI();
             cancelCOAForm();
         }
 
@@ -1652,13 +1676,15 @@
             document.getElementById("coa-side").value = item.side;
         }
 
+        /* REVISI 1: Delete COA also deletes it immediately from Dashboard Report */
         function triggerDeleteCOA(id) {
             showConfirmationModal("Delete COA Account", "Remove this account from Chart of Accounts?", false, () => {
                 appState.coa = appState.coa.filter(c => c.id !== id);
                 saveState();
                 populateCOADropdowns();
                 renderCOATable();
-                showToast("Account removed", "success");
+                updateUI();
+                showToast("Account removed!", "success");
             });
         }
 
@@ -1917,15 +1943,7 @@
             document.getElementById("client-name").value = client.name || "";
             document.getElementById("client-industry").value = client.industry || "";
             
-            const serviceVal = client.service.replace(' Revenue', '');
-            const standardServices = ["KOL Seeding", "Group Purchase", "Sales Program", "Localization Consulting", "Live Host", "Legal Registration"];
-            if (serviceVal && !standardServices.includes(serviceVal)) {
-                document.getElementById("client-service").value = "CUSTOM_VAL";
-                toggleCustomInput('client-service', 'client-service-custom');
-                document.getElementById("client-service-custom").value = client.service;
-            } else {
-                document.getElementById("client-service").value = serviceVal || "KOL Seeding";
-            }
+            document.getElementById("client-service").value = client.service || "KOL Seeding Revenue";
 
             if (client.dealType && !appState.customDealTypes.includes(client.dealType)) {
                 appState.customDealTypes.push(client.dealType);
@@ -1973,17 +1991,7 @@
                 if (customVal) rawService = customVal;
             }
 
-            const service = rawService.endsWith("Revenue") ? rawService : `${rawService} Revenue`;
-
-            if (!appState.coa.some(c => c.name === service)) {
-                appState.coa.push({
-                    id: Date.now(),
-                    code: '4' + Math.floor(100 + Math.random() * 900),
-                    name: service,
-                    category: 'Revenue',
-                    side: 'Credit'
-                });
-            }
+            const service = resolveRevenueCategory(rawService);
 
             let dealType = document.getElementById("client-dealtype").value;
             if (dealType === "CUSTOM_VAL") {
@@ -2023,6 +2031,7 @@
                 populateClientIndustryFilter();
                 renderClientsView();
                 renderPaymentScheduleHub();
+                updateUI();
                 cancelClientForm();
             };
 
@@ -2220,31 +2229,10 @@
                     appState.clientPayments.unshift(payData);
                 }
 
-                if (status === "Paid") {
-                    const clientObj = appState.clients.find(c => c.name === clientName);
-                    let rawService = clientObj ? clientObj.service : 'KOL Seeding Revenue';
-                    let serviceCategory = rawService.endsWith("Revenue") ? rawService : `${rawService} Revenue`;
-
-                    const linkedTx = {
-                        id: Date.now() + Math.floor(Math.random() * 1000),
-                        date: effectiveDate,
-                        description: `[Payment Received] ${clientName} (${termDesc})`,
-                        details: `Client Installment Payment (${termDesc}) for ${clientName}`,
-                        category: serviceCategory,
-                        amount: amount,
-                        currency: currency,
-                        amountInKRW: amountInKRW,
-                        type: 'CREDIT',
-                        picture: picture,
-                        linkedPaymentId: payData.id
-                    };
-                    appState.transactions.push(linkedTx);
-                }
-
                 saveState();
                 updateUI();
                 cancelPaymentScheduleForm();
-                showToast("Payment term logged and synchronized to revenue!", "success");
+                showToast("Payment term logged & synchronized to revenue!", "success");
             };
 
             if (fileInput.files && fileInput.files[0]) {
@@ -2678,12 +2666,13 @@
             }
 
             const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", filename);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            const link = document.getElementById("a");
+            const a = document.createElement("a");
+            a.setAttribute("href", encodedUri);
+            a.setAttribute("download", filename);
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
             showToast(`Exported ${type} to CSV file!`, "success");
         }
 
