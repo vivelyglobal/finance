@@ -117,7 +117,7 @@
         <!-- Main Content Layout -->
         <div class="flex flex-1">
             
-            <!-- Sidebar Navigation (WITH CLIENT PAYMENT SCHEDULE ADDED) -->
+            <!-- Sidebar Navigation -->
             <aside class="w-64 border-r border-neutral-100 p-6 flex flex-col justify-between bg-white">
                 <div class="space-y-8">
                     <div>
@@ -145,7 +145,7 @@
                             </button>
                             <button onclick="switchTab('client-payments')" id="btn-client-payments" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 hover:bg-neutral-50 hover:text-black border-l-4 border-transparent">
                                 <i class="fa-solid fa-file-invoice-dollar text-neutral-400"></i>
-                                Client Payment Schedule
+                                Client Payment
                             </button>
                             <button onclick="switchTab('commissions')" id="btn-commissions" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 hover:bg-neutral-50 hover:text-black border-l-4 border-transparent">
                                 <i class="fa-solid fa-wallet text-neutral-400"></i>
@@ -588,7 +588,7 @@
                     </div>
                 </section>
 
-                <!-- Tab 3: Key Client Portfolio (WITH MULTI-FILTERS & CONTRACT FILE UPLOAD) -->
+                <!-- Tab 3: Key Client Portfolio (REVISED FILTER "All Status") -->
                 <section id="tab-clients" class="hidden space-y-8 animate-fade-in">
                     <div class="flex justify-between items-center border-b border-neutral-100 pb-5">
                         <div>
@@ -634,7 +634,7 @@
                             <div class="flex items-center gap-2">
                                 <span class="text-xs font-semibold text-neutral-500">Status:</span>
                                 <select id="client-filter-status" onchange="renderClientsView()" class="bg-white border border-neutral-200 text-black px-3 py-1.5 rounded-lg text-xs font-medium focus:outline-none focus:ring-1 accent-ring">
-                                    <option value="ALL">All Statuses</option>
+                                    <option value="ALL">All Status</option>
                                     <option value="Active">Active</option>
                                     <option value="Pending">Pending</option>
                                     <option value="Completed">Completed</option>
@@ -644,7 +644,7 @@
                         <span class="text-xs text-neutral-500 font-semibold" id="client-filtered-counter">Showing 0 clients</span>
                     </div>
 
-                    <!-- Client Form Card (WITH SIGNED CONTRACT FILE UPLOAD) -->
+                    <!-- Client Form Card -->
                     <div id="client-form-card" class="hidden bg-neutral-50 border border-neutral-100 rounded-2xl p-6 space-y-4">
                         <h3 class="text-xs font-bold text-black uppercase tracking-wider text-neutral-500" id="client-form-title">New Client Registration</h3>
                         <form id="new-client-form" onsubmit="addManualClient(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
@@ -752,43 +752,39 @@
                     </div>
                 </section>
 
-                <!-- TAB BARU: Client Payment Schedule (MILESTONE PAYMENTS FOR PAID CAMPAIGNS) -->
+                <!-- TAB: Client Payment (LINKED TO PAID COLLAB CLIENTS) -->
                 <section id="tab-client-payments" class="hidden space-y-8 animate-fade-in">
                     <div class="flex justify-between items-center border-b border-neutral-100 pb-5">
                         <div>
-                            <h2 class="text-xl font-bold tracking-tight">Client Payment Schedule & Milestones</h2>
-                            <p class="text-xs text-neutral-500">Track installment payments for Paid Campaigns. Paid milestones automatically reflect into Revenue.</p>
+                            <h2 class="text-xl font-bold tracking-tight">Client Payment Hub</h2>
+                            <p class="text-xs text-neutral-500">Manage multiple installment terms and track remaining balances for Paid Collab brands.</p>
                         </div>
-                        <button onclick="togglePaymentScheduleForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
-                            <i class="fa-solid fa-plus mr-1.5"></i> Add Payment Term
-                        </button>
                     </div>
 
-                    <!-- Add Payment Milestone Form -->
+                    <!-- Payment Modal Form -->
                     <div id="payment-schedule-form-card" class="hidden bg-neutral-50 border border-neutral-100 rounded-2xl p-6 space-y-4">
-                        <h3 class="text-xs font-bold text-black uppercase tracking-wider text-neutral-500" id="payment-schedule-form-title">Log Payment Milestone</h3>
+                        <h3 class="text-xs font-bold text-black uppercase tracking-wider text-neutral-500" id="payment-schedule-form-title">Log Payment Term</h3>
                         <form id="new-payment-schedule-form" onsubmit="addManualPaymentSchedule(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                             <input type="hidden" id="edit-payment-schedule-id" value="">
                             <div>
-                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Select Paid Client</label>
-                                <select id="pay-client-select" onchange="autoFillClientContractValue()" required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
-                                    <!-- Populated with Paid Campaign Clients -->
-                                </select>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Target Client Brand</label>
+                                <input type="text" id="pay-client-display" readonly required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg bg-neutral-100 text-neutral-600 font-bold">
+                                <input type="hidden" id="pay-client-name">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Term Description</label>
-                                <input type="text" id="pay-term-desc" placeholder="e.g. Down Payment 50%, Final 50%..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                <input type="text" id="pay-term-desc" placeholder="e.g., Down Payment 50%, Final 50%..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Due Date</label>
                                 <input type="date" id="pay-due-date" required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Payment Date (If Paid)</label>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Actual Paid Date (If Paid)</label>
                                 <input type="date" id="pay-paid-date" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Milestone Currency</label>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Currency</label>
                                 <select id="pay-currency" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                                     <option value="KRW">KRW (₩)</option>
                                     <option value="SGD">SGD (S$)</option>
@@ -797,8 +793,8 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Milestone Amount</label>
-                                <input type="number" id="pay-amount" placeholder="e.g. 750000" required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Amount</label>
+                                <input type="number" id="pay-amount" placeholder="Amount..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Payment Status</label>
@@ -809,7 +805,7 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Proof of Payment Image</label>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Payment Proof Image</label>
                                 <input type="file" id="pay-picture" accept="image/*" class="w-full text-xs px-2 py-1.5 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
                             <div class="md:col-span-4 flex justify-end gap-2 pt-2 border-t border-neutral-100">
@@ -819,25 +815,8 @@
                         </form>
                     </div>
 
-                    <!-- Payment Schedule Table -->
-                    <div class="border border-neutral-100 rounded-2xl overflow-hidden shadow-sm bg-white">
-                        <table class="w-full text-left border-collapse text-xs">
-                            <thead>
-                                <tr class="bg-neutral-50 border-b border-neutral-100 text-neutral-500 font-bold uppercase tracking-wider text-[10px]">
-                                    <th class="p-4">Due Date</th>
-                                    <th class="p-4">Paid Date</th>
-                                    <th class="p-4">Client Name</th>
-                                    <th class="p-4">Term Milestone</th>
-                                    <th class="p-4 text-right">Original Value</th>
-                                    <th class="p-4 text-right">Value (KRW Base)</th>
-                                    <th class="p-4 text-center">Payment Proof</th>
-                                    <th class="p-4 text-center">Status</th>
-                                    <th class="p-4 text-center">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="payment-schedule-table-body" class="divide-y divide-neutral-100 text-neutral-800">
-                            </tbody>
-                        </table>
+                    <!-- Cards Container for Paid Collab Clients -->
+                    <div id="paid-clients-payment-container" class="space-y-6">
                     </div>
                 </section>
 
@@ -1095,7 +1074,6 @@
             populateDynamicSelects();
             populateEmployeeDropdowns();
             populateCOADropdowns();
-            populateClientDropdowns();
             populateClientIndustryFilter();
             updateUI();
         }
@@ -1154,18 +1132,9 @@
             tableCatFilter.innerHTML = filterOpts;
         }
 
-        function populateClientDropdowns() {
-            const select = document.getElementById("pay-client-select");
-            let opts = `<option value="">-- Select Paid Client --</option>`;
-            
-            appState.clients.filter(c => c.dealType === "Paid Campaign").forEach(c => {
-                opts += `<option value="${c.name}">${c.name} (${c.currency} ${parseFloat(c.originalValue).toLocaleString()})</option>`;
-            });
-            select.innerHTML = opts;
-        }
-
         function populateClientIndustryFilter() {
             const select = document.getElementById("client-filter-industry");
+            if (!select) return;
             const currentVal = select.value;
             const industries = [...new Set(appState.clients.map(c => c.industry).filter(Boolean))];
             
@@ -1198,7 +1167,6 @@
             populateDynamicSelects();
             populateEmployeeDropdowns();
             populateCOADropdowns();
-            populateClientDropdowns();
             populateClientIndustryFilter();
             updateUI();
             showToast("Workspace database cleared!", "success");
@@ -1304,7 +1272,7 @@
             return "";
         }
 
-        /* --- UPDATE EXECUTIVE DASHBOARD (TRANSACTIONS + PAID PAYROLL + PAID CLIENT MILESTONES) --- */
+        /* --- UPDATE EXECUTIVE DASHBOARD --- */
         function updateUI() {
             let totalRevenue = 0;
             let totalExpenses = 0;
@@ -1330,7 +1298,7 @@
                 }
             });
 
-            // 3. Paid Client Payment Schedule Milestones Auto-Added to Revenue
+            // 3. Paid Client Milestone Payments Auto-Added to Revenue
             appState.clientPayments.forEach(p => {
                 if (p.status === "Paid") {
                     const pDate = p.paidDate || p.dueDate;
@@ -1356,7 +1324,7 @@
             renderCOATable();
             renderEmployeesTable();
             renderClientsView();
-            renderPaymentScheduleTable();
+            renderPaymentScheduleHub();
             renderCommissionsTable();
             renderCharts();
         }
@@ -1878,9 +1846,9 @@
 
                 saveState();
                 populateDynamicSelects();
-                populateClientDropdowns();
                 populateClientIndustryFilter();
                 renderClientsView();
+                renderPaymentScheduleHub();
                 cancelClientForm();
             };
 
@@ -1897,19 +1865,136 @@
             showConfirmationModal("Delete Client Profile", "Remove this client and metadata?", () => {
                 appState.clients = appState.clients.filter(c => c.id !== id);
                 saveState();
-                populateClientDropdowns();
                 populateClientIndustryFilter();
                 renderClientsView();
+                renderPaymentScheduleHub();
                 showToast("Client profile deleted!", "success");
             });
         }
 
-        /* --- CLIENT PAYMENT SCHEDULE (MILESTONE PAYMENTS) LOGIC --- */
-        function togglePaymentScheduleForm() {
-            document.getElementById("payment-schedule-form-card").classList.toggle("hidden");
-            document.getElementById("payment-schedule-form-title").innerText = "Log Payment Milestone";
+        /* --- CLIENT PAYMENT HUB (PER-BRAND PAYMENT SCHEDULE & MULTI-INSTALLMENTS) --- */
+        function renderPaymentScheduleHub() {
+            const container = document.getElementById("paid-clients-payment-container");
+            container.innerHTML = "";
+
+            const paidClients = appState.clients.filter(c => c.dealType === "Paid Campaign");
+
+            if (paidClients.length === 0) {
+                container.innerHTML = `
+                    <div class="py-12 text-center text-neutral-400 italic text-xs bg-neutral-50 rounded-2xl border border-dashed border-neutral-200">
+                        No Paid Campaign clients registered in Key Client Portfolio. Register a Paid Campaign client to manage payment schedules.
+                    </div>
+                `;
+                return;
+            }
+
+            paidClients.forEach(client => {
+                const clientPayments = appState.clientPayments.filter(p => p.clientName === client.name);
+                
+                let totalPaidKRW = 0;
+                clientPayments.forEach(p => {
+                    if (p.status === "Paid") totalPaidKRW += parseFloat(p.amountInKRW);
+                });
+
+                const totalContractKRW = client.originalValue * getExchangeRateOnDate(client.currency, client.campaignStart || '2026-01-01');
+                const remainingBalanceKRW = Math.max(0, totalContractKRW - totalPaidKRW);
+
+                let rowsHtml = "";
+                if (clientPayments.length === 0) {
+                    rowsHtml = `<tr><td colspan="7" class="p-4 text-center text-neutral-400 italic">No payment terms logged yet. Click "+ Add Payment Term" to record installments.</td></tr>`;
+                } else {
+                    clientPayments.forEach(p => {
+                        const statusBadge = p.status === "Paid" ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                                           (p.status === "Overdue" ? "bg-rose-50 text-rose-600 border-rose-100" : "bg-amber-50 text-amber-600 border-amber-100");
+
+                        const proofButton = p.picture ? 
+                            `<button onclick="openReceiptModal('${p.picture}')" class="text-[#ff66c4] hover:text-black font-bold text-[11px]"><i class="fa-solid fa-image mr-1"></i> View Proof</button>` : 
+                            `<span class="text-neutral-400 italic text-[10px]">No proof</span>`;
+
+                        rowsHtml += `
+                            <tr class="hover:bg-neutral-50 transition-all border-b border-neutral-100">
+                                <td class="p-3.5 font-semibold text-black">${p.termDesc}</td>
+                                <td class="p-3.5 font-mono text-neutral-500">${p.dueDate}</td>
+                                <td class="p-3.5 font-mono text-neutral-700">${p.paidDate || '-'}</td>
+                                <td class="p-3.5 text-right font-bold text-black">${parseFloat(p.amount).toLocaleString()} ${p.currency}</td>
+                                <td class="p-3.5 text-center">${proofButton}</td>
+                                <td class="p-3.5 text-center"><span class="px-2 py-0.5 rounded border text-[9px] font-bold ${statusBadge}">${p.status}</span></td>
+                                <td class="p-3.5 text-center">
+                                    <div class="flex justify-center gap-1.5">
+                                        <button onclick="loadPaymentScheduleForEdit(${p.id})" class="text-neutral-400 hover:text-black p-1" title="Edit Term"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                                        <button onclick="triggerDeletePaymentSchedule(${p.id})" class="text-neutral-400 hover:text-rose-600 p-1" title="Delete Term"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                const cardHtml = `
+                    <div class="bg-white border border-neutral-200 rounded-2xl p-6 shadow-sm space-y-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-100 pb-4">
+                            <div>
+                                <h3 class="text-base font-bold text-black font-korean flex items-center gap-2">
+                                    ${client.name} 
+                                    <span class="text-[10px] font-normal px-2 py-0.5 rounded bg-neutral-100 text-neutral-600 border border-neutral-200">${client.industry}</span>
+                                </h3>
+                                <p class="text-xs text-neutral-400 mt-0.5">Service: ${client.service}</p>
+                            </div>
+                            <div class="flex items-center gap-6">
+                                <div class="text-right">
+                                    <p class="text-[10px] font-bold text-neutral-400 uppercase">Contract Value</p>
+                                    <p class="text-sm font-bold text-black">${parseFloat(client.originalValue).toLocaleString()} ${client.currency}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-[10px] font-bold text-emerald-500 uppercase">Total Paid</p>
+                                    <p class="text-sm font-bold text-emerald-600">₩ ${totalPaidKRW.toLocaleString()}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-[10px] font-bold text-rose-400 uppercase">Remaining Balance</p>
+                                    <p class="text-sm font-bold text-rose-600">₩ ${remainingBalanceKRW.toLocaleString()}</p>
+                                </div>
+                                <button onclick="openPaymentFormForClient('${client.name}', '${client.currency}')" class="px-3.5 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm flex items-center gap-1.5">
+                                    <i class="fa-solid fa-plus text-[10px]"></i> Add Payment Term
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Installment Terms Table -->
+                        <div class="overflow-x-auto rounded-xl border border-neutral-100">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead>
+                                    <tr class="bg-neutral-50 border-b border-neutral-100 text-neutral-400 font-bold uppercase tracking-wider text-[9px]">
+                                        <th class="p-3.5">Term Milestone</th>
+                                        <th class="p-3.5">Due Date</th>
+                                        <th class="p-3.5">Actual Paid Date</th>
+                                        <th class="p-3.5 text-right">Amount</th>
+                                        <th class="p-3.5 text-center">Payment Proof</th>
+                                        <th class="p-3.5 text-center">Status</th>
+                                        <th class="p-3.5 text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${rowsHtml}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', cardHtml);
+            });
+        }
+
+        function openPaymentFormForClient(clientName, currency) {
+            document.getElementById("payment-schedule-form-card").classList.remove("hidden");
+            document.getElementById("payment-schedule-form-title").innerText = `Log Payment Term for ${clientName}`;
             document.getElementById("edit-payment-schedule-id").value = "";
             document.getElementById("new-payment-schedule-form").reset();
+            
+            document.getElementById("pay-client-display").value = clientName;
+            document.getElementById("pay-client-name").value = clientName;
+            document.getElementById("pay-currency").value = currency || "KRW";
+            
+            document.getElementById("payment-schedule-form-card").scrollIntoView({ behavior: 'smooth' });
         }
 
         function cancelPaymentScheduleForm() {
@@ -1918,18 +2003,10 @@
             document.getElementById("edit-payment-schedule-id").value = "";
         }
 
-        function autoFillClientContractValue() {
-            const selectedClientName = document.getElementById("pay-client-select").value;
-            const client = appState.clients.find(c => c.name === selectedClientName);
-            if (client) {
-                document.getElementById("pay-currency").value = client.currency || "KRW";
-            }
-        }
-
         function addManualPaymentSchedule(e) {
             e.preventDefault();
             const editId = document.getElementById("edit-payment-schedule-id").value;
-            const clientName = document.getElementById("pay-client-select").value;
+            const clientName = document.getElementById("pay-client-name").value;
             const termDesc = document.getElementById("pay-term-desc").value.trim();
             const dueDate = document.getElementById("pay-due-date").value;
             const paidDate = document.getElementById("pay-paid-date").value;
@@ -1973,67 +2050,24 @@
             }
         }
 
-        function renderPaymentScheduleTable() {
-            const tbody = document.getElementById("payment-schedule-table-body");
-            tbody.innerHTML = "";
-
-            if (appState.clientPayments.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="9" class="p-8 text-center text-neutral-400 italic">No client payment milestones logged yet.</td></tr>`;
-                return;
-            }
-
-            const sortedPayments = [...appState.clientPayments].sort((a, b) => {
-                const dateA = a.paidDate || a.dueDate;
-                const dateB = b.paidDate || b.dueDate;
-                return dateB.localeCompare(dateA);
-            });
-
-            sortedPayments.forEach(p => {
-                const statusBadge = p.status === "Paid" ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
-                                   (p.status === "Overdue" ? "bg-rose-50 text-rose-600 border-rose-100" :
-                                   "bg-amber-50 text-amber-600 border-amber-100");
-
-                const attachmentButton = p.picture ? 
-                    `<button onclick="openReceiptModal('${p.picture}')" class="text-[#ff66c4] hover:text-black transition-all p-1.5 font-bold"><i class="fa-solid fa-image text-sm mr-1"></i> View Proof</button>` : 
-                    `<span class="text-neutral-400 text-[10px] italic">No proof</span>`;
-
-                const row = `
-                    <tr class="hover:bg-neutral-50 transition-all">
-                        <td class="p-4 font-mono text-neutral-500">${p.dueDate}</td>
-                        <td class="p-4 font-mono text-neutral-700">${p.paidDate || '-'}</td>
-                        <td class="p-4 font-bold text-black">${p.clientName}</td>
-                        <td class="p-4 font-semibold text-neutral-700">${p.termDesc}</td>
-                        <td class="p-4 text-right font-semibold text-neutral-600">${parseFloat(p.amount).toLocaleString()} ${p.currency}</td>
-                        <td class="p-4 text-right font-bold text-emerald-600">₩ ${parseFloat(p.amountInKRW).toLocaleString()}</td>
-                        <td class="p-4 text-center">${attachmentButton}</td>
-                        <td class="p-4 text-center"><span class="px-2 py-0.5 rounded border text-[9px] font-bold ${statusBadge}">${p.status}</span></td>
-                        <td class="p-4 text-center">
-                            <div class="flex justify-center gap-2">
-                                <button onclick="loadPaymentScheduleForEdit(${p.id})" class="text-neutral-400 hover:text-black p-1.5"><i class="fa-solid fa-pen-to-square"></i></button>
-                                <button onclick="triggerDeletePaymentSchedule(${p.id})" class="text-neutral-400 hover:text-rose-600 p-1.5"><i class="fa-solid fa-trash-can"></i></button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-                tbody.insertAdjacentHTML('beforeend', row);
-            });
-        }
-
         function loadPaymentScheduleForEdit(id) {
             const p = appState.clientPayments.find(item => item.id === id);
             if (!p) return;
 
             document.getElementById("payment-schedule-form-card").classList.remove("hidden");
-            document.getElementById("payment-schedule-form-title").innerText = "Revise Payment Milestone";
+            document.getElementById("payment-schedule-form-title").innerText = `Revise Payment Term for ${p.clientName}`;
             document.getElementById("edit-payment-schedule-id").value = p.id;
 
-            document.getElementById("pay-client-select").value = p.clientName;
+            document.getElementById("pay-client-display").value = p.clientName;
+            document.getElementById("pay-client-name").value = p.clientName;
             document.getElementById("pay-term-desc").value = p.termDesc;
             document.getElementById("pay-due-date").value = p.dueDate;
             document.getElementById("pay-paid-date").value = p.paidDate || "";
             document.getElementById("pay-currency").value = p.currency;
             document.getElementById("pay-amount").value = p.amount;
             document.getElementById("pay-status").value = p.status;
+            
+            document.getElementById("payment-schedule-form-card").scrollIntoView({ behavior: 'smooth' });
         }
 
         function triggerDeletePaymentSchedule(id) {
@@ -2413,9 +2447,9 @@
                     csvContent += `"${c.name}","${c.industry}","${c.service}","${c.dealType}",${c.originalValue},"${c.currency}","${c.status}",${c.creatorsSeeding},"${c.campaignStart}","${c.campaignEnd}",${c.isOngoing}\n`;
                 });
             } else if (type === 'client-payments') {
-                csvContent += "DueDate,PaidDate,ClientName,TermDesc,Amount,Currency,AmountInKRW,Status\n";
+                csvContent += "ClientName,TermDesc,DueDate,PaidDate,Amount,Currency,AmountInKRW,Status\n";
                 appState.clientPayments.forEach(p => {
-                    csvContent += `"${p.dueDate}","${p.paidDate || ''}","${p.clientName}","${p.termDesc}",${p.amount},"${p.currency}",${p.amountInKRW},"${p.status}"\n`;
+                    csvContent += `"${p.clientName}","${p.termDesc}","${p.dueDate}","${p.paidDate || ''}",${p.amount},"${p.currency}",${p.amountInKRW},"${p.status}"\n`;
                 });
             } else if (type === 'commissions') {
                 csvContent += "Date,ProjectName,Recipient,Type,ClientCompany,Value,Currency,ValueInKRW,Status\n";
