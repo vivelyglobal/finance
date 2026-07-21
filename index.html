@@ -1069,7 +1069,7 @@
             renderCharts();
         }
 
-        /* --- TRANSACTION MANAGER WITH AUTOMATIC DATE SORTING --- */
+        /* --- TRANSACTION MANAGER WITH GUARANTEED STRING DATE SORTING --- */
         function renderTransactionsTable() {
             const tbody = document.getElementById("transactions-table-body");
             tbody.innerHTML = "";
@@ -1081,8 +1081,13 @@
             let filteredIncomeKRW = 0;
             let filteredExpenseKRW = 0;
 
-            // OTOMATIS SORTING TANGGAL (DESCENDING: TERBARU KE TERLAMA)
-            const sortedTransactions = [...appState.transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+            // OTOMATIS SORTING TANGGAL (DESCENDING: TERBARU KE TERLAMA SEPERTI 2026-06-25 DULU BARU 2026-06-24)
+            const sortedTransactions = [...appState.transactions].sort((a, b) => {
+                if (b.date !== a.date) {
+                    return b.date.localeCompare(a.date);
+                }
+                return b.id - a.id;
+            });
 
             sortedTransactions.forEach(t => {
                 const txMonth = t.date.split('-')[1];
@@ -1341,7 +1346,7 @@
             });
         }
 
-        /* --- PAYROLL HUB WITH AUTOMATIC DATE SORTING --- */
+        /* --- PAYROLL HUB WITH STRICT DATE SORTING --- */
         function renderCommissionsTable() {
             const tbody = document.getElementById("commissions-table-body");
             tbody.innerHTML = "";
@@ -1350,7 +1355,12 @@
             let hasRecords = false;
 
             // OTOMATIS SORTING TANGGAL (DESCENDING: TERBARU KE TERLAMA)
-            const sortedCommissions = [...appState.commissions].sort((a, b) => new Date(b.date) - new Date(a.date));
+            const sortedCommissions = [...appState.commissions].sort((a, b) => {
+                if (b.date !== a.date) {
+                    return b.date.localeCompare(a.date);
+                }
+                return b.id - a.id;
+            });
 
             sortedCommissions.forEach(com => {
                 const comMonth = com.date.split('-')[1];
@@ -1478,7 +1488,7 @@
                     appState.transactions = appState.transactions.map(t => t.id === targetId ? txData : t);
                     showToast("Transaction updated!", "success");
                 } else {
-                    appState.transactions.unshift(txData);
+                    appState.transactions.push(txData);
                     showToast("New transaction saved!", "success");
                 }
 
@@ -1569,7 +1579,7 @@
             if (editId) {
                 appState.commissions = appState.commissions.map(c => c.id === parseInt(editId) ? comData : c);
             } else {
-                appState.commissions.unshift(comData);
+                appState.commissions.push(comData);
             }
 
             saveState();
@@ -1592,7 +1602,10 @@
 
             if (type === 'transactions') {
                 csvContent += "Date,Description,Details,Category,Amount,Currency,AmountInKRW,Type\n";
-                const sortedTx = [...appState.transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+                const sortedTx = [...appState.transactions].sort((a, b) => {
+                    if (b.date !== a.date) return b.date.localeCompare(a.date);
+                    return b.id - a.id;
+                });
                 sortedTx.forEach(t => {
                     csvContent += `"${t.date}","${t.description}","${t.details || ''}","${t.category}",${t.amount},"${t.currency}",${t.amountInKRW},"${t.type}"\n`;
                 });
@@ -1608,7 +1621,10 @@
                 });
             } else if (type === 'commissions') {
                 csvContent += "Date,ProjectName,Recipient,Type,ClientCompany,Value,Currency,ValueInKRW,Status\n";
-                const sortedComm = [...appState.commissions].sort((a, b) => new Date(b.date) - new Date(a.date));
+                const sortedComm = [...appState.commissions].sort((a, b) => {
+                    if (b.date !== a.date) return b.date.localeCompare(a.date);
+                    return b.id - a.id;
+                });
                 sortedComm.forEach(c => {
                     csvContent += `"${c.date}","${c.project}","${c.manager}","${c.type}","${c.client}",${c.val},"${c.currency}",${c.amountInKRW},"${c.status}"\n`;
                 });
