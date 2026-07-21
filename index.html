@@ -24,34 +24,15 @@
         .font-korean {
             font-family: 'Noto Sans KR', sans-serif;
         }
-        /* Premium Pink Accents */
-        .accent-text {
-            color: #ff66c4;
-        }
-        .accent-bg {
-            background-color: #ff66c4;
-        }
-        .accent-border {
-            border-color: #ff66c4;
-        }
-        .accent-ring:focus {
-            --tw-ring-color: #ff66c4;
-        }
-        /* Custom scrollbars */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #ffffff;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #e5e5e5;
-            border-radius: 3px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #ff66c4;
-        }
+        .accent-text { color: #ff66c4; }
+        .accent-bg { background-color: #ff66c4; }
+        .accent-border { border-color: #ff66c4; }
+        .accent-ring:focus { --tw-ring-color: #ff66c4; }
+        
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #ffffff; }
+        ::-webkit-scrollbar-thumb { background: #e5e5e5; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ff66c4; }
     </style>
 </head>
 <body class="min-h-screen bg-white text-black">
@@ -124,32 +105,25 @@
                         <p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-4">Core Workspace</p>
                         <nav class="space-y-1">
                             <button onclick="switchTab('dashboard')" id="btn-dashboard" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all bg-neutral-50 text-black border-l-4 accent-border">
-                                <i class="fa-solid fa-chart-line text-neutral-800"></i>
-                                Executive Dashboard
+                                <i class="fa-solid fa-chart-line text-neutral-800"></i> Executive Dashboard
                             </button>
                             <button onclick="switchTab('transactions')" id="btn-transactions" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 hover:bg-neutral-50 hover:text-black border-l-4 border-transparent">
-                                <i class="fa-solid fa-receipt text-neutral-400"></i>
-                                Transaction Tracker
+                                <i class="fa-solid fa-receipt text-neutral-400"></i> Transaction Tracker
                             </button>
                             <button onclick="switchTab('coa')" id="btn-coa" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 hover:bg-neutral-50 hover:text-black border-l-4 border-transparent">
-                                <i class="fa-solid fa-book-bookmark text-neutral-400"></i>
-                                Chart of Accounts
+                                <i class="fa-solid fa-book-bookmark text-neutral-400"></i> Chart of Accounts
                             </button>
                             <button onclick="switchTab('employees')" id="btn-employees" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 hover:bg-neutral-50 hover:text-black border-l-4 border-transparent">
-                                <i class="fa-solid fa-users text-neutral-400"></i>
-                                Employee Data
+                                <i class="fa-solid fa-users text-neutral-400"></i> Employee Data
                             </button>
                             <button onclick="switchTab('clients')" id="btn-clients" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 hover:bg-neutral-50 hover:text-black border-l-4 border-transparent">
-                                <i class="fa-solid fa-address-book text-neutral-400"></i>
-                                Key Client Portfolio
+                                <i class="fa-solid fa-address-book text-neutral-400"></i> Key Client Portfolio
                             </button>
                             <button onclick="switchTab('client-payments')" id="btn-client-payments" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 hover:bg-neutral-50 hover:text-black border-l-4 border-transparent">
-                                <i class="fa-solid fa-file-invoice-dollar text-neutral-400"></i>
-                                Client Payment
+                                <i class="fa-solid fa-file-invoice-dollar text-neutral-400"></i> Client Payment
                             </button>
                             <button onclick="switchTab('commissions')" id="btn-commissions" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 hover:bg-neutral-50 hover:text-black border-l-4 border-transparent">
-                                <i class="fa-solid fa-wallet text-neutral-400"></i>
-                                Payroll & Payout Hub
+                                <i class="fa-solid fa-wallet text-neutral-400"></i> Payroll & Payout Hub
                             </button>
                         </nav>
                     </div>
@@ -158,18 +132,9 @@
                     <div>
                         <p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-3">Daily Forex Rates (To KRW)</p>
                         <div class="bg-neutral-50 rounded-xl p-3.5 space-y-2 border border-neutral-100 text-xs text-neutral-700">
-                            <div class="flex justify-between items-center">
-                                <span class="font-semibold text-neutral-500">1 SGD =</span>
-                                <span class="font-mono font-bold text-black" id="forex-sgd">1,000 KRW</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="font-semibold text-neutral-500">1 USD =</span>
-                                <span class="font-mono font-bold text-black" id="forex-usd">1,350 KRW</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="font-semibold text-neutral-500">1 IDR =</span>
-                                <span class="font-mono font-bold text-black" id="forex-idr">0.085 KRW</span>
-                            </div>
+                            <div class="flex justify-between items-center"><span class="font-semibold text-neutral-500">1 SGD =</span><span class="font-mono font-bold text-black" id="forex-sgd">1,000 KRW</span></div>
+                            <div class="flex justify-between items-center"><span class="font-semibold text-neutral-500">1 USD =</span><span class="font-mono font-bold text-black" id="forex-usd">1,350 KRW</span></div>
+                            <div class="flex justify-between items-center"><span class="font-semibold text-neutral-500">1 IDR =</span><span class="font-mono font-bold text-black" id="forex-idr">0.085 KRW</span></div>
                         </div>
                     </div>
 
@@ -234,7 +199,7 @@
                                 <span class="p-1.5 bg-neutral-50 text-black border border-neutral-100 rounded-lg text-xs"><i class="fa-solid fa-arrow-trend-up text-emerald-500"></i></span>
                             </div>
                             <h3 class="text-2xl font-bold text-black" id="metric-revenue">0</h3>
-                            <p class="text-[10px] text-neutral-500 mt-2" id="sub-revenue-desc">KOL Seeding & Consulting</p>
+                            <p class="text-[10px] text-neutral-500 mt-2" id="sub-revenue-desc">Client Services & Campaigns</p>
                         </div>
 
                         <div class="bg-white border border-neutral-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all">
@@ -281,7 +246,7 @@
                         </div>
                     </div>
 
-                    <!-- REVISI 1: COA Financial Report Table on Executive Dashboard -->
+                    <!-- COA Financial Report Table on Executive Dashboard -->
                     <div class="border border-neutral-100 rounded-2xl p-6 bg-white shadow-sm space-y-4">
                         <div class="flex justify-between items-center border-b border-neutral-100 pb-3">
                             <h4 class="text-xs font-bold uppercase tracking-wider text-black flex items-center gap-2">
@@ -682,17 +647,17 @@
                                 <input type="text" id="client-industry" placeholder="Industry..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Primary Service Line</label>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Primary Service Line (Revenue COA)</label>
                                 <select id="client-service" onchange="toggleCustomInput('client-service', 'client-service-custom')" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
-                                    <option value="KOL Seeding">KOL Seeding</option>
-                                    <option value="Group Purchase">Group Purchase</option>
-                                    <option value="Sales Program">Sales Program</option>
-                                    <option value="Localization Consulting">Localization Consulting</option>
-                                    <option value="Live Host">Live Host</option>
-                                    <option value="Legal Registration">Legal Registration</option>
-                                    <option value="CUSTOM_VAL">+ Add Custom...</option>
+                                    <option value="KOL Seeding">KOL Seeding Revenue</option>
+                                    <option value="Group Purchase">Group Purchase Revenue</option>
+                                    <option value="Sales Program">Sales Program Revenue</option>
+                                    <option value="Localization Consulting">Localization Consulting Revenue</option>
+                                    <option value="Live Host">Live Host Revenue</option>
+                                    <option value="Legal Registration">Legal Registration Revenue</option>
+                                    <option value="CUSTOM_VAL">+ Add Custom Revenue Service...</option>
                                 </select>
-                                <input type="text" id="client-service-custom" placeholder="Type custom service..." class="hidden mt-1.5 w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                <input type="text" id="client-service-custom" placeholder="Type custom service name..." class="hidden mt-1.5 w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Deal Type</label>
@@ -831,7 +796,7 @@
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Payment Status</label>
                                 <select id="pay-status" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
-                                    <option value="Paid">Paid (Added to Revenue)</option>
+                                    <option value="Paid">Paid (Added to Revenue & Tracker)</option>
                                     <option value="Pending">Pending</option>
                                     <option value="Overdue">Overdue</option>
                                 </select>
@@ -912,7 +877,7 @@
                                 <input type="number" id="comm-val" placeholder="Direct payout..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
                             
-                            <!-- REVISI 4: TAX CHECKBOX 3.3% -->
+                            <!-- TAX CHECKBOX 3.3% -->
                             <div class="flex items-center gap-2 py-2">
                                 <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-semibold text-neutral-700">
                                     <input type="checkbox" id="comm-tax-deduct" class="rounded text-[#ff66c4] focus:ring-0 w-4 h-4">
@@ -999,7 +964,7 @@
         </div>
     </div>
 
-    <!-- REVISI 3: CONFIRM MODAL WITH PASSWORD FOR CLEAR DATA -->
+    <!-- CONFIRM MODAL WITH PASSWORD -->
     <div id="confirm-modal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-neutral-900 bg-opacity-50 flex items-center justify-center p-4">
         <div class="bg-white border border-neutral-100 rounded-2xl p-6 max-w-sm w-full space-y-4 shadow-xl">
             <h3 class="text-sm font-bold text-black uppercase tracking-wider" id="confirm-modal-title">Confirm Action</h3>
@@ -1020,7 +985,7 @@
 
     <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2 max-w-sm w-full"></div>
 
-    <!-- Application JavaScript Logic -->
+    <!-- JavaScript Logic -->
     <script>
         let currentTabId = 'dashboard';
 
@@ -1069,13 +1034,21 @@
             return baseRate * variation;
         }
 
+        /* REVISI 1: Standard COA Includes All Revenue Service Lines */
         const defaultCOA = [
             { id: 101, code: '1010', name: 'Cash & Bank (KRW)', category: 'Asset', side: 'Debit' },
             { id: 102, code: '1200', name: 'Accounts Receivable (Piutang)', category: 'Asset', side: 'Debit' },
             { id: 201, code: '2010', name: 'Accounts Payable (Hutang)', category: 'Liability', side: 'Credit' },
             { id: 301, code: '3010', name: "Owner's Capital", category: 'Equity', side: 'Credit' },
+            
+            // Service Line Revenue Accounts
             { id: 401, code: '4010', name: 'KOL Seeding Revenue', category: 'Revenue', side: 'Credit' },
-            { id: 402, code: '4020', name: 'Consulting & Campaign Revenue', category: 'Revenue', side: 'Credit' },
+            { id: 402, code: '4020', name: 'Group Purchase Revenue', category: 'Revenue', side: 'Credit' },
+            { id: 403, code: '4030', name: 'Sales Program Revenue', category: 'Revenue', side: 'Credit' },
+            { id: 404, code: '4040', name: 'Localization Consulting Revenue', category: 'Revenue', side: 'Credit' },
+            { id: 405, code: '4050', name: 'Live Host Revenue', category: 'Revenue', side: 'Credit' },
+            { id: 406, code: '4060', name: 'Legal Registration Revenue', category: 'Revenue', side: 'Credit' },
+
             { id: 501, code: '5010', name: 'Salaries & Wages', category: 'Expense', side: 'Debit' },
             { id: 502, code: '5020', name: 'KOL / Creator Payouts', category: 'Expense', side: 'Debit' },
             { id: 503, code: '5030', name: 'Software & Tools', category: 'Expense', side: 'Debit' },
@@ -1112,8 +1085,14 @@
                 if (!appState.transactions) appState.transactions = [];
                 if (!appState.clients) appState.clients = [];
                 if (!appState.clientPayments) appState.clientPayments = [];
-                if (!appState.commissions) appState.commissions = [];
                 if (!appState.coa || appState.coa.length === 0) appState.coa = [...defaultCOA];
+                
+                // Ensure default COA has all revenue service lines
+                defaultCOA.forEach(defCoa => {
+                    if (!appState.coa.some(c => c.name === defCoa.name)) {
+                        appState.coa.push(defCoa);
+                    }
+                });
             } else {
                 appState = JSON.parse(JSON.stringify(defaultData));
                 saveState();
@@ -1248,7 +1227,6 @@
             }, 3000);
         }
 
-        /* REVISI 3: Clear confirmation with password "20260619" */
         function triggerClearConfirmation() {
             showConfirmationModal(
                 "Clear Ledger Database",
@@ -1352,7 +1330,7 @@
 
             const selectedMonthFilter = document.getElementById("dashboard-month-filter").value;
 
-            // 1. Transaction Tracker Log
+            // 1. Transaction Tracker Log (Calculates Revenue & Expenses)
             appState.transactions.forEach(t => {
                 const txMonth = t.date.split('-')[1];
                 if (selectedMonthFilter === "ALL" || selectedMonthFilter === txMonth) {
@@ -1367,17 +1345,6 @@
                     const cMonth = c.date.split('-')[1];
                     if (selectedMonthFilter === "ALL" || selectedMonthFilter === cMonth) {
                         totalExpenses += parseFloat(c.amountInKRW);
-                    }
-                }
-            });
-
-            // 3. Paid Client Milestone Payments Auto-Added to Revenue
-            appState.clientPayments.forEach(p => {
-                if (p.status === "Paid") {
-                    const pDate = p.paidDate || p.dueDate;
-                    const pMonth = pDate.split('-')[1];
-                    if (selectedMonthFilter === "ALL" || selectedMonthFilter === pMonth) {
-                        totalRevenue += parseFloat(p.amountInKRW);
                     }
                 }
             });
@@ -1399,11 +1366,11 @@
             renderClientsView();
             renderPaymentScheduleHub();
             renderCommissionsTable();
-            renderDashboardCOAReport(); // REVISI 1: COA Report Table
+            renderDashboardCOAReport(); // REVISI 3: Connected COA Financial Report
             renderCharts();
         }
 
-        /* REVISI 1: Render COA Report Table on Dashboard */
+        /* REVISI 3: Fully Linked COA Financial Report Table on Dashboard */
         function renderDashboardCOAReport() {
             const tbody = document.getElementById("dashboard-coa-report-body");
             if (!tbody) return;
@@ -1412,24 +1379,26 @@
             const monthFilter = document.getElementById("dashboard-month-filter").value;
             const coaTotals = {};
 
-            // Initialize all COA items
+            // Initialize all COA items from COA master list
             appState.coa.forEach(c => {
                 coaTotals[c.name] = { code: c.code, category: c.category, amountKRW: 0 };
             });
 
-            // Accumulate from Transactions
+            // 1. Accumulate from All Transactions in Transaction Tracker
             appState.transactions.forEach(t => {
                 const txMonth = t.date.split('-')[1];
                 if (monthFilter === "ALL" || monthFilter === txMonth) {
                     if (coaTotals[t.category]) {
                         coaTotals[t.category].amountKRW += parseFloat(t.amountInKRW || 0);
                     } else {
-                        coaTotals[t.category] = { code: '-', category: 'Other', amountKRW: parseFloat(t.amountInKRW || 0) };
+                        // Dynamically register if missing
+                        const categoryType = t.type === "CREDIT" ? "Revenue" : "Expense";
+                        coaTotals[t.category] = { code: 'AUTO', category: categoryType, amountKRW: parseFloat(t.amountInKRW || 0) };
                     }
                 }
             });
 
-            // Accumulate from Payroll Payouts (Paid status)
+            // 2. Accumulate from Payroll Payouts (Paid status)
             appState.commissions.forEach(c => {
                 if (c.status === "Paid") {
                     const comMonth = c.date.split('-')[1];
@@ -1438,7 +1407,6 @@
                         if (coaTotals[targetCategory]) {
                             coaTotals[targetCategory].amountKRW += parseFloat(c.amountInKRW || 0);
                         } else {
-                            // Find match or default
                             const matchKey = Object.keys(coaTotals).find(k => k.toLowerCase().includes('salary')) || "Salaries & Wages";
                             if (coaTotals[matchKey]) coaTotals[matchKey].amountKRW += parseFloat(c.amountInKRW || 0);
                         }
@@ -1449,6 +1417,7 @@
             const currencySymbol = getCurrencySymbol();
             const currKey = document.getElementById("global-currency-select").value;
 
+            // Render rows
             Object.keys(coaTotals).forEach(accName => {
                 const acc = coaTotals[accName];
                 const converted = getConvertedVal(acc.amountKRW);
@@ -1895,13 +1864,14 @@
             document.getElementById("client-name").value = client.name || "";
             document.getElementById("client-industry").value = client.industry || "";
             
+            const serviceVal = client.service.replace(' Revenue', '');
             const standardServices = ["KOL Seeding", "Group Purchase", "Sales Program", "Localization Consulting", "Live Host", "Legal Registration"];
-            if (client.service && !standardServices.includes(client.service)) {
+            if (serviceVal && !standardServices.includes(serviceVal)) {
                 document.getElementById("client-service").value = "CUSTOM_VAL";
                 toggleCustomInput('client-service', 'client-service-custom');
                 document.getElementById("client-service-custom").value = client.service;
             } else {
-                document.getElementById("client-service").value = client.service || "KOL Seeding";
+                document.getElementById("client-service").value = serviceVal || "KOL Seeding";
             }
 
             if (client.dealType && !appState.customDealTypes.includes(client.dealType)) {
@@ -1930,7 +1900,7 @@
             document.getElementById("client-form-card").scrollIntoView({ behavior: 'smooth' });
         }
 
-        /* REVISI 2: Edit Client preserves existing proof */
+        /* REVISI 1: Service Line Linked to Revenue COA */
         function addManualClient(e) {
             e.preventDefault();
             const editId = document.getElementById("edit-client-id").value;
@@ -1945,10 +1915,24 @@
             const campaignEnd = isOngoing ? "" : document.getElementById("client-end-date").value;
             const contractFileInput = document.getElementById("client-contract-file");
 
-            let service = document.getElementById("client-service").value;
-            if (service === "CUSTOM_VAL") {
+            let rawService = document.getElementById("client-service").value;
+            if (rawService === "CUSTOM_VAL") {
                 const customVal = document.getElementById("client-service-custom").value.trim();
-                if (customVal) service = customVal;
+                if (customVal) rawService = customVal;
+            }
+
+            // Ensure "Revenue" suffix for COA Mapping
+            const service = rawService.endsWith("Revenue") ? rawService : `${rawService} Revenue`;
+
+            // Auto-Add service to COA if missing
+            if (!appState.coa.some(c => c.name === service)) {
+                appState.coa.push({
+                    id: Date.now(),
+                    code: '4' + Math.floor(100 + Math.random() * 900),
+                    name: service,
+                    category: 'Revenue',
+                    side: 'Credit'
+                });
             }
 
             let dealType = document.getElementById("client-dealtype").value;
@@ -1985,6 +1969,7 @@
 
                 saveState();
                 populateDynamicSelects();
+                populateCOADropdowns();
                 populateClientIndustryFilter();
                 renderClientsView();
                 renderPaymentScheduleHub();
@@ -2150,7 +2135,7 @@
             document.getElementById("edit-payment-schedule-id").value = "";
         }
 
-        /* REVISI 2: Edit Payment Schedule preserves existing proof */
+        /* REVISI 2: Paid Client Payments Automatically Link to Transaction Tracker */
         function addManualPaymentSchedule(e) {
             e.preventDefault();
             const editId = document.getElementById("edit-payment-schedule-id").value;
@@ -2167,27 +2152,52 @@
             const existingObj = editId ? appState.clientPayments.find(p => p.id === parseInt(editId)) : null;
 
             const handleSavePayment = (pictureBase64) => {
-                const rate = getExchangeRateOnDate(currency, paidDate || dueDate);
+                const effectiveDate = paidDate || dueDate;
+                const rate = getExchangeRateOnDate(currency, effectiveDate);
                 const amountInKRW = amount * rate;
+                const picture = pictureBase64 || (existingObj ? existingObj.picture : "");
 
                 const payData = {
                     id: editId ? parseInt(editId) : Date.now(),
                     clientName, percentage, termDesc, dueDate, paidDate, currency, amount,
-                    amountInKRW, status, picture: pictureBase64 || (existingObj ? existingObj.picture : "")
+                    amountInKRW, status, picture
                 };
 
                 if (editId) {
                     const targetId = parseInt(editId);
                     appState.clientPayments = appState.clientPayments.map(p => p.id === targetId ? payData : p);
-                    showToast("Payment milestone updated!", "success");
+                    
+                    // Remove old linked transaction if exists
+                    appState.transactions = appState.transactions.filter(t => t.linkedPaymentId !== targetId);
                 } else {
                     appState.clientPayments.unshift(payData);
-                    showToast("Payment milestone logged!", "success");
+                }
+
+                // AUTO-LINK TO TRANSACTION TRACKER IF PAID
+                if (status === "Paid") {
+                    const clientObj = appState.clients.find(c => c.name === clientName);
+                    const serviceCategory = clientObj ? clientObj.service : 'KOL Seeding Revenue';
+
+                    const linkedTx = {
+                        id: Date.now() + 1,
+                        date: effectiveDate,
+                        description: `[Payment Received] ${clientName} (${termDesc})`,
+                        details: `Client Installment Payment (${termDesc}) for ${clientName}`,
+                        category: serviceCategory,
+                        amount: amount,
+                        currency: currency,
+                        amountInKRW: amountInKRW,
+                        type: 'CREDIT',
+                        picture: picture,
+                        linkedPaymentId: payData.id
+                    };
+                    appState.transactions.push(linkedTx);
                 }
 
                 saveState();
                 updateUI();
                 cancelPaymentScheduleForm();
+                showToast("Payment milestone logged & synced to transactions!", "success");
             };
 
             if (fileInput.files && fileInput.files[0]) {
@@ -2225,6 +2235,7 @@
         function triggerDeletePaymentSchedule(id) {
             showConfirmationModal("Delete Payment Milestone", "Remove this milestone record?", false, () => {
                 appState.clientPayments = appState.clientPayments.filter(p => p.id !== id);
+                appState.transactions = appState.transactions.filter(t => t.linkedPaymentId !== id);
                 saveState();
                 updateUI();
                 showToast("Milestone record removed", "success");
@@ -2323,7 +2334,7 @@
             });
         }
 
-        /* REVISI 1: Harmony & Varied Color Palette for Operating Expenses Pie Chart */
+        /* Chart rendering */
         function renderCharts() {
             try {
                 if (perfChart) perfChart.destroy();
@@ -2342,16 +2353,6 @@
                     if (monthIdx >= 0 && monthIdx < 12) {
                         if (t.type === "CREDIT") monthlyRevenue[monthIdx] += getConvertedVal(parseFloat(t.amountInKRW));
                         else monthlyExpenses[monthIdx] += getConvertedVal(parseFloat(t.amountInKRW));
-                    }
-                });
-
-                appState.clientPayments.forEach(p => {
-                    if (p.status === "Paid") {
-                        const pDate = p.paidDate || p.dueDate;
-                        const monthIdx = new Date(pDate).getMonth();
-                        if (monthIdx >= 0 && monthIdx < 12) {
-                            monthlyRevenue[monthIdx] += getConvertedVal(parseFloat(p.amountInKRW));
-                        }
                     }
                 });
 
@@ -2395,17 +2396,8 @@
                     }
                 });
 
-                // Soft, elegant, pastel-toned colors (Pink, Lavender, Slate, Coral, Mint, Indigo)
                 const pastelColors = [
-                    '#ff66c4', // Vively Pink
-                    '#8b5cf6', // Lavender / Violet
-                    '#3b82f6', // Soft Blue
-                    '#10b981', // Mint Green
-                    '#f59e0b', // Warm Amber
-                    '#ec4899', // Rose
-                    '#6366f1', // Indigo
-                    '#14b8a6', // Teal
-                    '#64748b'  // Slate
+                    '#ff66c4', '#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#6366f1', '#14b8a6', '#64748b'
                 ];
 
                 pieChart = new Chart(canvasPie, {
@@ -2422,7 +2414,7 @@
             } catch (err) { console.error(err); }
         }
 
-        /* REVISI 2: Edit Transaction preserves existing proof */
+        /* Add Transaction */
         function addManualTransaction(e) {
             e.preventDefault();
             const editId = document.getElementById("edit-transaction-id").value;
@@ -2533,7 +2525,7 @@
             document.getElementById("edit-commission-id").value = "";
         }
 
-        /* REVISI 2 & 4: Add/Edit Payroll with Tax 3.3% Deduction and Proof Preservation */
+        /* Add/Edit Payroll with Tax 3.3% Deduction and Proof Preservation */
         function addManualCommission(e) {
             e.preventDefault();
             const editId = document.getElementById("edit-commission-id").value;
@@ -2544,7 +2536,6 @@
             const rawVal = parseFloat(document.getElementById("comm-val").value);
             const isTaxDeducted = document.getElementById("comm-tax-deduct").checked;
             
-            // Deduct 3.3% if checked
             const val = isTaxDeducted ? (rawVal * 0.967) : rawVal;
 
             const currency = document.getElementById("comm-currency").value;
