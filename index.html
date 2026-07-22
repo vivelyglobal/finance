@@ -317,7 +317,7 @@
                             <div><label class="block text-[11px] font-semibold mb-1">Account Name</label><input type="text" id="coa-name" required class="w-full text-xs px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900"></div>
                             <div><label class="block text-[11px] font-semibold mb-1">Category Type</label><select id="coa-category" onchange="autoSetNormalBalance()" class="w-full text-xs px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900"><option value="Asset">Asset</option><option value="Liability">Liability</option><option value="Equity">Equity</option><option value="Revenue">Revenue</option><option value="Expense" selected>Expense</option></select></div>
                             <div><label class="block text-[11px] font-semibold mb-1">Normal Balance Side</label><select id="coa-side" class="w-full text-xs px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900"><option value="Debit">Debit</option><option value="Credit">Credit</option></select></div>
-                            <div class="md:col-span-4 flex justify-end gap-2 pt-2"><button type="button" onclick="cancelCOAForm()" class="px-4 py-2 border rounded-lg text-xs">Cancel</button><button type="submit" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-bold">Save Account</button></div>
+                            <div class="md:col-span-4 flex justify-end gap-2 pt-2 border-t"><button type="button" onclick="cancelCOAForm()" class="px-4 py-2 border rounded-lg text-xs">Cancel</button><button type="submit" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-bold">Save Account</button></div>
                         </form>
                     </div>
                     <div class="border rounded-2xl overflow-hidden shadow-sm bg-white dark:bg-neutral-800">
@@ -342,7 +342,7 @@
                             <div><label class="block text-[11px] font-semibold mb-1">Employment Type</label><select id="emp-type" class="w-full text-xs px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900"><option value="Full-Time">Full-Time</option><option value="Part-Time">Part-Time</option><option value="Intern">Intern</option><option value="Contractor / Freelance">Contractor / Freelance</option></select></div>
                             <div><label class="block text-[11px] font-semibold mb-1">Status</label><select id="emp-status" class="w-full text-xs px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900"><option value="On-Going">On-Going (Active)</option><option value="Completed">Completed</option></select></div>
                             <div><label class="block text-[11px] font-semibold mb-1">Bank Details</label><input type="text" id="emp-bank" placeholder="Bank & Account..." class="w-full text-xs px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900"></div>
-                            <div class="md:col-span-4 flex justify-end gap-2 pt-2"><button type="button" onclick="cancelEmployeeForm()" class="px-4 py-2 border rounded-lg text-xs">Cancel</button><button type="submit" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-bold">Save Employee</button></div>
+                            <div class="md:col-span-4 flex justify-end gap-2 pt-2 border-t"><button type="button" onclick="cancelEmployeeForm()" class="px-4 py-2 border rounded-lg text-xs">Cancel</button><button type="submit" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-bold">Save Employee</button></div>
                         </form>
                     </div>
                     <div class="border rounded-2xl overflow-hidden shadow-sm bg-white dark:bg-neutral-800">
@@ -471,18 +471,20 @@
                     </div>
 
                     <div class="border border-neutral-100 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-sm bg-white dark:bg-neutral-800">
-                        <table class="w-full text-left border-collapse text-xs">
-                            <thead>
-                                <tr class="bg-neutral-50 dark:bg-neutral-700/50 border-b text-neutral-500 uppercase tracking-wider text-[10px]">
-                                    <th class="p-4">Date (YYYY-MM-DD)</th>
-                                    <th class="p-4">Item Description / Notes</th>
-                                    <th class="p-4">Category</th>
-                                    <th class="p-4 text-right">Amount (₩)</th>
-                                    <th class="p-4 text-center">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="transactions-table-body" class="divide-y divide-neutral-100 dark:divide-neutral-700"></tbody>
-                        </table>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead>
+                                    <tr class="bg-neutral-50 dark:bg-neutral-700/50 border-b text-neutral-500 uppercase tracking-wider text-[10px]">
+                                        <th class="p-4">Date (YYYY-MM-DD)</th>
+                                        <th class="p-4">Item Description / Notes</th>
+                                        <th class="p-4">Category</th>
+                                        <th class="p-4 text-right">Amount (₩)</th>
+                                        <th class="p-4 text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transactions-table-body" class="divide-y divide-neutral-100 dark:divide-neutral-700"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </section>
 
@@ -800,7 +802,7 @@
 
                 appState.transactions = appState.transactions.filter(t => {
                     if (t.source !== "HANA_BANK") return true;
-                    return bankReconData.some(b => b.description === b.description && b.date === t.date && parseFloat(b.amount) === parseFloat(t.amount));
+                    return bankReconData.some(b => b.description === t.description && b.date === t.date && parseFloat(b.amount) === parseFloat(t.amount));
                 });
 
                 renderReconTable();
@@ -856,6 +858,21 @@
                 }
             });
             saveState();
+        }
+
+        function resolveRevenueCategory(rawServiceName) {
+            if (!rawServiceName) return "KOL Seeding Revenue";
+            let name = rawServiceName.trim();
+            if (!name.toLowerCase().includes("revenue")) { name = `${name} Revenue`; }
+
+            const exactMatch = appState.coa.find(c => c.name.toLowerCase() === name.toLowerCase());
+            if (exactMatch) return exactMatch.name;
+
+            const newCoa = { id: Date.now(), code: '4' + Math.floor(100 + Math.random() * 899), name: name, category: 'Revenue', side: 'Credit' };
+            appState.coa.push(newCoa);
+            saveState();
+            populateCOADropdowns();
+            return newCoa.name;
         }
 
         function populateCOADropdowns() {
