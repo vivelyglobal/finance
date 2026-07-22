@@ -849,10 +849,30 @@
                             <p class="text-[10px] text-neutral-400 mt-1">Verified Received Revenue</p>
                         </div>
                         <div class="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-5 shadow-sm">
-                            <span class="text-[10px] font-bold text-rose-500 uppercase tracking-wider">Total Remaining Balance (Sisa Pembayaran)</span>
+                            <span class="text-[10px] font-bold text-rose-500 uppercase tracking-wider">Total Remaining Balance </span>
                             <h3 class="text-xl font-bold text-rose-600 dark:text-rose-400 mt-2" id="sum-paid-remaining">0</h3>
                             <p class="text-[10px] text-neutral-400 mt-1">Outstanding Receivable Balance</p>
                         </div>
+                    </div>
+
+                    <!-- Client Payment Modal / Form Card for Editing -->
+                    <div id="client-payment-form-card" class="hidden bg-neutral-50 dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 rounded-2xl p-6 space-y-4">
+                        <h3 class="text-xs font-bold text-black dark:text-white uppercase tracking-wider text-neutral-500">Edit Client Payment Record</h3>
+                        <form id="edit-client-payment-form" onsubmit="saveClientPaymentEdit(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                            <input type="hidden" id="edit-pay-id" value="">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Paid Date</label>
+                                <input type="date" id="edit-pay-date" required class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Amount (KRW)</label>
+                                <input type="number" step="any" id="edit-pay-amount" required class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
+                            </div>
+                            <div class="flex gap-2">
+                                <button type="submit" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-semibold hover:opacity-95 transition-all">Update Payment</button>
+                                <button type="button" onclick="cancelClientPaymentEdit()" class="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs font-semibold hover:bg-white dark:hover:bg-neutral-700 transition-all">Cancel</button>
+                            </div>
+                        </form>
                     </div>
 
                     <div id="paid-clients-payment-container" class="space-y-6">
@@ -1528,9 +1548,7 @@
             return newCoa.name;
         }
 
-        // Proses mapping ke Client Payment & Hapus otomatis jika transactionBy diubah dari Paid Client ke Other/Vively
         function processTransactionMapping(tx, oldTransactionBy) {
-            // Jika sebelumnya terhubung ke paid client tertentu, bersihkan dahulu dari client payment lama jika berganti
             if (oldTransactionBy && oldTransactionBy !== "Vively" && oldTransactionBy !== "Other") {
                 appState.clientPayments = appState.clientPayments.filter(p => !(p.clientName === oldTransactionBy && p.amount === tx.amount && p.paidDate === tx.date));
             }
@@ -1957,8 +1975,7 @@
             }
 
             reportList.forEach(c => {
-                const badgeColor = c.category === "Revenue" ? "bg-neutral-100 text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200" :
-                                  (c.category === "Expense" ? "bg-neutral-100 text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200" : "bg-neutral-100 text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200");
+                const badgeColor = "bg-neutral-100 text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200";
 
                 const row = `
                     <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-700/30 transition-all">
@@ -1989,7 +2006,6 @@
                 return b.id - a.id;
             });
 
-            // Filter hanya Paid Clients untuk "Transaction By"
             const paidClients = appState.clients.filter(c => c.dealType === "Paid Campaign");
 
             sortedTransactions.forEach(t => {
@@ -2018,7 +2034,6 @@
                 });
                 categorySelectHtml += `</select>`;
 
-                // Tombol Add Notes / Notes Added tepat di bawah item description
                 let notesButtonHtml = `<button onclick="openNotesModal(${t.id})" class="mt-1 block px-2 py-0.5 rounded text-[9px] font-bold border border-neutral-200 dark:border-neutral-700 text-neutral-500 hover:text-black dark:hover:text-white bg-neutral-50 dark:bg-neutral-800 transition-all"><i class="fa-solid fa-plus mr-1 text-neutral-400"></i> Add Notes</button>`;
                 if (t.notes && t.notes.trim() !== "") {
                     notesButtonHtml = `<button onclick="openNotesModal(${t.id})" class="mt-1 block px-2 py-0.5 rounded text-[9px] font-bold border border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-800 transition-all"><i class="fa-solid fa-note-sticky mr-1 text-neutral-400"></i> Notes Added</button>`;
@@ -2026,7 +2041,6 @@
 
                 const formattedDate = parseToStandardDate(t.date);
                 
-                // Aturan warna amount: Received = Hijau, Paid = Merah, Lainnya = Hitam
                 let amountColorClass = 'text-black dark:text-white font-bold';
                 if (t.paidBy === 'received' || t.type === 'CREDIT') {
                     amountColorClass = 'text-emerald-600 dark:text-emerald-400 font-bold';
@@ -2132,7 +2146,7 @@
             }
         }
 
-        /* COA LOGIC - Form dikosongkan bersih saat dibuka */
+        /* COA LOGIC */
         function toggleCOAForm() {
             const card = document.getElementById("coa-form-card");
             card.classList.toggle("hidden");
@@ -2263,7 +2277,7 @@
                     <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-700/30 transition-all">
                         <td class="p-4 font-bold text-black dark:text-white">${emp.name}</td>
                         <td class="p-4 font-semibold text-neutral-600 dark:text-neutral-300">${emp.type}</td>
-                        <td class="p-4"><span class="px-2 py-0.5 rounded text-[9px] font-semibold border ${statusColor}">${emp.status}</span></td>
+                        <td class="p-4"><span class="px-2 py-0.5 rounded border text-[9px] font-semibold ${statusColor}">${emp.status}</span></td>
                         <td class="p-4 text-neutral-500 dark:text-neutral-400">${emp.phone || '-'}</td>
                         <td class="p-4 text-neutral-500 dark:text-neutral-400">${emp.email || '-'}</td>
                         <td class="p-4 font-semibold text-neutral-700 dark:text-neutral-300">${emp.bank || '-'}</td>
@@ -2446,6 +2460,7 @@
             });
         }
 
+        /* CLIENT PAYMENT HUB & EDIT/DELETE PEMBAYARAN */
         function renderPaymentScheduleHub() {
             const container = document.getElementById("paid-clients-payment-container");
             if (!container) return;
@@ -2486,12 +2501,18 @@
                             <td class="p-3.5 font-mono text-neutral-700 dark:text-neutral-300">${parseToStandardDate(p.paidDate)}</td>
                             <td class="p-3.5 text-right font-bold text-black dark:text-white">₩ ${parseFloat(p.amount).toLocaleString()}</td>
                             <td class="p-3.5 text-center"><span class="px-2 py-0.5 rounded border text-[9px] font-bold bg-neutral-100 text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200 border-neutral-200">Paid / Cleared</span></td>
+                            <td class="p-3.5 text-center">
+                                <div class="flex justify-center gap-1.5">
+                                    <button onclick="loadClientPaymentForEdit(${p.id})" class="text-neutral-400 hover:text-black dark:hover:text-white p-1" title="Edit Payment"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                                    <button onclick="triggerDeleteClientPayment(${p.id})" class="text-neutral-400 hover:text-rose-600 p-1" title="Delete Payment"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                                </div>
+                            </td>
                         </tr>
                     `;
                 });
 
                 if (clientPayments.length === 0) {
-                    rowsHtml = `<tr><td colspan="4" class="p-4 text-center text-neutral-400 italic text-xs">No payment received yet. Link via Transaction Tracker ("Transaction By").</td></tr>`;
+                    rowsHtml = `<tr><td colspan="5" class="p-4 text-center text-neutral-400 italic text-xs">No payment received yet. Link via Transaction Tracker ("Transaction By").</td></tr>`;
                 }
 
                 const cardHtml = `
@@ -2509,13 +2530,53 @@
                         </div>
                         <div class="overflow-x-auto rounded-xl border border-neutral-100 dark:border-neutral-700">
                             <table class="w-full text-left border-collapse text-xs">
-                                <thead><tr class="bg-neutral-50 dark:bg-neutral-700/50 text-neutral-400 font-bold uppercase text-[9px]"><th class="p-3.5">% Term</th><th class="p-3.5">Paid Date</th><th class="p-3.5 text-right">Amount</th><th class="p-3.5 text-center">Status</th></tr></thead>
+                                <thead><tr class="bg-neutral-50 dark:bg-neutral-700/50 text-neutral-400 font-bold uppercase text-[9px]"><th class="p-3.5">% Term</th><th class="p-3.5">Paid Date</th><th class="p-3.5 text-right">Amount</th><th class="p-3.5 text-center">Status</th><th class="p-3.5 text-center">Actions</th></tr></thead>
                                 <tbody>${rowsHtml}</tbody>
                             </table>
                         </div>
                     </div>
                 `;
                 container.insertAdjacentHTML('beforeend', cardHtml);
+            });
+        }
+
+        function loadClientPaymentForEdit(id) {
+            const p = appState.clientPayments.find(item => item.id === id);
+            if (!p) return;
+            document.getElementById("client-payment-form-card").classList.remove("hidden");
+            document.getElementById("edit-pay-id").value = p.id;
+            document.getElementById("edit-pay-date").value = parseToStandardDate(p.paidDate);
+            document.getElementById("edit-pay-amount").value = p.amount;
+            document.getElementById("client-payment-form-card").scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function cancelClientPaymentEdit() {
+            document.getElementById("client-payment-form-card").classList.add("hidden");
+        }
+
+        function saveClientPaymentEdit(e) {
+            e.preventDefault();
+            const id = parseInt(document.getElementById("edit-pay-id").value);
+            const newDate = parseToStandardDate(document.getElementById("edit-pay-date").value);
+            const newAmount = parseFloat(document.getElementById("edit-pay-amount").value);
+
+            const p = appState.clientPayments.find(item => item.id === id);
+            if (p) {
+                p.paidDate = newDate;
+                p.amount = newAmount;
+                saveState();
+                updateUI();
+                cancelClientPaymentEdit();
+                showToast("Client payment updated successfully!", "success");
+            }
+        }
+
+        function triggerDeleteClientPayment(id) {
+            showConfirmationModal("Delete Client Payment Record", "Remove this payment record?", false, () => {
+                appState.clientPayments = appState.clientPayments.filter(p => p.id !== id);
+                saveState();
+                updateUI();
+                showToast("Payment record deleted!", "success");
             });
         }
 
@@ -2824,7 +2885,6 @@
             document.getElementById("form-paid-by").value = tx.paidBy || "paid";
             document.getElementById("form-amount").value = tx.amount;
             
-            // Auto scroll up to top of transaction form card
             document.getElementById("transaction-form-card").scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
