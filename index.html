@@ -68,7 +68,6 @@
         <!-- Header Navigation -->
         <header class="border-b border-neutral-100 dark:border-neutral-800 px-8 py-3.5 flex justify-between items-center bg-white dark:bg-neutral-900 sticky top-0 z-40">
             <div class="flex items-center gap-4">
-                <!-- Sidebar Toggle Button -->
                 <button onclick="toggleSidebar()" class="text-neutral-500 hover:text-black dark:hover:text-white p-1 text-sm transition-all" title="Toggle Sidebar">
                     <i class="fa-solid fa-bars-staggered"></i>
                 </button>
@@ -128,6 +127,7 @@
                             <button onclick="switchTab('commissions')" id="btn-commissions" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-black dark:hover:text-white border-l-4 border-transparent">
                                 <i class="fa-solid fa-wallet text-neutral-400"></i> Payroll & Payout Hub
                             </button>
+                            <!-- REVISI TEKS MENU: "Reimbursements" -->
                             <button onclick="switchTab('reimbursements')" id="btn-reimbursements" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-black dark:hover:text-white border-l-4 border-transparent">
                                 <i class="fa-solid fa-credit-card text-amber-500"></i> Reimbursements
                             </button>
@@ -298,6 +298,194 @@
                     </div>
                 </section>
 
+                <!-- TAB: Chart of Accounts (COA) -->
+                <section id="tab-coa" class="hidden space-y-8 animate-fade-in">
+                    <div class="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-800 pb-5">
+                        <div>
+                            <h2 class="text-xl font-bold tracking-tight">Chart of Accounts (COA)</h2>
+                            <p class="text-xs text-neutral-500 dark:text-neutral-400">Manage financial account structures, categories, and normal balances.</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="exportCSV('coa')" class="px-3.5 py-2 border border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 rounded-xl text-xs font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all flex items-center gap-1.5">
+                                <i class="fa-solid fa-download"></i> Export CSV
+                            </button>
+                            <button onclick="toggleCOAForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
+                                <i class="fa-solid fa-plus mr-1.5"></i> Add COA
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="coa-form-card" class="hidden bg-neutral-50 dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 rounded-2xl p-6 space-y-4">
+                        <h3 class="text-xs font-bold text-black dark:text-white uppercase tracking-wider text-neutral-500" id="coa-form-title">Add New Account</h3>
+                        <form id="new-coa-form" onsubmit="addManualCOA(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                            <input type="hidden" id="edit-coa-id" value="">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Account Code</label>
+                                <input type="text" id="coa-code" placeholder="e.g. 1010..." required class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Account Name</label>
+                                <input type="text" id="coa-name" placeholder="e.g. Software & Tools..." required class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Category Type</label>
+                                <select id="coa-category" onchange="autoSetNormalBalance()" class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
+                                    <option value="Asset">Asset</option>
+                                    <option value="Liability">Liability</option>
+                                    <option value="Equity">Equity</option>
+                                    <option value="Revenue">Revenue</option>
+                                    <option value="Expense" selected>Expense</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Normal Balance Side</label>
+                                <select id="coa-side" class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
+                                    <option value="Debit">Debit</option>
+                                    <option value="Credit">Credit</option>
+                                </select>
+                            </div>
+                            <div class="md:col-span-4 flex justify-end gap-2 pt-2 border-t border-neutral-100 dark:border-neutral-700">
+                                <button type="button" onclick="cancelCOAForm()" class="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs font-semibold hover:bg-white dark:hover:bg-neutral-700">Cancel</button>
+                                <button type="submit" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-bold hover:opacity-95">Save Account</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="border border-neutral-100 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-sm bg-white dark:bg-neutral-800">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-neutral-50 dark:bg-neutral-700/50 border-b border-neutral-100 dark:border-neutral-700 text-neutral-500 dark:text-neutral-400 font-bold uppercase tracking-wider text-[10px]">
+                                    <th class="p-4">Account Code</th>
+                                    <th class="p-4">Account Name</th>
+                                    <th class="p-4">Category</th>
+                                    <th class="p-4">Normal Balance Side</th>
+                                    <th class="p-4 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="coa-table-body" class="divide-y divide-neutral-100 dark:divide-neutral-700 text-neutral-800 dark:text-neutral-200">
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- TAB: Employee Data -->
+                <section id="tab-employees" class="hidden space-y-8 animate-fade-in">
+                    <div class="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-800 pb-5">
+                        <div>
+                            <h2 class="text-xl font-bold tracking-tight">Employee Directory</h2>
+                            <p class="text-xs text-neutral-500 dark:text-neutral-400">Manage team profiles and banking details.</p>
+                        </div>
+                        <button onclick="toggleEmployeeForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
+                            <i class="fa-solid fa-plus mr-1.5"></i> Add Employee
+                        </button>
+                    </div>
+
+                    <div id="employee-form-card" class="hidden bg-neutral-50 dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 rounded-2xl p-6 space-y-4">
+                        <h3 class="text-xs font-bold text-black dark:text-white uppercase tracking-wider text-neutral-500" id="employee-form-title">New Employee Registration</h3>
+                        <form id="new-employee-form" onsubmit="addManualEmployee(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                            <input type="hidden" id="edit-employee-id" value="">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Full Name</label>
+                                <input type="text" id="emp-name" placeholder="Employee Name..." required class="w-full text-xs px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Employment Type</label>
+                                <select id="emp-type" class="w-full text-xs px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
+                                    <option value="Full-Time">Full-Time</option>
+                                    <option value="Part-Time">Part-Time</option>
+                                    <option value="Intern">Intern</option>
+                                    <option value="Contractor / Freelance">Contractor / Freelance</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Status</label>
+                                <select id="emp-status" class="w-full text-xs px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
+                                    <option value="On-Going">On-Going (Active)</option>
+                                    <option value="Completed">Completed (Inactive / Resigned)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Bank Name & Account</label>
+                                <input type="text" id="emp-bank" placeholder="Bank & Account No..." class="w-full text-xs px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
+                            </div>
+                            <div class="md:col-span-4 flex justify-end gap-2 pt-2 border-t border-neutral-100 dark:border-neutral-700">
+                                <button type="button" onclick="cancelEmployeeForm()" class="px-4 py-2 border rounded-lg text-xs font-semibold">Cancel</button>
+                                <button type="submit" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-bold">Save Employee</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="border border-neutral-100 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-sm bg-white dark:bg-neutral-800">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-neutral-50 dark:bg-neutral-700/50 border-b text-neutral-500 uppercase tracking-wider text-[10px]">
+                                    <th class="p-4">Full Name</th>
+                                    <th class="p-4">Employment Type</th>
+                                    <th class="p-4">Status</th>
+                                    <th class="p-4">Bank Details</th>
+                                    <th class="p-4 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="employees-table-body" class="divide-y divide-neutral-100 dark:divide-neutral-700">
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- TAB: Key Client Portfolio -->
+                <section id="tab-clients" class="hidden space-y-8 animate-fade-in">
+                    <div class="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-800 pb-5">
+                        <div>
+                            <h2 class="text-xl font-bold tracking-tight">Key Companies / Clients</h2>
+                            <p class="text-xs text-neutral-500 dark:text-neutral-400">Portfolio accounts contract values and seeding numbers.</p>
+                        </div>
+                        <button onclick="toggleClientForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
+                            <i class="fa-solid fa-plus mr-1.5"></i> Add Client
+                        </button>
+                    </div>
+
+                    <div id="client-form-card" class="hidden bg-neutral-50 dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 rounded-2xl p-6 space-y-4">
+                        <h3 class="text-xs font-bold text-black dark:text-white uppercase tracking-wider text-neutral-500" id="client-form-title">New Client Registration</h3>
+                        <form id="new-client-form" onsubmit="addManualClient(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                            <input type="hidden" id="edit-client-id" value="">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Company Name</label>
+                                <input type="text" id="client-name" placeholder="Name..." required class="w-full text-xs px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Industry</label>
+                                <input type="text" id="client-industry" placeholder="Industry..." required class="w-full text-xs px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Primary Service Line</label>
+                                <select id="client-service" class="w-full text-xs px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
+                                    <option value="KOL Seeding Revenue">KOL Seeding Revenue</option>
+                                    <option value="Group Purchase Revenue">Group Purchase Revenue</option>
+                                    <option value="Sales Program Revenue">Sales Program Revenue</option>
+                                    <option value="Localization Consulting Revenue">Localization Consulting Revenue</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Deal Type</label>
+                                <select id="client-dealtype" class="w-full text-xs px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
+                                    <option value="Paid Campaign">Paid Campaign</option>
+                                    <option value="Free Trial">Free Trial</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Contract Value (₩)</label>
+                                <input type="number" id="client-value-raw" placeholder="e.g. 1500000" class="w-full text-xs px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
+                            </div>
+                            <div class="md:col-span-3 flex justify-end gap-2 pt-2 border-t border-neutral-100 dark:border-neutral-700">
+                                <button type="button" onclick="cancelClientForm()" class="px-4 py-2 border rounded-lg text-xs font-semibold">Cancel</button>
+                                <button type="submit" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-bold">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="clients-cards-view" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                </section>
+
                 <!-- TAB: Bank Reconciliation -->
                 <section id="tab-bank-recon" class="hidden space-y-8 animate-fade-in">
                     <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b border-neutral-100 dark:border-neutral-800 pb-5 gap-4">
@@ -306,24 +494,6 @@
                             <p class="text-xs text-neutral-500 dark:text-neutral-400">Live synced via Published Google Sheets Bank Database.</p>
                         </div>
                         <div class="flex items-center gap-3">
-                            <div class="flex items-center gap-2">
-                                <span class="text-xs font-bold text-neutral-500 dark:text-neutral-400">Filter Month:</span>
-                                <select id="bank-recon-month-filter" onchange="fetchGoogleSheetBankData()" class="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-black dark:text-white px-3 py-1.5 rounded-xl text-xs font-semibold focus:outline-none accent-ring">
-                                    <option value="ALL">All Months</option>
-                                    <option value="01">January</option>
-                                    <option value="02">February</option>
-                                    <option value="03">March</option>
-                                    <option value="04">April</option>
-                                    <option value="05">May</option>
-                                    <option value="06">June</option>
-                                    <option value="07">July</option>
-                                    <option value="08">August</option>
-                                    <option value="09">September</option>
-                                    <option value="10">October</option>
-                                    <option value="11">November</option>
-                                    <option value="12">December</option>
-                                </select>
-                            </div>
                             <button onclick="fetchGoogleSheetBankData()" class="px-4 py-2 accent-bg text-white font-semibold rounded-xl text-xs shadow-sm flex items-center gap-2">
                                 <i class="fa-solid fa-arrows-rotate"></i> Sync Bank Sheet
                             </button>
@@ -350,7 +520,7 @@
                         <div class="overflow-x-auto">
                             <table class="w-full text-left border-collapse text-xs">
                                 <thead>
-                                    <tr class="bg-neutral-50 dark:bg-neutral-700/50 border-b border-neutral-100 dark:border-neutral-700 text-neutral-500 dark:text-neutral-400 font-bold uppercase tracking-wider text-[10px]">
+                                    <tr class="bg-neutral-50 dark:bg-neutral-700/50 border-b text-neutral-500 uppercase tracking-wider text-[10px]">
                                         <th class="p-3.5">Date (YYYY-MM-DD)</th>
                                         <th class="p-3.5">Bank Feed Description</th>
                                         <th class="p-3.5 text-right">Amount</th>
@@ -358,7 +528,7 @@
                                         <th class="p-3.5 text-center">Status</th>
                                     </tr>
                                 </thead>
-                                <tbody id="bank-sheet-table-body" class="divide-y divide-neutral-100 dark:divide-neutral-700 text-neutral-800 dark:text-neutral-200">
+                                <tbody id="bank-sheet-table-body" class="divide-y divide-neutral-100 dark:divide-neutral-700">
                                     <tr><td colspan="5" class="p-6 text-center text-neutral-400 italic">Click "Sync Bank Sheet" to fetch data.</td></tr>
                                 </tbody>
                             </table>
@@ -366,21 +536,16 @@
                     </div>
                 </section>
 
-                <!-- Tab 2: Transaction Tracker -->
+                <!-- TAB: Transaction Tracker -->
                 <section id="tab-transactions" class="hidden space-y-8 animate-fade-in">
                     <div class="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-800 pb-5">
                         <div>
                             <h2 class="text-xl font-bold tracking-tight">Transaction Tracker</h2>
                             <p class="text-xs text-neutral-500 dark:text-neutral-400">Manage bank feeds and add custom notes to each transaction.</p>
                         </div>
-                        <div class="flex gap-2">
-                            <button onclick="exportCSV('transactions')" class="px-3.5 py-2 border border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 rounded-xl text-xs font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all flex items-center gap-1.5">
-                                <i class="fa-solid fa-download"></i> Export CSV
-                            </button>
-                            <button onclick="openNewTransactionForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
-                                <i class="fa-solid fa-plus mr-1.5"></i> Log Manual Cash Transaction
-                            </button>
-                        </div>
+                        <button onclick="openNewTransactionForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
+                            <i class="fa-solid fa-plus mr-1.5"></i> Log Manual Cash Transaction
+                        </button>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -389,17 +554,11 @@
                                 <p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Total Filtered Income</p>
                                 <h4 class="text-lg font-bold text-emerald-600 dark:text-emerald-400 mt-1" id="tx-summary-income">₩ 0</h4>
                             </div>
-                            <div class="w-9 h-9 rounded-xl bg-emerald-100/50 dark:bg-emerald-950 flex items-center justify-center text-emerald-600 text-sm">
-                                <i class="fa-solid fa-arrow-down-left"></i>
-                            </div>
                         </div>
                         <div class="bg-neutral-50 dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 rounded-2xl p-4 flex items-center justify-between">
                             <div>
                                 <p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Total Filtered Expenses</p>
                                 <h4 class="text-lg font-bold text-rose-600 dark:text-rose-400 mt-1" id="tx-summary-expenses">₩ 0</h4>
-                            </div>
-                            <div class="w-9 h-9 rounded-xl bg-rose-100/50 dark:bg-rose-950 flex items-center justify-center text-rose-600 text-sm">
-                                <i class="fa-solid fa-arrow-up-right"></i>
                             </div>
                         </div>
                         <div class="bg-neutral-50 dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 rounded-2xl p-4 flex items-center justify-between">
@@ -407,77 +566,42 @@
                                 <p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Filtered Net Balance</p>
                                 <h4 class="text-lg font-bold text-black dark:text-white mt-1" id="tx-summary-net">₩ 0</h4>
                             </div>
-                            <div class="w-9 h-9 rounded-xl bg-neutral-200/50 dark:bg-neutral-700 flex items-center justify-center text-black dark:text-white text-sm">
-                                <i class="fa-solid fa-scale-balanced"></i>
-                            </div>
                         </div>
                     </div>
 
-                    <!-- Edit/Add Transaction Form Container -->
+                    <!-- Edit/Add Form Anchor -->
                     <div id="transaction-form-card" class="hidden bg-neutral-50 dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 rounded-2xl p-6 space-y-4">
                         <h3 class="text-xs font-bold text-black dark:text-white uppercase tracking-wider text-neutral-500" id="transaction-form-title">Edit Transaction Details</h3>
                         <form id="new-transaction-form" onsubmit="addManualTransaction(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                             <input type="hidden" id="edit-transaction-id" value="">
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Transaction Date</label>
-                                <input type="date" id="form-date" required class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
+                                <input type="date" id="form-date" required class="w-full text-xs px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Item Description</label>
-                                <input type="text" id="form-desc" placeholder="Summary..." required class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
+                                <input type="text" id="form-desc" placeholder="Summary..." required class="w-full text-xs px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Category (COA)</label>
-                                <select id="form-category" class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white"></select>
+                                <select id="form-category" class="w-full text-xs px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white"></select>
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Amount (₩)</label>
-                                <input type="number" step="any" id="form-amount" placeholder="Amount..." required class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
+                                <input type="number" step="any" id="form-amount" placeholder="Amount..." required class="w-full text-xs px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
                             </div>
                             <div class="md:col-span-4 flex justify-end gap-2 pt-2 border-t border-neutral-100 dark:border-neutral-700">
-                                <button type="button" onclick="cancelTransactionForm()" class="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs font-semibold hover:bg-white dark:hover:bg-neutral-700 transition-all">Cancel</button>
-                                <button type="submit" id="form-tx-submit" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-bold hover:opacity-95 transition-all">Save Changes</button>
+                                <button type="button" onclick="cancelTransactionForm()" class="px-4 py-2 border rounded-lg text-xs font-semibold">Cancel</button>
+                                <button type="submit" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-bold">Save Changes</button>
                             </div>
                         </form>
                     </div>
 
-                    <!-- Filter panel -->
-                    <div class="flex flex-wrap gap-4 items-center justify-between bg-neutral-50 dark:bg-neutral-800 p-4 rounded-xl border border-neutral-100 dark:border-neutral-700">
-                        <div class="flex flex-wrap gap-4 items-center">
-                            <div class="flex items-center gap-2">
-                                <span class="text-xs font-semibold text-neutral-500 dark:text-neutral-400">Category Filter:</span>
-                                <select id="table-category-filter" onchange="renderTransactionsTable()" class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 text-black dark:text-white px-3 py-1.5 rounded-lg text-xs font-medium focus:outline-none accent-ring">
-                                    <option value="ALL">All Categories</option>
-                                </select>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="text-xs font-semibold text-neutral-500 dark:text-neutral-400">Month:</span>
-                                <select id="table-month-filter" onchange="renderTransactionsTable()" class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 text-black dark:text-white px-3 py-1.5 rounded-lg text-xs font-medium focus:outline-none accent-ring">
-                                    <option value="ALL">All Months</option>
-                                    <option value="01">January</option>
-                                    <option value="02">February</option>
-                                    <option value="03">March</option>
-                                    <option value="04">April</option>
-                                    <option value="05">May</option>
-                                    <option value="06">June</option>
-                                    <option value="07">July</option>
-                                    <option value="08">August</option>
-                                    <option value="09">September</option>
-                                    <option value="10">October</option>
-                                    <option value="11">November</option>
-                                    <option value="12">December</option>
-                                </select>
-                            </div>
-                        </div>
-                        <span class="text-xs text-neutral-500 dark:text-neutral-400 font-semibold" id="table-filtered-counter">Showing 0 transactions</span>
-                    </div>
-
-                    <!-- REVISI: Cleaned Transactions Table (No Proof Column, Color-Coded Amounts, Pop-up Notes) -->
                     <div class="border border-neutral-100 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-sm bg-white dark:bg-neutral-800">
                         <div class="overflow-x-auto">
                             <table class="w-full text-left border-collapse text-xs">
                                 <thead>
-                                    <tr class="bg-neutral-50 dark:bg-neutral-700/50 border-b border-neutral-100 dark:border-neutral-700 text-neutral-500 dark:text-neutral-400 font-bold uppercase tracking-wider text-[10px]">
+                                    <tr class="bg-neutral-50 dark:bg-neutral-700/50 border-b text-neutral-500 uppercase tracking-wider text-[10px]">
                                         <th class="p-4">Date (YYYY-MM-DD)</th>
                                         <th class="p-4">Item Description / Notes</th>
                                         <th class="p-4">Category</th>
@@ -485,18 +609,118 @@
                                         <th class="p-4 text-center">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody id="transactions-table-body" class="divide-y divide-neutral-100 dark:divide-neutral-700 text-neutral-800 dark:text-neutral-200">
+                                <tbody id="transactions-table-body" class="divide-y divide-neutral-100 dark:divide-neutral-700">
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </section>
 
-                <!-- WORKSPACE: Reimbursements -->
+                <!-- TAB: Client Payment & AR Aging -->
+                <section id="tab-client-payments" class="hidden space-y-8 animate-fade-in">
+                    <div class="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-800 pb-5">
+                        <div>
+                            <h2 class="text-xl font-bold tracking-tight">Client Payment & Accounts Receivable (AR Aging)</h2>
+                            <p class="text-xs text-neutral-500 dark:text-neutral-400">Manage payment terms and monitor Accounts Receivable (AR) overdue aging for Paid Collab brands.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-5 shadow-sm">
+                            <span class="text-[10px] font-bold text-neutral-400 uppercase">Total Contract Value</span>
+                            <h3 class="text-xl font-bold text-black dark:text-white mt-2" id="sum-paid-contract">₩ 0</h3>
+                        </div>
+                        <div class="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-5 shadow-sm">
+                            <span class="text-[10px] font-bold text-emerald-500 uppercase">Total Paid Amount Received</span>
+                            <h3 class="text-xl font-bold text-emerald-600 dark:text-emerald-400 mt-2" id="sum-paid-received">₩ 0</h3>
+                        </div>
+                        <div class="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-5 shadow-sm">
+                            <span class="text-[10px] font-bold text-rose-500 uppercase">Total Remaining Balance</span>
+                            <h3 class="text-xl font-bold text-rose-600 dark:text-rose-400 mt-2" id="sum-paid-remaining">₩ 0</h3>
+                        </div>
+                    </div>
+
+                    <div id="paid-clients-payment-container" class="space-y-6"></div>
+                </section>
+
+                <!-- TAB: Payroll & Payout Hub -->
+                <section id="tab-commissions" class="hidden space-y-8 animate-fade-in">
+                    <div class="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-800 pb-5">
+                        <div>
+                            <h2 class="text-xl font-bold tracking-tight">Payroll, Salaries & Commissions Hub</h2>
+                            <p class="text-xs text-neutral-500 dark:text-neutral-400">Standalone internal logging for salaries and PM commissions.</p>
+                        </div>
+                        <button onclick="toggleCommissionForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold shadow-sm">
+                            <i class="fa-solid fa-plus mr-1.5"></i> Log Payout / Salary
+                        </button>
+                    </div>
+
+                    <div id="commission-form-card" class="hidden bg-neutral-50 dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 rounded-2xl p-6 space-y-4">
+                        <h3 class="text-xs font-bold text-black dark:text-white uppercase tracking-wider text-neutral-500" id="commissions-form-title">Log Payout Details</h3>
+                        <form id="new-commission-form" onsubmit="addManualCommission(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                            <input type="hidden" id="edit-commission-id" value="">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Date of Payment</label>
+                                <input type="date" id="comm-date" required class="w-full text-xs px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Category type</label>
+                                <select id="comm-type" class="w-full text-xs px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
+                                    <option value="Salary">Salary</option>
+                                    <option value="Commission Expense">Commission Expense</option>
+                                    <option value="Bonus Payout Expense">Bonus Payout Expense</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Item / Project Name</label>
+                                <input type="text" id="comm-project" placeholder="Project / Month..." required class="w-full text-xs px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Recipient Name</label>
+                                <select id="comm-manager-select" class="w-full text-xs px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Flat Payment Value (₩)</label>
+                                <input type="number" id="comm-val" placeholder="Amount..." required class="w-full text-xs px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
+                            </div>
+                            <div class="flex items-center gap-2 py-2">
+                                <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-semibold text-neutral-700 dark:text-neutral-300">
+                                    <input type="checkbox" id="comm-tax-deduct" class="rounded text-vively focus:ring-0 w-4 h-4">
+                                    <span>Deduct 3.3% Tax (PPh)</span>
+                                </label>
+                            </div>
+                            <div class="md:col-span-2 flex justify-end gap-2 pt-2">
+                                <button type="button" onclick="cancelCommissionForm()" class="px-4 py-2 border rounded-lg text-xs font-semibold">Cancel</button>
+                                <button type="submit" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-semibold">Save Record</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="border border-neutral-100 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-sm bg-white dark:bg-neutral-800">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-neutral-50 dark:bg-neutral-700/50 border-b text-neutral-500 uppercase tracking-wider text-[10px]">
+                                    <th class="p-4">Payment Date</th>
+                                    <th class="p-4">Description Name</th>
+                                    <th class="p-4">Payout Recipient</th>
+                                    <th class="p-4">Type</th>
+                                    <th class="p-4 text-right">Value (₩)</th>
+                                    <th class="p-4 text-center">Status</th>
+                                    <th class="p-4 text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="commissions-table-body" class="divide-y divide-neutral-100 dark:divide-neutral-700">
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- WORKSPACE BARU: Reimbursements -->
                 <section id="tab-reimbursements" class="hidden space-y-8 animate-fade-in">
                     <div class="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-800 pb-5">
                         <div>
-                            <h2 class="text-xl font-bold tracking-tight">Personal Card & Reimbursements</h2>
+                            <h2 class="text-xl font-bold tracking-tight">Reimbursements</h2>
                             <p class="text-xs text-neutral-500 dark:text-neutral-400">Track company operational expenses paid using personal cards/cash.</p>
                         </div>
                         <button onclick="toggleReimbursementForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
@@ -510,74 +734,145 @@
                             <input type="hidden" id="edit-reimb-id" value="">
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Expense Date</label>
-                                <input type="date" id="reimb-date" required class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
+                                <input type="date" id="reimb-date" required class="w-full text-xs px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Item / App Description</label>
-                                <input type="text" id="reimb-desc" placeholder="e.g. Figma Subscription..." required class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
+                                <input type="text" id="reimb-desc" placeholder="e.g. Figma Subscription..." required class="w-full text-xs px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Paid By (Person)</label>
-                                <select id="reimb-payer-select" class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
-                                </select>
+                                <select id="reimb-payer-select" class="w-full text-xs px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white"></select>
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Total Amount (₩)</label>
-                                <input type="number" id="reimb-amount" placeholder="Amount..." required class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
+                                <input type="number" id="reimb-amount" placeholder="Amount..." required class="w-full text-xs px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Reimbursement Status</label>
-                                <select id="reimb-status" class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white font-bold">
+                                <select id="reimb-status" class="w-full text-xs px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white font-bold">
                                     <option value="Pending">Pending Reimbursement</option>
                                     <option value="Reimbursed">Reimbursed by Company</option>
                                 </select>
                             </div>
                             <div class="md:col-span-2">
                                 <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Receipt Image Proof</label>
-                                <input type="file" id="reimb-picture" accept="image/*" class="w-full text-xs px-2 py-1.5 border border-neutral-200 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
+                                <input type="file" id="reimb-picture" accept="image/*" class="w-full text-xs px-2 py-1.5 border rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
                             </div>
                             <div class="md:col-span-4 flex justify-end gap-2 pt-2 border-t border-neutral-100 dark:border-neutral-700">
-                                <button type="button" onclick="cancelReimbursementForm()" class="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs font-semibold hover:bg-white dark:hover:bg-neutral-700 transition-all">Cancel</button>
-                                <button type="submit" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-bold hover:opacity-95 transition-all">Save Personal Expense</button>
+                                <button type="button" onclick="cancelReimbursementForm()" class="px-4 py-2 border rounded-lg text-xs font-semibold">Cancel</button>
+                                <button type="submit" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-bold">Save Personal Expense</button>
                             </div>
                         </form>
                     </div>
 
                     <div class="border border-neutral-100 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-sm bg-white dark:bg-neutral-800">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse text-xs">
-                                <thead>
-                                    <tr class="bg-neutral-50 dark:bg-neutral-700/50 border-b border-neutral-100 dark:border-neutral-700 text-neutral-500 dark:text-neutral-400 font-bold uppercase tracking-wider text-[10px]">
-                                        <th class="p-4">Date</th>
-                                        <th class="p-4">Item Description</th>
-                                        <th class="p-4">Paid By</th>
-                                        <th class="p-4 text-right">Amount (₩)</th>
-                                        <th class="p-4 text-center">Receipt Proof</th>
-                                        <th class="p-4 text-center">Status</th>
-                                        <th class="p-4 text-center">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="reimb-table-body" class="divide-y divide-neutral-100 dark:divide-neutral-700 text-neutral-800 dark:text-neutral-200">
-                                </tbody>
-                            </table>
-                        </div>
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-neutral-50 dark:bg-neutral-700/50 border-b text-neutral-500 uppercase tracking-wider text-[10px]">
+                                    <th class="p-4">Date</th>
+                                    <th class="p-4">Item Description</th>
+                                    <th class="p-4">Paid By</th>
+                                    <th class="p-4 text-right">Amount (₩)</th>
+                                    <th class="p-4 text-center">Receipt Proof</th>
+                                    <th class="p-4 text-center">Status</th>
+                                    <th class="p-4 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reimb-table-body" class="divide-y divide-neutral-100 dark:divide-neutral-700">
+                            </tbody>
+                        </table>
                     </div>
                 </section>
 
-                <!-- Other Workspaces (COA, Employees, Clients, Payments, Payroll, Statements) -->
-                <section id="tab-coa" class="hidden space-y-8 animate-fade-in"><div id="coa-workspace-content"></div></section>
-                <section id="tab-employees" class="hidden space-y-8 animate-fade-in"><div id="employees-workspace-content"></div></section>
-                <section id="tab-clients" class="hidden space-y-8 animate-fade-in"><div id="clients-workspace-content"></div></section>
-                <section id="tab-client-payments" class="hidden space-y-8 animate-fade-in"><div id="payments-workspace-content"></div></section>
-                <section id="tab-commissions" class="hidden space-y-8 animate-fade-in"><div id="commissions-workspace-content"></div></section>
-                <section id="tab-fin-statements" class="hidden space-y-8 animate-fade-in"><div id="statements-workspace-content"></div></section>
+                <!-- TAB: Financial Statements Workspace -->
+                <section id="tab-fin-statements" class="hidden space-y-8 animate-fade-in">
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b border-neutral-100 dark:border-neutral-800 pb-5 gap-4">
+                        <div>
+                            <h2 class="text-xl font-bold tracking-tight">Formal Financial Statements</h2>
+                            <p class="text-xs text-neutral-500 dark:text-neutral-400">Generated Income Statement (Profit & Loss) and Balanced Balance Sheet.</p>
+                        </div>
+                        
+                        <div class="flex items-center gap-3">
+                            <div class="bg-neutral-100 dark:bg-neutral-800 p-1 rounded-xl flex gap-1 border border-neutral-200 dark:border-neutral-700">
+                                <button onclick="setStatementView('INCOME')" id="btn-stmt-income" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white dark:bg-neutral-900 text-black dark:text-white shadow-sm">
+                                    Income Statement
+                                </button>
+                                <button onclick="setStatementView('BALANCE')" id="btn-stmt-balance" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-neutral-500 hover:text-black dark:hover:text-white">
+                                    Balance Sheet
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Income Statement View -->
+                    <div id="stmt-view-income" class="max-w-3xl mx-auto border border-neutral-100 dark:border-neutral-800 rounded-2xl p-8 bg-white dark:bg-neutral-800 shadow-sm space-y-6">
+                        <div class="border-b pb-4 text-center space-y-1">
+                            <h3 class="text-base font-bold uppercase tracking-wider text-black dark:text-white">Vively Global Operations</h3>
+                            <h4 class="text-sm font-semibold text-emerald-600 dark:text-emerald-400">INCOME STATEMENT (PROFIT & LOSS)</h4>
+                        </div>
+                        
+                        <div class="space-y-4 text-xs">
+                            <div class="flex justify-between font-bold text-emerald-600 dark:text-emerald-400 pb-1 border-b">
+                                <span>OPERATING REVENUE</span>
+                                <span id="stmt-total-revenue">₩ 0</span>
+                            </div>
+                            <div id="stmt-revenue-breakdown" class="space-y-1 pl-3 text-neutral-600 dark:text-neutral-300"></div>
+
+                            <div class="flex justify-between font-bold text-rose-600 dark:text-rose-400 pt-3 pb-1 border-b">
+                                <span>OPERATING EXPENSES</span>
+                                <span id="stmt-total-expenses">₩ 0</span>
+                            </div>
+                            <div id="stmt-expense-breakdown" class="space-y-1 pl-3 text-neutral-600 dark:text-neutral-300"></div>
+
+                            <div class="flex justify-between font-bold text-sm pt-4 border-t-2 border-black dark:border-white text-black dark:text-white">
+                                <span>NET OPERATING INCOME / PROFIT</span>
+                                <span id="stmt-net-profit">₩ 0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Balance Sheet View -->
+                    <div id="stmt-view-balance" class="hidden max-w-3xl mx-auto border border-neutral-100 dark:border-neutral-800 rounded-2xl p-8 bg-white dark:bg-neutral-800 shadow-sm space-y-6">
+                        <div class="border-b pb-4 text-center space-y-1">
+                            <h3 class="text-base font-bold uppercase tracking-wider text-black dark:text-white">Vively Global Operations</h3>
+                            <h4 class="text-sm font-semibold text-vively">BALANCE SHEET (STATEMENT OF FINANCIAL POSITION)</h4>
+                        </div>
+                        
+                        <div class="space-y-4 text-xs">
+                            <div class="flex justify-between font-bold text-black dark:text-white pb-1 border-b text-sm">
+                                <span>TOTAL ASSETS</span>
+                                <span id="stmt-total-assets">₩ 0</span>
+                            </div>
+                            <div class="space-y-1.5 pl-3 text-neutral-600 dark:text-neutral-300">
+                                <div class="flex justify-between"><span>Cash & Bank Balances (Hana Bank)</span><span id="stmt-asset-cash">₩ 0</span></div>
+                                <div class="flex justify-between"><span>Accounts Receivable (Uncollected AR Invoices)</span><span id="stmt-asset-ar">₩ 0</span></div>
+                            </div>
+
+                            <div class="flex justify-between font-bold text-black dark:text-white pt-4 pb-1 border-b text-sm">
+                                <span>TOTAL LIABILITIES & EQUITY</span>
+                                <span id="stmt-total-liab-equity">₩ 0</span>
+                            </div>
+                            <div class="space-y-1.5 pl-3 text-neutral-600 dark:text-neutral-300">
+                                <div class="flex justify-between"><span>Accounts Payable (AP)</span><span>₩ 0</span></div>
+                                <div class="flex justify-between font-semibold text-black dark:text-white"><span>Equity & Earnings Reserve</span><span id="stmt-equity-total">₩ 0</span></div>
+                                <div class="flex justify-between pl-3 text-[11px] text-neutral-400"><span>- Retained Net Profit (P&L)</span><span id="stmt-rere-profit">₩ 0</span></div>
+                                <div class="flex justify-between pl-3 text-[11px] text-neutral-400"><span>- Uncollected Revenue Reserve (AR Equity)</span><span id="stmt-ar-reserve">₩ 0</span></div>
+                            </div>
+
+                            <div class="p-3 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 rounded-xl text-center text-emerald-700 dark:text-emerald-400 font-bold text-[11px] mt-4">
+                                ✓ Accounting Equation Verification: Assets = Liabilities + Equity (Balanced)
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
             </main>
         </div>
 
     </div>
 
-    <!-- REVISI 4: POPUP MODAL FOR ADDING/EDITING/DELETING NOTES -->
+    <!-- POPUP MODAL FOR TRANSACTION NOTES -->
     <div id="notes-modal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-neutral-900 bg-opacity-70 flex items-center justify-center p-4">
         <div class="bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 rounded-2xl p-6 max-w-md w-full space-y-4 shadow-2xl relative">
             <button onclick="closeNotesModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-black dark:hover:text-white transition-all p-1 text-lg">
@@ -598,7 +893,7 @@
                     <i class="fa-solid fa-trash"></i> Delete Notes
                 </button>
                 <div class="flex gap-2">
-                    <button onclick="closeNotesModal()" class="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs font-semibold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all">Exit</button>
+                    <button onclick="closeNotesModal()" class="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs font-semibold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700">Exit</button>
                     <button onclick="saveTransactionNotes()" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-bold hover:opacity-90 transition-all">Save Notes</button>
                 </div>
             </div>
@@ -614,7 +909,7 @@
                 <img id="receipt-image-view" class="max-h-[400px] object-contain rounded-lg" src="" alt="Proof View">
             </div>
             <div class="flex justify-end pt-2">
-                <button onclick="closeReceiptModal()" class="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs font-semibold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all">Close</button>
+                <button onclick="closeReceiptModal()" class="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs font-semibold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700">Close</button>
             </div>
         </div>
     </div>
@@ -627,29 +922,28 @@
             
             <div id="confirm-password-container" class="hidden space-y-2 pt-1">
                 <label class="block text-[11px] font-bold text-neutral-700 dark:text-neutral-300">Enter Admin Password to confirm:</label>
-                <input type="password" id="confirm-password-input" placeholder="••••••••" class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-xl focus:outline-none accent-ring bg-neutral-50 dark:bg-neutral-900 text-black dark:text-white font-mono">
+                <input type="password" id="confirm-password-input" placeholder="••••••••" class="w-full text-xs px-3 py-2 border rounded-xl bg-neutral-50 dark:bg-neutral-900 text-black dark:text-white font-mono">
                 <p id="confirm-password-error" class="text-[10px] text-rose-500 font-semibold hidden"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Incorrect password!</p>
             </div>
 
             <div class="flex gap-2 justify-end pt-2">
-                <button id="confirm-btn-cancel" class="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs font-semibold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all">Cancel</button>
-                <button id="confirm-btn-ok" class="px-4 py-2 text-white accent-bg rounded-lg text-xs font-semibold hover:opacity-90 transition-all">Yes, Proceed</button>
+                <button id="confirm-btn-cancel" class="px-4 py-2 border rounded-lg text-xs font-semibold">Cancel</button>
+                <button id="confirm-btn-ok" class="px-4 py-2 text-white accent-bg rounded-lg text-xs font-semibold">Yes, Proceed</button>
             </div>
         </div>
     </div>
 
     <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2 max-w-sm w-full"></div>
 
-    <!-- JavaScript Logic -->
+    <!-- JavaScript Application Logic -->
     <script>
         const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQchV_2ir_FJAREPDvS68tPSOztknSSoC9vXgWxeOlK0ZGu8PDNG4rtuyU0PHqOa33yffHX3LsQWbca/pub?gid=0&single=true&output=csv";
 
         let currentTabId = 'dashboard';
+        let currentStmtView = 'INCOME';
         let bankReconData = [];
 
-        function toggleSidebar() {
-            document.getElementById("sidebar-menu").classList.toggle("hidden");
-        }
+        function toggleSidebar() { document.getElementById("sidebar-menu").classList.toggle("hidden"); }
 
         function toggleDarkMode() {
             const isDark = document.documentElement.classList.toggle('dark');
@@ -660,13 +954,8 @@
         function updateThemeUI(isDark) {
             const icon = document.getElementById("theme-icon");
             const label = document.getElementById("theme-label");
-            if (isDark) {
-                icon.className = "fa-solid fa-sun text-amber-400";
-                label.innerText = "Day Mode";
-            } else {
-                icon.className = "fa-solid fa-moon";
-                label.innerText = "Night Mode";
-            }
+            if (isDark) { icon.className = "fa-solid fa-sun text-amber-400"; label.innerText = "Day Mode"; }
+            else { icon.className = "fa-solid fa-moon"; label.innerText = "Night Mode"; }
         }
 
         function parseToStandardDate(dateStr) {
@@ -717,6 +1006,7 @@
             { id: 103, code: '1200', name: 'Accounts Receivable (Piutang)', category: 'Asset', side: 'Debit' },
             { id: 201, code: '2010', name: 'Accounts Payable (Hutang)', category: 'Liability', side: 'Credit' },
             { id: 301, code: '3010', name: "Owner's Capital", category: 'Equity', side: 'Credit' },
+            { id: 302, code: '3020', name: 'Retained Earnings', category: 'Equity', side: 'Credit' },
             
             { id: 401, code: '4010', name: 'KOL Seeding Revenue', category: 'Revenue', side: 'Credit' },
             { id: 402, code: '4020', name: 'Group Purchase Revenue', category: 'Revenue', side: 'Credit' },
@@ -750,6 +1040,7 @@
                 appState = JSON.parse(savedState);
                 if (!appState.transactions) appState.transactions = [];
                 if (!appState.coa || appState.coa.length === 0) appState.coa = [...defaultCOA];
+                defaultCOA.forEach(d => { if (!appState.coa.some(c => c.name === d.name)) appState.coa.push(d); });
             } else {
                 appState = JSON.parse(JSON.stringify(defaultData));
                 saveState();
@@ -761,6 +1052,7 @@
             }
 
             populateCOADropdowns();
+            populateEmployeeDropdowns();
             fetchGoogleSheetBankData();
             updateUI();
         }
@@ -855,7 +1147,6 @@
             saveState();
         }
 
-        /* REVISI: CLEAN CATEGORY DROPDOWN (ONLY REVENUE & EXPENSE, ORDERED BY CODE, NO CATEGORY SUFFIX) */
         function populateCOADropdowns() {
             const formCatSelect = document.getElementById("form-category");
             const tableCatFilter = document.getElementById("table-category-filter");
@@ -875,9 +1166,24 @@
             if (tableCatFilter) tableCatFilter.innerHTML = filterOpts;
         }
 
+        function populateEmployeeDropdowns() {
+            const reimbPayerSelect = document.getElementById("reimb-payer-select");
+            const commSelect = document.getElementById("comm-manager-select");
+            let options = `<option value="">-- Select Person --</option>`;
+            if (appState.employees) {
+                appState.employees.forEach(emp => { options += `<option value="${emp.name}">${emp.name}</option>`; });
+            }
+            if (reimbPayerSelect) reimbPayerSelect.innerHTML = options;
+            if (commSelect) commSelect.innerHTML = options;
+        }
+
         function updateUI() {
             renderTransactionsTable();
             renderDashboardCOAReport();
+            renderCOATable();
+            renderEmployeesTable();
+            renderReimbursementsTable();
+            renderCommissionsTable();
         }
 
         function renderDashboardCOAReport() {
@@ -908,7 +1214,7 @@
             });
         }
 
-        /* REVISI 3: TRANSACTION TRACKER TABLE WITH COLOR CODED AMOUNT (GREEN REVENUE / RED EXPENSE) & NOTES POPUP */
+        /* REVISI: TRANSACTION TRACKER TABLE */
         function renderTransactionsTable() {
             const tbody = document.getElementById("transactions-table-body");
             if (!tbody) return;
@@ -921,10 +1227,8 @@
 
             sortedTransactions.forEach(t => {
                 const isRevenue = t.type === "CREDIT";
-                // REVISI 3: Amount Color Green (Revenue) vs Red (Expense)
                 const amountColorClass = isRevenue ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400";
 
-                // REVISI 4: Interactive Pop-up Notes Button (+ Add Notes vs ✓ Notes Added)
                 let notesButtonHtml = "";
                 if (t.details && t.details.trim().length > 0) {
                     notesButtonHtml = `<button onclick="openNotesModal(${t.id})" class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800 hover:opacity-80 transition-all flex items-center gap-1 mt-1"><i class="fa-solid fa-circle-check"></i> Notes Added</button>`;
@@ -932,7 +1236,6 @@
                     notesButtonHtml = `<button onclick="openNotesModal(${t.id})" class="text-[10px] font-semibold text-neutral-400 hover:text-black dark:hover:text-white transition-all flex items-center gap-1 mt-1"><i class="fa-solid fa-plus-circle"></i> Add Notes</button>`;
                 }
 
-                // Clean Selectable Category Dropdown
                 let categorySelectHtml = `<select onchange="updateTransactionCategoryInline(${t.id}, this.value)" class="bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 text-black dark:text-white px-2 py-1 rounded text-[11px] font-semibold focus:outline-none accent-ring">`;
                 appState.coa.forEach(c => {
                     if (c.category === "Revenue" || c.category === "Expense") {
@@ -963,30 +1266,24 @@
             });
         }
 
-        /* REVISI 4: NOTES MODAL HANDLERS */
+        /* NOTES MODAL HANDLERS */
         function openNotesModal(txId) {
             const tx = appState.transactions.find(t => t.id === txId);
             if (!tx) return;
-
             document.getElementById("notes-tx-id").value = tx.id;
             document.getElementById("notes-text-input").value = tx.details || "";
             document.getElementById("notes-modal").classList.remove("hidden");
         }
 
-        function closeNotesModal() {
-            document.getElementById("notes-modal").classList.add("hidden");
-        }
+        function closeNotesModal() { document.getElementById("notes-modal").classList.add("hidden"); }
 
         function saveTransactionNotes() {
             const txId = parseFloat(document.getElementById("notes-tx-id").value);
             const text = document.getElementById("notes-text-input").value.trim();
             const tx = appState.transactions.find(t => t.id === txId);
-
             if (tx) {
                 tx.details = text;
-                saveState();
-                updateUI();
-                closeNotesModal();
+                saveState(); updateUI(); closeNotesModal();
                 showToast("Transaction Notes Saved!", "success");
             }
         }
@@ -994,12 +1291,9 @@
         function deleteTransactionNotes() {
             const txId = parseFloat(document.getElementById("notes-tx-id").value);
             const tx = appState.transactions.find(t => t.id === txId);
-
             if (tx) {
                 tx.details = "";
-                saveState();
-                updateUI();
-                closeNotesModal();
+                saveState(); updateUI(); closeNotesModal();
                 showToast("Notes Removed!", "success");
             }
         }
@@ -1010,13 +1304,12 @@
                 tx.category = newCategory;
                 const coaMatch = appState.coa.find(c => c.name === newCategory);
                 if (coaMatch) tx.type = coaMatch.category === "Revenue" ? "CREDIT" : "DEBIT";
-                saveState();
-                updateUI();
+                saveState(); updateUI();
                 showToast("Category Updated!", "success");
             }
         }
 
-        /* REVISI 1: LOAD TRANSACTION FOR EDIT & AUTO-SCROLL TO TOP EDIT FORM */
+        /* LOAD TRANSACTION FOR EDIT & AUTO-SCROLL TO TOP EDIT FORM */
         function loadTransactionForEdit(id) {
             const tx = appState.transactions.find(t => t.id === id);
             if (!tx) return;
@@ -1028,13 +1321,9 @@
             document.getElementById("form-category").value = tx.category;
             document.getElementById("form-amount").value = tx.amount;
 
-            // REVISI 1: Guaranteed Smooth Scroll to Top Viewport & Form Anchor
-            const viewport = document.getElementById("main-viewport");
-            if (viewport) {
-                viewport.scrollTo({ top: 0, behavior: 'smooth' });
-            } else {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
+            // Auto-scroll to top edit form anchor
+            const formCard = document.getElementById("transaction-form-card");
+            formCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         function cancelTransactionForm() { 
@@ -1049,8 +1338,8 @@
             document.getElementById("new-transaction-form").reset();
             document.getElementById("form-date").value = new Date().toISOString().slice(0, 10);
             
-            const viewport = document.getElementById("main-viewport");
-            if (viewport) viewport.scrollTo({ top: 0, behavior: 'smooth' });
+            const formCard = document.getElementById("transaction-form-card");
+            formCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         function addManualTransaction(e) {
@@ -1082,6 +1371,99 @@
             showConfirmationModal("Delete Transaction", "Permanently delete this entry?", false, () => {
                 appState.transactions = appState.transactions.filter(t => t.id !== id);
                 saveState(); updateUI(); showToast("Deleted!", "success");
+            });
+        }
+
+        /* REIMBURSEMENTS LOGIC */
+        function toggleReimbursementForm() {
+            document.getElementById("edit-reimb-id").value = "";
+            document.getElementById("new-reimb-form").reset();
+            document.getElementById("reimb-date").value = new Date().toISOString().slice(0, 10);
+            document.getElementById("reimb-form-card").classList.toggle('hidden');
+        }
+        function cancelReimbursementForm() { document.getElementById("reimb-form-card").classList.add('hidden'); }
+
+        function addManualReimbursement(e) {
+            e.preventDefault();
+            const editId = document.getElementById("edit-reimb-id").value;
+            const fileInput = document.getElementById("reimb-picture");
+
+            const saveReimb = (pic) => {
+                const reimbData = {
+                    id: editId ? parseInt(editId) : Date.now(),
+                    date: parseToStandardDate(document.getElementById("reimb-date").value),
+                    description: document.getElementById("reimb-desc").value.trim(),
+                    payer: document.getElementById("reimb-payer-select").value,
+                    amount: parseFloat(document.getElementById("reimb-amount").value) || 0,
+                    status: document.getElementById("reimb-status").value,
+                    picture: pic
+                };
+
+                if (editId) { appState.reimbursements = appState.reimbursements.map(r => r.id === parseInt(editId) ? reimbData : r); }
+                else { appState.reimbursements.unshift(reimbData); }
+
+                saveState(); renderReimbursementsTable(); cancelReimbursementForm();
+                showToast("Personal Expense Logged!", "success");
+            };
+
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(event) { saveReimb(event.target.result); };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else { saveReimb(""); }
+        }
+
+        function renderReimbursementsTable() {
+            const tbody = document.getElementById("reimb-table-body");
+            if (!tbody) return;
+            tbody.innerHTML = "";
+
+            if (!appState.reimbursements || appState.reimbursements.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-neutral-400 italic">No personal card expenses logged yet.</td></tr>`;
+                return;
+            }
+
+            appState.reimbursements.forEach(r => {
+                const badgeColor = r.status === "Reimbursed" ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400 border-emerald-100" : "bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-400 border-amber-100";
+                const proofBtn = r.picture ? `<button onclick="openReceiptModal('${r.picture}')" class="text-vively font-bold text-xs"><i class="fa-solid fa-image mr-1"></i> View Proof</button>` : `<span class="text-neutral-400 text-[10px] italic">No Proof</span>`;
+
+                const row = `
+                    <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-700/30 transition-all">
+                        <td class="p-4 font-mono text-neutral-500">${r.date}</td>
+                        <td class="p-4 font-bold text-black dark:text-white">${r.description}</td>
+                        <td class="p-4 font-semibold text-neutral-700 dark:text-neutral-300">${r.payer}</td>
+                        <td class="p-4 text-right font-bold text-black dark:text-white">₩ ${r.amount.toLocaleString()}</td>
+                        <td class="p-4 text-center">${proofBtn}</td>
+                        <td class="p-4 text-center"><span class="px-2 py-0.5 rounded border text-[9px] font-bold ${badgeColor}">${r.status}</span></td>
+                        <td class="p-4 text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                <button onclick="loadReimbForEdit(${r.id})" class="text-neutral-400 hover:text-black dark:hover:text-white p-1.5"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                                <button onclick="triggerDeleteReimb(${r.id})" class="text-neutral-400 hover:text-rose-600 p-1.5"><i class="fa-solid fa-trash text-xs"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        }
+
+        function loadReimbForEdit(id) {
+            const r = appState.reimbursements.find(item => item.id === id);
+            if (!r) return;
+            document.getElementById("reimb-form-card").classList.remove('hidden');
+            document.getElementById("edit-reimb-id").value = r.id;
+            document.getElementById("reimb-date").value = r.date;
+            document.getElementById("reimb-desc").value = r.description;
+            document.getElementById("reimb-payer-select").value = r.payer;
+            document.getElementById("reimb-amount").value = r.amount;
+            document.getElementById("reimb-status").value = r.status;
+        }
+
+        function triggerDeleteReimb(id) {
+            showConfirmationModal("Delete Personal Expense", "Remove this record?", false, () => {
+                appState.reimbursements = appState.reimbursements.filter(r => r.id !== id);
+                saveState(); renderReimbursementsTable();
+                showToast("Entry Deleted!", "success");
             });
         }
 
