@@ -860,21 +860,6 @@
             saveState();
         }
 
-        function resolveRevenueCategory(rawServiceName) {
-            if (!rawServiceName) return "KOL Seeding Revenue";
-            let name = rawServiceName.trim();
-            if (!name.toLowerCase().includes("revenue")) { name = `${name} Revenue`; }
-
-            const exactMatch = appState.coa.find(c => c.name.toLowerCase() === name.toLowerCase());
-            if (exactMatch) return exactMatch.name;
-
-            const newCoa = { id: Date.now(), code: '4' + Math.floor(100 + Math.random() * 899), name: name, category: 'Revenue', side: 'Credit' };
-            appState.coa.push(newCoa);
-            saveState();
-            populateCOADropdowns();
-            return newCoa.name;
-        }
-
         function populateCOADropdowns() {
             const formCatSelect = document.getElementById("form-category");
             const tableCatFilter = document.getElementById("table-category-filter");
@@ -985,7 +970,7 @@
                         <td class="p-4 text-right font-bold ${amountColorClass}">₩ ${parseFloat(t.amountInKRW).toLocaleString()}</td>
                         <td class="p-4 text-center">
                             <div class="flex items-center justify-center gap-2">
-                                <button onclick="loadTransactionForEdit(${t.id})" class="text-neutral-400 hover:text-black dark:hover:text-white p-1.5" title="Edit Item"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                                <button onclick="loadTransactionForEdit(${t.id})" class="text-neutral-400 hover:text-neutral-900 dark:hover:text-white p-1.5" title="Edit Item"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
                                 <button onclick="triggerDeleteTransaction(${t.id})" class="text-neutral-400 hover:text-rose-600 p-1.5" title="Delete Item"><i class="fa-solid fa-trash text-xs"></i></button>
                             </div>
                         </td>
