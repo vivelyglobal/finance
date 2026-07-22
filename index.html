@@ -13,9 +13,7 @@
     <script>
         tailwind.config = {
             darkMode: 'class',
-            theme: {
-                extend: { colors: { vively: '#ff66c4' } }
-            }
+            theme: { extend: { colors: { vively: '#ff66c4' } } }
         }
     </script>
     <!-- FontAwesome Icons -->
@@ -69,19 +67,15 @@
         
         <!-- Header Navigation -->
         <header class="border-b border-neutral-100 dark:border-neutral-800 px-8 py-3.5 flex justify-between items-center bg-white dark:bg-neutral-900 sticky top-0 z-40">
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-4">
+                <!-- Sidebar Toggle Button -->
+                <button onclick="toggleSidebar()" class="text-neutral-500 hover:text-black dark:hover:text-white p-1 text-sm transition-all" title="Toggle Sidebar">
+                    <i class="fa-solid fa-bars-staggered"></i>
+                </button>
                 <h1 class="font-korean text-2xl font-bold tracking-tight accent-text">vively</h1>
             </div>
             <div class="flex items-center gap-6 text-xs font-medium">
-                <div class="flex items-center gap-2">
-                    <span class="text-neutral-500 dark:text-neutral-400 font-semibold">Display Base:</span>
-                    <select id="global-currency-select" onchange="changeGlobalCurrency()" class="bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-black dark:text-white px-2.5 py-1 rounded-lg text-xs font-bold focus:outline-none focus:ring-1 accent-ring">
-                        <option value="KRW">KRW (₩) - Core</option>
-                        <option value="SGD">SGD (S$)</option>
-                        <option value="USD">USD ($)</option>
-                        <option value="IDR">IDR (Rp)</option>
-                    </select>
-                </div>
+                <span class="text-neutral-500 dark:text-neutral-400 font-semibold">Display Base: <strong class="text-black dark:text-white">KRW (₩)</strong></span>
                 <div class="h-4 w-[1px] bg-neutral-200 dark:bg-neutral-800"></div>
                 <span class="text-neutral-500 dark:text-neutral-400 flex items-center gap-1.5">
                     <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
@@ -102,13 +96,14 @@
         </header>
 
         <!-- Main Layout -->
-        <div class="flex flex-1">
+        <div class="flex flex-1 relative">
             
-            <!-- Sidebar Navigation (REVISI 2: Exact Specified Order) -->
-            <aside class="w-64 border-r border-neutral-100 dark:border-neutral-800 p-6 flex flex-col justify-between bg-white dark:bg-neutral-900">
+            <!-- FIXED STICKY SIDEBAR (Tidak Ikut Scroll Down) -->
+            <aside id="sidebar-menu" class="w-64 border-r border-neutral-100 dark:border-neutral-800 p-6 flex flex-col justify-between bg-white dark:bg-neutral-900 sticky top-[57px] h-[calc(100vh-57px)] overflow-y-auto shrink-0 transition-all duration-300">
                 <div class="space-y-8">
                     <div>
                         <p class="text-[10px] font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider mb-4">Core Workspace</p>
+                        <!-- REVISI 2: Exact Ordered Sidebar Links -->
                         <nav class="space-y-1">
                             <!-- 1. Executive Dashboard -->
                             <button onclick="switchTab('dashboard')" id="btn-dashboard" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all bg-neutral-50 dark:bg-neutral-800 text-black dark:text-white border-l-4 accent-border">
@@ -142,24 +137,15 @@
                             <button onclick="switchTab('commissions')" id="btn-commissions" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-black dark:hover:text-white border-l-4 border-transparent">
                                 <i class="fa-solid fa-wallet text-neutral-400"></i> Payroll & Payout Hub
                             </button>
+                            <!-- WORKSPACE BARU: Reimbursements / Personal Card Expenses -->
+                            <button onclick="switchTab('reimbursements')" id="btn-reimbursements" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-black dark:hover:text-white border-l-4 border-transparent">
+                                <i class="fa-solid fa-credit-card text-amber-500"></i> Personal Card & Reimbursements
+                            </button>
                             <!-- 9. Financial Statements -->
                             <button onclick="switchTab('fin-statements')" id="btn-fin-statements" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-black dark:hover:text-white border-l-4 border-transparent">
                                 <i class="fa-solid fa-file-contract text-vively"></i> Financial Statements
                             </button>
                         </nav>
-                    </div>
-
-                    <!-- Real-time Forex Board -->
-                    <div>
-                        <div class="flex justify-between items-center mb-3">
-                            <p class="text-[10px] font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider">Real-time Forex (To KRW)</p>
-                            <span class="text-[9px] text-emerald-500 font-bold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span> Live</span>
-                        </div>
-                        <div class="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-3.5 space-y-2 border border-neutral-100 dark:border-neutral-700 text-xs text-neutral-700 dark:text-neutral-300">
-                            <div class="flex justify-between items-center"><span class="font-semibold text-neutral-500 dark:text-neutral-400">1 SGD =</span><span class="font-mono font-bold text-black dark:text-white" id="forex-sgd">Fetching...</span></div>
-                            <div class="flex justify-between items-center"><span class="font-semibold text-neutral-500 dark:text-neutral-400">1 USD =</span><span class="font-mono font-bold text-black dark:text-white" id="forex-usd">Fetching...</span></div>
-                            <div class="flex justify-between items-center"><span class="font-semibold text-neutral-500 dark:text-neutral-400">1 IDR =</span><span class="font-mono font-bold text-black dark:text-white" id="forex-idr">Fetching...</span></div>
-                        </div>
                     </div>
 
                     <!-- Export Module -->
@@ -180,7 +166,7 @@
                 </div>
             </aside>
 
-            <!-- Main Viewport -->
+            <!-- Main Viewport Area -->
             <main class="flex-1 p-8 overflow-y-auto bg-white dark:bg-neutral-900">
                 
                 <!-- Tab 1: Executive Dashboard -->
@@ -263,6 +249,7 @@
                             </div>
                         </div>
 
+                        <!-- Payments Need to be Collected Widget -->
                         <div class="border border-neutral-100 dark:border-neutral-800 rounded-2xl p-6 bg-white dark:bg-neutral-800 shadow-sm flex flex-col justify-between space-y-4">
                             <div class="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-700 pb-3">
                                 <h4 class="text-xs font-bold uppercase tracking-wider text-black dark:text-white flex items-center gap-2">
@@ -396,14 +383,11 @@
                     <div class="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-800 pb-5">
                         <div>
                             <h2 class="text-xl font-bold tracking-tight">Transaction Tracker</h2>
-                            <p class="text-xs text-neutral-500 dark:text-neutral-400">Track, manage, and edit individual ledger items including physical proofs of purchase.</p>
+                            <p class="text-xs text-neutral-500 dark:text-neutral-400">Manage bank feeds, add custom notes, and map received client payments.</p>
                         </div>
                         <div class="flex gap-2">
                             <button onclick="exportCSV('transactions')" class="px-3.5 py-2 border border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 rounded-xl text-xs font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all flex items-center gap-1.5">
                                 <i class="fa-solid fa-download"></i> Export CSV
-                            </button>
-                            <button onclick="openNewTransactionForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
-                                <i class="fa-solid fa-plus mr-1.5"></i> Log Manual Cash Transaction
                             </button>
                         </div>
                     </div>
@@ -438,9 +422,9 @@
                         </div>
                     </div>
 
-                    <!-- Form Input Transaction Manual (REVISI 1: Guaranteed Empty on New Add) -->
+                    <!-- Edit Transaction Card Container (Auto-Scroll Anchor) -->
                     <div id="transaction-form-card" class="hidden bg-neutral-50 dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 rounded-2xl p-6 space-y-4">
-                        <h3 class="text-xs font-bold text-black dark:text-white uppercase tracking-wider text-neutral-500" id="transaction-form-title">Manual Cash Transaction</h3>
+                        <h3 class="text-xs font-bold text-black dark:text-white uppercase tracking-wider text-neutral-500" id="transaction-form-title">Edit Transaction Details</h3>
                         <form id="new-transaction-form" onsubmit="addManualTransaction(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                             <input type="hidden" id="edit-transaction-id" value="">
                             <div>
@@ -452,41 +436,20 @@
                                 <input type="text" id="form-desc" placeholder="Summary..." required class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Details</label>
-                                <input type="text" id="form-details" placeholder="Notes..." class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Add Notes / Explanation</label>
+                                <input type="text" id="form-details" placeholder="Add custom notes..." class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Account Category (COA)</label>
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Category (COA)</label>
                                 <select id="form-category" class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white"></select>
                             </div>
-                            
-                            <div class="flex items-center gap-2 py-2">
-                                <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-semibold text-neutral-700 dark:text-neutral-300">
-                                    <input type="checkbox" id="form-is-cash" class="rounded text-vively focus:ring-0 w-4 h-4" checked>
-                                    <span>Paid via Petty Cash / Personal Card</span>
-                                </label>
-                            </div>
-
                             <div>
-                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Currency</label>
-                                <select id="form-currency" class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
-                                    <option value="KRW">KRW (₩)</option>
-                                    <option value="SGD">SGD (S$)</option>
-                                    <option value="USD">USD ($)</option>
-                                    <option value="IDR">IDR (Rp)</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Amount</label>
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Amount (KRW ₩)</label>
                                 <input type="number" step="any" id="form-amount" placeholder="Amount..." required class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
                             </div>
-                            <div class="md:col-span-2">
-                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Receipt Image Proof</label>
-                                <input type="file" id="form-picture" accept="image/*" class="w-full text-xs px-2 py-1.5 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
-                            </div>
-                            <div class="md:col-span-4 flex justify-end gap-2 pt-2 border-t border-neutral-100 dark:border-neutral-700">
+                            <div class="md:col-span-3 flex justify-end gap-2 pt-2 border-t border-neutral-100 dark:border-neutral-700">
                                 <button type="button" onclick="cancelTransactionForm()" class="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs font-semibold hover:bg-white dark:hover:bg-neutral-700 transition-all">Cancel</button>
-                                <button type="submit" id="form-tx-submit" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-bold hover:opacity-95 transition-all">Submit Entry</button>
+                                <button type="submit" id="form-tx-submit" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-bold hover:opacity-95 transition-all">Save Changes</button>
                             </div>
                         </form>
                     </div>
@@ -522,22 +485,95 @@
                         <span class="text-xs text-neutral-500 dark:text-neutral-400 font-semibold" id="table-filtered-counter">Showing 0 transactions</span>
                     </div>
 
-                    <!-- Transactions Table -->
+                    <!-- Transactions Table (REVISI: Category Header Renamed to "Category", Removed Proof Column) -->
                     <div class="border border-neutral-100 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-sm bg-white dark:bg-neutral-800">
                         <div class="overflow-x-auto">
                             <table class="w-full text-left border-collapse text-xs">
                                 <thead>
                                     <tr class="bg-neutral-50 dark:bg-neutral-700/50 border-b border-neutral-100 dark:border-neutral-700 text-neutral-500 dark:text-neutral-400 font-bold uppercase tracking-wider text-[10px]">
                                         <th class="p-4">Date (YYYY-MM-DD)</th>
-                                        <th class="p-4">Item Description</th>
-                                        <th class="p-4">Category (Select COA)</th>
-                                        <th class="p-4 text-right">Original Amount</th>
-                                        <th class="p-4 text-right">Converted (KRW Base)</th>
-                                        <th class="p-4 text-center">Receipt / Source</th>
+                                        <th class="p-4">Item Description / Add Notes</th>
+                                        <th class="p-4">Category</th>
+                                        <th class="p-4 text-center">Linked Brand (Payer)</th>
+                                        <th class="p-4 text-right">Amount (₩)</th>
                                         <th class="p-4 text-center">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="transactions-table-body" class="divide-y divide-neutral-100 dark:divide-neutral-700 text-neutral-800 dark:text-neutral-200">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- WORKSPACE BARU: Personal Card & Reimbursements -->
+                <section id="tab-reimbursements" class="hidden space-y-8 animate-fade-in">
+                    <div class="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-800 pb-5">
+                        <div>
+                            <h2 class="text-xl font-bold tracking-tight">Personal Card & Reimbursements</h2>
+                            <p class="text-xs text-neutral-500 dark:text-neutral-400">Track company operational expenses paid using personal cards/cash without cluttering bank feeds.</p>
+                        </div>
+                        <button onclick="toggleReimbursementForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
+                            <i class="fa-solid fa-plus mr-1.5"></i> Log Personal Card Expense
+                        </button>
+                    </div>
+
+                    <!-- Personal Card Form -->
+                    <div id="reimb-form-card" class="hidden bg-neutral-50 dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 rounded-2xl p-6 space-y-4">
+                        <h3 class="text-xs font-bold text-black dark:text-white uppercase tracking-wider text-neutral-500" id="reimb-form-title">New Personal Card Expense</h3>
+                        <form id="new-reimb-form" onsubmit="addManualReimbursement(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                            <input type="hidden" id="edit-reimb-id" value="">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Expense Date</label>
+                                <input type="date" id="reimb-date" required class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Item / App Description</label>
+                                <input type="text" id="reimb-desc" placeholder="e.g. Figma Subscription / Coffee..." required class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Paid By (Person)</label>
+                                <select id="reimb-payer-select" class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Total Amount (₩)</label>
+                                <input type="number" id="reimb-amount" placeholder="Amount..." required class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Reimbursement Status</label>
+                                <select id="reimb-status" class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white font-bold">
+                                    <option value="Pending">Pending Reimbursement</option>
+                                    <option value="Reimbursed">Reimbursed by Company</option>
+                                </select>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Receipt Image Proof</label>
+                                <input type="file" id="reimb-picture" accept="image/*" class="w-full text-xs px-2 py-1.5 border border-neutral-200 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-900 text-black dark:text-white">
+                            </div>
+                            <div class="md:col-span-4 flex justify-end gap-2 pt-2 border-t border-neutral-100 dark:border-neutral-700">
+                                <button type="button" onclick="cancelReimbursementForm()" class="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs font-semibold hover:bg-white dark:hover:bg-neutral-700 transition-all">Cancel</button>
+                                <button type="submit" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-bold hover:opacity-95 transition-all">Save Personal Expense</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Personal Cards Table -->
+                    <div class="border border-neutral-100 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-sm bg-white dark:bg-neutral-800">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead>
+                                    <tr class="bg-neutral-50 dark:bg-neutral-700/50 border-b border-neutral-100 dark:border-neutral-700 text-neutral-500 dark:text-neutral-400 font-bold uppercase tracking-wider text-[10px]">
+                                        <th class="p-4">Date</th>
+                                        <th class="p-4">Item Description</th>
+                                        <th class="p-4">Paid By</th>
+                                        <th class="p-4 text-right">Amount (₩)</th>
+                                        <th class="p-4 text-center">Receipt Proof</th>
+                                        <th class="p-4 text-center">Status</th>
+                                        <th class="p-4 text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reimb-table-body" class="divide-y divide-neutral-100 dark:divide-neutral-700 text-neutral-800 dark:text-neutral-200">
                                 </tbody>
                             </table>
                         </div>
@@ -879,17 +915,17 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div class="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-5 shadow-sm">
                             <span class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Total Contract Value (All Paid Brands)</span>
-                            <h3 class="text-xl font-bold text-black dark:text-white mt-2" id="sum-paid-contract">0</h3>
+                            <h3 class="text-xl font-bold text-black dark:text-white mt-2" id="sum-paid-contract">₩ 0</h3>
                             <p class="text-[10px] text-neutral-400 mt-1">Accumulated Paid Campaign Contracts</p>
                         </div>
                         <div class="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-5 shadow-sm">
                             <span class="text-[10px] font-bold text-emerald-500 uppercase tracking-wider">Total Paid Amount Received</span>
-                            <h3 class="text-xl font-bold text-emerald-600 dark:text-emerald-400 mt-2" id="sum-paid-received">0</h3>
+                            <h3 class="text-xl font-bold text-emerald-600 dark:text-emerald-400 mt-2" id="sum-paid-received">₩ 0</h3>
                             <p class="text-[10px] text-neutral-400 mt-1">Verified Received Revenue</p>
                         </div>
                         <div class="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-5 shadow-sm">
                             <span class="text-[10px] font-bold text-rose-500 uppercase tracking-wider">Total Remaining Balance (Sisa Pembayaran)</span>
-                            <h3 class="text-xl font-bold text-rose-600 dark:text-rose-400 mt-2" id="sum-paid-remaining">0</h3>
+                            <h3 class="text-xl font-bold text-rose-600 dark:text-rose-400 mt-2" id="sum-paid-remaining">₩ 0</h3>
                             <p class="text-[10px] text-neutral-400 mt-1">Outstanding Receivable Balance</p>
                         </div>
                     </div>
@@ -937,22 +973,10 @@
                                 <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Payment Percentage (%)</label>
                                 <input type="number" id="pay-percentage" placeholder="e.g., 50" oninput="calculatePaymentAmount()" required class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
                             </div>
-                            <div>
-                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Due Date</label>
-                                <input type="date" id="pay-due-date" required class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
-                            </div>
+                            <!-- REVISI: Removed Due Date from form -->
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Actual Paid Date (If Paid)</label>
                                 <input type="date" id="pay-paid-date" class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Currency</label>
-                                <select id="pay-currency" class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
-                                    <option value="KRW">KRW (₩)</option>
-                                    <option value="SGD">SGD (S$)</option>
-                                    <option value="USD">USD ($)</option>
-                                    <option value="IDR">IDR (Rp)</option>
-                                </select>
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Amount (Auto-calculated)</label>
@@ -965,10 +989,6 @@
                                     <option value="Pending">Pending</option>
                                     <option value="Overdue">Overdue</option>
                                 </select>
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Payment Proof Image</label>
-                                <input type="file" id="pay-picture" accept="image/*" class="w-full text-xs px-2 py-1.5 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
                             </div>
                             <div class="md:col-span-4 flex justify-end gap-2 pt-2 border-t border-neutral-100 dark:border-neutral-700">
                                 <button type="submit" id="pay-submit-btn" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-semibold hover:opacity-95 transition-all">Save Term Record</button>
@@ -1028,16 +1048,7 @@
                                 <input type="text" id="comm-client" placeholder="Company..." class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Payout Currency</label>
-                                <select id="comm-currency" class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
-                                    <option value="KRW">KRW (₩)</option>
-                                    <option value="SGD">SGD (S$)</option>
-                                    <option value="USD">USD ($)</option>
-                                    <option value="IDR">IDR (Rp)</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Flat Payment Value</label>
+                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Flat Payment Value (₩)</label>
                                 <input type="number" id="comm-val" placeholder="Direct payout..." required class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
                             </div>
                             
@@ -1081,7 +1092,7 @@
                         </select>
                     </div>
 
-                    <!-- Payroll Table -->
+                    <!-- Payroll Table (REVISI: Cleaned without Proof Column) -->
                     <div class="border border-neutral-100 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-sm bg-white dark:bg-neutral-800">
                         <table class="w-full text-left border-collapse text-xs">
                             <thead>
@@ -1091,8 +1102,7 @@
                                     <th class="p-4">Payout Recipient</th>
                                     <th class="p-4">Type</th>
                                     <th class="p-4">Associated Client</th>
-                                    <th class="p-4 text-right">Flat Value (Orig)</th>
-                                    <th class="p-4 text-right">Value (KRW Base)</th>
+                                    <th class="p-4 text-right">Value (₩)</th>
                                     <th class="p-4 text-center">Status</th>
                                     <th class="p-4 text-center">Action</th>
                                 </tr>
@@ -1171,7 +1181,7 @@
                         </div>
                     </div>
 
-                    <!-- Balance Sheet View -->
+                    <!-- Corrected Accounting Balance Sheet View -->
                     <div id="stmt-view-balance" class="hidden max-w-3xl mx-auto border border-neutral-100 dark:border-neutral-800 rounded-2xl p-8 bg-white dark:bg-neutral-800 shadow-sm space-y-6">
                         <div class="border-b pb-4 text-center space-y-1">
                             <h3 class="text-base font-bold uppercase tracking-wider text-black dark:text-white">Vively Global Operations</h3>
@@ -1184,7 +1194,7 @@
                                 <span id="stmt-total-assets">₩ 0</span>
                             </div>
                             <div class="space-y-1.5 pl-3 text-neutral-600 dark:text-neutral-300">
-                                <div class="flex justify-between"><span>Cash & Bank Balances (Hana Bank / Cash)</span><span id="stmt-asset-cash">₩ 0</span></div>
+                                <div class="flex justify-between"><span>Cash & Bank Balances (Hana Bank)</span><span id="stmt-asset-cash">₩ 0</span></div>
                                 <div class="flex justify-between"><span>Accounts Receivable (Uncollected AR Invoices)</span><span id="stmt-asset-ar">₩ 0</span></div>
                             </div>
 
@@ -1253,6 +1263,11 @@
         let currentTabId = 'dashboard';
         let currentStmtView = 'INCOME';
         let bankReconData = [];
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar-menu");
+            sidebar.classList.toggle("hidden");
+        }
 
         function toggleDarkMode() {
             const isDark = document.documentElement.classList.toggle('dark');
@@ -1331,9 +1346,7 @@
                     BASE_FOREX.IDR = 1 / data.rates.IDR;
                     renderForexSidebar();
                 }
-            } catch(e) {
-                renderForexSidebar();
-            }
+            } catch(e) { renderForexSidebar(); }
         }
 
         function getExchangeRateOnDate(currency, dateStr) {
@@ -1373,6 +1386,7 @@
             clients: [],
             clientPayments: [],
             commissions: [],
+            reimbursements: [], // Personal Card Expenses Log
             employees: [],
             coa: defaultCOA,
             clientLayout: 'card',
@@ -1395,9 +1409,9 @@
                 if (!appState.transactions) appState.transactions = [];
                 if (!appState.clients) appState.clients = [];
                 if (!appState.clientPayments) appState.clientPayments = [];
+                if (!appState.reimbursements) appState.reimbursements = [];
                 if (!appState.coa || appState.coa.length === 0) appState.coa = [...defaultCOA];
 
-                // Ensure new COA accounts are present
                 defaultCOA.forEach(d => {
                     if (!appState.coa.some(c => c.name === d.name)) {
                         appState.coa.push(d);
@@ -1462,7 +1476,7 @@
                     }
                 }
 
-                // Purge removed sheet items
+                // Purge deleted items from bank sheet
                 appState.transactions = appState.transactions.filter(t => {
                     if (t.source !== "HANA_BANK") return true;
                     return bankReconData.some(b => b.description === t.description && b.date === t.date && parseFloat(b.amount) === parseFloat(t.amount));
@@ -1528,13 +1542,14 @@
                         id: Date.now() + Math.random(),
                         date: bankItem.date,
                         description: bankItem.description,
+                        details: "",
                         category: bankItem.category || "Uncategorized",
                         amount: parseFloat(bankItem.amount),
                         currency: "KRW",
                         amountInKRW: parseFloat(bankItem.amount),
                         type: bankItem.type,
                         source: "HANA_BANK",
-                        picture: ""
+                        linkedBrandName: ""
                     });
                 }
             });
@@ -1557,40 +1572,7 @@
         }
 
         function syncPaidPaymentsToTransactions() {
-            if (!appState.clientPayments || appState.clientPayments.length === 0) return;
-
-            let updated = false;
-            appState.clientPayments.forEach(p => {
-                if (p.status === "Paid") {
-                    const existingTxIndex = appState.transactions.findIndex(t => t.linkedPaymentId === p.id);
-                    const clientObj = appState.clients.find(c => c.name === p.clientName);
-                    const serviceCategory = resolveRevenueCategory(clientObj ? clientObj.service : "KOL Seeding Revenue");
-
-                    const effectiveDate = parseToStandardDate(p.paidDate || p.dueDate);
-                    const rate = getExchangeRateOnDate(p.currency || 'KRW', effectiveDate);
-                    const amountInKRW = (p.amount || 0) * rate;
-
-                    const txData = {
-                        id: existingTxIndex !== -1 ? appState.transactions[existingTxIndex].id : (Date.now() + Math.floor(Math.random() * 1000)),
-                        date: effectiveDate,
-                        description: `[Payment Received] ${p.clientName} (${p.termDesc || 'Installment'})`,
-                        details: `Client Installment Payment (${p.termDesc || ''}) for ${p.clientName}`,
-                        category: serviceCategory,
-                        amount: p.amount,
-                        currency: p.currency || 'KRW',
-                        amountInKRW: amountInKRW,
-                        type: 'CREDIT',
-                        picture: p.picture || "",
-                        linkedPaymentId: p.id,
-                        source: "HANA_BANK"
-                    };
-
-                    if (existingTxIndex !== -1) { appState.transactions[existingTxIndex] = txData; }
-                    else { appState.transactions.push(txData); }
-                    updated = true;
-                }
-            });
-            if (updated) saveState();
+            // Disabled legacy double-creation to prevent duplicate entries
         }
 
         function populateDynamicSelects() {
@@ -1612,15 +1594,19 @@
 
         function populateEmployeeDropdowns() {
             const select = document.getElementById("comm-manager-select");
+            const reimbPayerSelect = document.getElementById("reimb-payer-select");
             const currentVal = select.value;
+            
             let options = `<option value="">-- Select Recipient --</option>`;
             appState.employees.forEach(emp => { options += `<option value="${emp.name}">${emp.name} (${emp.type})</option>`; });
             options += `<option value="CUSTOM_RECIPIENT">+ Other / Custom Name</option>`;
+            
             select.innerHTML = options;
+            if (reimbPayerSelect) reimbPayerSelect.innerHTML = options;
             if (currentVal) select.value = currentVal;
         }
 
-        // REVISI 7: Clean Titles in Category Dropdown (Revenue & Expense only)
+        /* REVISI 7: Clean Titles in Category Dropdown (Revenue & Expense only, strictly ordered by COA Code) */
         function populateCOADropdowns() {
             const formCatSelect = document.getElementById("form-category");
             const tableCatFilter = document.getElementById("table-category-filter");
@@ -1762,7 +1748,7 @@
 
         function switchTab(tabId) {
             currentTabId = tabId;
-            const tabs = ['dashboard', 'coa', 'employees', 'clients', 'bank-recon', 'transactions', 'client-payments', 'commissions', 'fin-statements'];
+            const tabs = ['dashboard', 'coa', 'employees', 'clients', 'bank-recon', 'transactions', 'client-payments', 'commissions', 'reimbursements', 'fin-statements'];
             tabs.forEach(t => {
                 const element = document.getElementById(`tab-${t}`);
                 if (element) element.classList.add('hidden');
@@ -1777,6 +1763,7 @@
             
             if (tabId === 'dashboard') { setTimeout(renderCharts, 100); }
             if (tabId === 'fin-statements') { renderFormalFinancialStatements(); }
+            if (tabId === 'reimbursements') { renderReimbursementsTable(); }
         }
 
         function changeGlobalCurrency() {
@@ -1784,25 +1771,11 @@
             showToast(`Dashboard base viewing currency shifted!`, "success");
         }
 
-        function getConvertedVal(krwVal) {
-            const displayCurrency = document.getElementById("global-currency-select").value;
-            if (displayCurrency === "KRW") return krwVal;
-            return krwVal / BASE_FOREX[displayCurrency];
-        }
-
-        function getCurrencySymbol() {
-            const cur = document.getElementById("global-currency-select").value;
-            if (cur === "KRW") return "₩";
-            if (cur === "USD") return "$";
-            if (cur === "SGD") return "S$";
-            if (cur === "IDR") return "Rp";
-            return "";
-        }
+        function getConvertedVal(krwVal) { return krwVal; }
+        function getCurrencySymbol() { return "₩"; }
 
         /* --- UPDATE EXECUTIVE DASHBOARD & WIDGETS --- */
         function updateUI() {
-            syncPaidPaymentsToTransactions();
-
             let totalRevenue = 0;
             let totalExpenses = 0;
 
@@ -1819,13 +1792,11 @@
             const netProfit = totalRevenue - totalExpenses;
             const margin = totalRevenue > 0 ? ((netProfit / totalRevenue) * 100).toFixed(2) : "0.00";
 
-            const currencySymbol = getCurrencySymbol();
-
-            document.getElementById("metric-revenue").innerText = `${currencySymbol} ${getConvertedVal(totalRevenue).toLocaleString(undefined, {maximumFractionDigits: 0})}`;
-            document.getElementById("metric-expenses").innerText = `${currencySymbol} ${getConvertedVal(totalExpenses).toLocaleString(undefined, {maximumFractionDigits: 0})}`;
+            document.getElementById("metric-revenue").innerText = `₩ ${totalRevenue.toLocaleString()}`;
+            document.getElementById("metric-expenses").innerText = `₩ ${totalExpenses.toLocaleString()}`;
             
             const profitEl = document.getElementById("metric-profit");
-            profitEl.innerText = `${currencySymbol} ${getConvertedVal(netProfit).toLocaleString(undefined, {maximumFractionDigits: 0})}`;
+            profitEl.innerText = `₩ ${netProfit.toLocaleString()}`;
             if (netProfit < 0) {
                 profitEl.className = "text-2xl font-bold text-rose-600 dark:text-rose-400";
             } else {
@@ -1859,16 +1830,12 @@
                 let clientPaidKRW = 0;
                 clientPayments.forEach(p => { if (p.status === "Paid") clientPaidKRW += parseFloat(p.amountInKRW || 0); });
 
-                const clientRate = getExchangeRateOnDate(client.currency, client.campaignStart || '2026-01-01');
-                const totalContractKRW = (client.originalValue || 0) * clientRate;
+                const totalContractKRW = client.originalValue || 0;
                 const uncollectedKRW = Math.max(0, totalContractKRW - clientPaidKRW);
 
                 if (uncollectedKRW > 0) {
                     countUncollected++;
                     totalUnpaidKRW += uncollectedKRW;
-
-                    const converted = getConvertedVal(uncollectedKRW);
-                    const currencySymbol = getCurrencySymbol();
 
                     const row = `
                         <div class="flex justify-between items-center p-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 text-xs">
@@ -1877,7 +1844,7 @@
                                 <p class="text-[10px] text-neutral-400">Service: ${client.service}</p>
                             </div>
                             <div class="text-right">
-                                <span class="font-bold text-rose-600 dark:text-rose-400">${currencySymbol} ${converted.toLocaleString(undefined, {maximumFractionDigits:0})}</span>
+                                <span class="font-bold text-rose-600 dark:text-rose-400">₩ ${uncollectedKRW.toLocaleString()}</span>
                                 <p class="text-[9px] text-amber-500 font-semibold">Need Collection</p>
                             </div>
                         </div>
@@ -1890,8 +1857,7 @@
                 container.innerHTML = `<div class="p-6 text-center text-neutral-400 italic text-xs">✓ All brand payments fully collected!</div>`;
             }
 
-            const currencySymbol = getCurrencySymbol();
-            document.getElementById("dashboard-total-ar-unpaid").innerText = `${currencySymbol} ${getConvertedVal(totalUnpaidKRW).toLocaleString(undefined, {maximumFractionDigits:0})}`;
+            document.getElementById("dashboard-total-ar-unpaid").innerText = `₩ ${totalUnpaidKRW.toLocaleString()}`;
         }
 
         function setStatementView(view) {
@@ -1960,8 +1926,8 @@
             let uncollectedAR_KRW = 0;
             appState.clients.forEach(c => {
                 if (c.dealType === "Paid Campaign") {
-                    const contractValKRW = (c.originalValue || 0) * getExchangeRateOnDate(c.currency, c.campaignStart || '2026-01-01');
-                    const paid = appState.clientPayments.filter(p => p.clientName === c.name && p.status === "Paid").reduce((acc, p) => acc + parseFloat(p.amountInKRW || 0), 0);
+                    const contractValKRW = c.originalValue || 0;
+                    const paid = appState.transactions.filter(t => t.linkedBrandName === c.name && t.type === "CREDIT").reduce((acc, t) => acc + parseFloat(t.amountInKRW || 0), 0);
                     uncollectedAR_KRW += Math.max(0, contractValKRW - paid);
                 }
             });
@@ -2004,15 +1970,12 @@
 
             reportList.sort((a, b) => parseInt(a.code) - parseInt(b.code));
 
-            const currencySymbol = getCurrencySymbol();
-
             if (reportList.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-neutral-400 italic">No accounts match category filter.</td></tr>`;
                 return;
             }
 
             reportList.forEach(c => {
-                const converted = getConvertedVal(c.amountKRW);
                 const badgeColor = c.category === "Revenue" ? "bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-950 dark:text-emerald-400" :
                                   (c.category === "Expense" ? "bg-rose-50 text-rose-600 border-rose-100 dark:bg-rose-950 dark:text-rose-400" : "bg-neutral-50 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300");
 
@@ -2021,13 +1984,14 @@
                         <td class="p-3 font-mono font-bold text-neutral-500 dark:text-neutral-400">${c.code}</td>
                         <td class="p-3 font-semibold text-black dark:text-white">${c.name}</td>
                         <td class="p-3"><span class="px-2 py-0.5 rounded border text-[10px] font-semibold ${badgeColor}">${c.category}</span></td>
-                        <td class="p-3 text-right font-bold text-black dark:text-white">${currencySymbol} ${converted.toLocaleString(undefined, {maximumFractionDigits: 0})}</td>
+                        <td class="p-3 text-right font-bold text-black dark:text-white">₩ ${c.amountKRW.toLocaleString()}</td>
                     </tr>
                 `;
                 tbody.insertAdjacentHTML('beforeend', row);
             });
         }
 
+        /* REVISI: TRANSACTION TRACKER WITH LINK TO BRAND & REVENUE CLIENT PAYMENT SYNC */
         function renderTransactionsTable() {
             const tbody = document.getElementById("transactions-table-body");
             tbody.innerHTML = "";
@@ -2053,21 +2017,26 @@
                 if (t.type === "CREDIT") { filteredIncomeKRW += parseFloat(t.amountInKRW); } 
                 else { filteredExpenseKRW += parseFloat(t.amountInKRW); }
 
-                let proofCol = `<span class="text-neutral-400 text-[10px] italic">No proof</span>`;
-                if (t.picture) {
-                    proofCol = `<button onclick="openReceiptModal('${t.picture}')" class="text-[#ff66c4] hover:text-black dark:hover:text-white transition-all p-1.5 font-bold"><i class="fa-solid fa-image text-sm mr-1"></i> View Proof</button>`;
-                } else if (t.source === "HANA_BANK") {
-                    proofCol = `<span class="px-2 py-0.5 rounded border text-[9px] font-bold bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400 border-emerald-100"><i class="fa-solid fa-building-columns mr-1"></i> Hana Bank Feed</span>`;
-                }
-
-                const detailsHtml = t.details ? `<div class="text-[10px] text-neutral-400 font-normal mt-0.5">${t.details}</div>` : '';
-
                 let categorySelectHtml = `<select onchange="updateTransactionCategoryInline(${t.id}, this.value)" class="bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 text-black dark:text-white px-2 py-1 rounded text-[11px] font-semibold focus:outline-none accent-ring">`;
                 appState.coa.forEach(c => {
-                    const sel = c.name === t.category ? 'selected' : '';
-                    categorySelectHtml += `<option value="${c.name}" ${sel}>${c.name}</option>`;
+                    if (c.category === "Revenue" || c.category === "Expense") {
+                        const sel = c.name === t.category ? 'selected' : '';
+                        categorySelectHtml += `<option value="${c.name}" ${sel}>${c.name}</option>`;
+                    }
                 });
                 categorySelectHtml += `</select>`;
+
+                // REVISI: Brand Select Link for Revenue Payments
+                let brandSelectHtml = `-`;
+                if (t.type === "CREDIT") {
+                    brandSelectHtml = `<select onchange="linkTransactionToBrand(${t.id}, this.value)" class="bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 text-black dark:text-white px-2 py-1 rounded text-[11px] font-bold focus:outline-none accent-ring">`;
+                    brandSelectHtml += `<option value="">-- Received From --</option>`;
+                    appState.clients.forEach(cl => {
+                        const sel = cl.name === t.linkedBrandName ? 'selected' : '';
+                        brandSelectHtml += `<option value="${cl.name}" ${sel}>${cl.name}</option>`;
+                    });
+                    brandSelectHtml += `</select>`;
+                }
 
                 const formattedDate = parseToStandardDate(t.date);
 
@@ -2076,16 +2045,15 @@
                         <td class="p-4 font-mono text-neutral-500 dark:text-neutral-400">${formattedDate}</td>
                         <td class="p-4">
                             <div class="font-semibold text-black dark:text-white">${t.description}</div>
-                            ${detailsHtml}
+                            <div class="text-[10px] text-neutral-400 italic mt-0.5">${t.details || 'No notes added'}</div>
                         </td>
                         <td class="p-4">${categorySelectHtml}</td>
-                        <td class="p-4 text-right font-semibold text-neutral-600 dark:text-neutral-300">${parseFloat(t.amount).toLocaleString(undefined, {maximumFractionDigits: 2})} ${t.currency}</td>
-                        <td class="p-4 text-right font-bold ${t.type === 'CREDIT' ? 'text-emerald-600 dark:text-emerald-400' : 'text-black dark:text-white'}">₩ ${parseFloat(t.amountInKRW).toLocaleString(undefined, {maximumFractionDigits: 0})}</td>
-                        <td class="p-4 text-center">${proofCol}</td>
+                        <td class="p-4 text-center">${brandSelectHtml}</td>
+                        <td class="p-4 text-right font-bold ${t.type === 'CREDIT' ? 'text-emerald-600 dark:text-emerald-400' : 'text-black dark:text-white'}">₩ ${parseFloat(t.amountInKRW).toLocaleString()}</td>
                         <td class="p-4 text-center">
                             <div class="flex items-center justify-center gap-2">
-                                <button onclick="loadTransactionForEdit(${t.id})" class="text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-all p-1.5"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
-                                <button onclick="triggerDeleteTransaction(${t.id})" class="text-neutral-400 hover:text-rose-600 transition-all p-1.5"><i class="fa-solid fa-trash text-xs"></i></button>
+                                <button onclick="loadTransactionForEdit(${t.id})" class="text-neutral-400 hover:text-black dark:hover:text-white p-1.5"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                                <button onclick="triggerDeleteTransaction(${t.id})" class="text-neutral-400 hover:text-rose-600 p-1.5"><i class="fa-solid fa-trash text-xs"></i></button>
                             </div>
                         </td>
                     </tr>
@@ -2093,13 +2061,53 @@
                 tbody.insertAdjacentHTML('beforeend', row);
             });
 
-            const currencySymbol = getCurrencySymbol();
             const netBalanceKRW = filteredIncomeKRW - filteredExpenseKRW;
 
-            document.getElementById("tx-summary-income").innerText = `${currencySymbol} ${getConvertedVal(filteredIncomeKRW).toLocaleString(undefined, {maximumFractionDigits: 0})}`;
-            document.getElementById("tx-summary-expenses").innerText = `${currencySymbol} ${getConvertedVal(filteredExpenseKRW).toLocaleString(undefined, {maximumFractionDigits: 0})}`;
-            document.getElementById("tx-summary-net").innerText = `${currencySymbol} ${getConvertedVal(netBalanceKRW).toLocaleString(undefined, {maximumFractionDigits: 0})}`;
+            document.getElementById("tx-summary-income").innerText = `₩ ${filteredIncomeKRW.toLocaleString()}`;
+            document.getElementById("tx-summary-expenses").innerText = `₩ ${filteredExpenseKRW.toLocaleString()}`;
+            document.getElementById("tx-summary-net").innerText = `₩ ${netBalanceKRW.toLocaleString()}`;
             document.getElementById("table-filtered-counter").innerText = `Showing ${count} transaction${count !== 1 ? 's' : ''}`;
+        }
+
+        /* REVISI: LINK TRANSACTION TO BRAND (AUTOMATICALLY UPDATES CLIENT PAYMENT HUB) */
+        function linkTransactionToBrand(txId, brandName) {
+            const tx = appState.transactions.find(t => t.id === txId);
+            if (!tx) return;
+
+            tx.linkedBrandName = brandName;
+            
+            if (brandName) {
+                const clientObj = appState.clients.find(c => c.name === brandName);
+                if (clientObj) {
+                    const contractVal = clientObj.originalValue || 0;
+                    const percentage = contractVal > 0 ? ((tx.amountInKRW / contractVal) * 100).toFixed(0) : 100;
+
+                    // Sync to clientPayments array
+                    const existingPayIndex = appState.clientPayments.findIndex(p => p.linkedTxId === txId);
+                    const payData = {
+                        id: existingPayIndex !== -1 ? appState.clientPayments[existingPayIndex].id : Date.now(),
+                        clientName: brandName,
+                        percentage: parseFloat(percentage),
+                        termDesc: `${percentage}% Term`,
+                        dueDate: tx.date,
+                        paidDate: tx.date,
+                        currency: "KRW",
+                        amount: tx.amountInKRW,
+                        amountInKRW: tx.amountInKRW,
+                        status: "Paid",
+                        linkedTxId: txId
+                    };
+
+                    if (existingPayIndex !== -1) appState.clientPayments[existingPayIndex] = payData;
+                    else appState.clientPayments.unshift(payData);
+                }
+            } else {
+                appState.clientPayments = appState.clientPayments.filter(p => p.linkedTxId !== txId);
+            }
+
+            saveState();
+            updateUI();
+            showToast("Linked transaction to " + (brandName || "unassigned"), "success");
         }
 
         function updateTransactionCategoryInline(id, newCategory) {
@@ -2110,7 +2118,7 @@
                 if (coaMatch) tx.type = coaMatch.category === "Revenue" ? "CREDIT" : "DEBIT";
                 saveState();
                 updateUI();
-                showToast("Transaction category updated!", "success");
+                showToast("Category updated!", "success");
             }
         }
 
@@ -2140,7 +2148,7 @@
             renderCOATable();
             updateUI();
             cancelCOAForm();
-            showToast("COA Account Saved!", "success");
+            showToast("COA Saved!", "success");
         }
 
         function renderCOATable() {
@@ -2416,7 +2424,7 @@
             });
         }
 
-        /* CLIENT PAYMENT HUB & AR AGING */
+        /* CLIENT PAYMENT HUB & AR AGING (REVISI: Removed Due Date) */
         function calculatePaymentAmount() {
             const pct = parseFloat(document.getElementById("pay-percentage").value) || 0;
             const total = parseFloat(document.getElementById("pay-client-total-value").value) || 0;
@@ -2425,14 +2433,7 @@
 
         function getARAgingInfo(dueDateStr, status) {
             if (status === "Paid") return { days: 0, label: "Paid / Cleared", color: "bg-emerald-50 text-emerald-600 border-emerald-100" };
-            const today = new Date();
-            const due = new Date(dueDateStr);
-            const diffDays = Math.floor((today - due) / (1000 * 60 * 60 * 24));
-
-            if (diffDays <= 0) return { days: diffDays, label: "Current (On Time)", color: "bg-emerald-50 text-emerald-600 border-emerald-100" };
-            if (diffDays <= 30) return { days: diffDays, label: `Overdue +${diffDays}d (H+30)`, color: "bg-amber-50 text-amber-600 border-amber-100" };
-            if (diffDays <= 60) return { days: diffDays, label: `Overdue +${diffDays}d (H+60)`, color: "bg-orange-50 text-orange-600 border-orange-100" };
-            return { days: diffDays, label: `Critical +${diffDays}d (>H+60)`, color: "bg-rose-50 text-rose-600 border-rose-100" };
+            return { days: 1, label: "Uncollected", color: "bg-amber-50 text-amber-600 border-amber-100" };
         }
 
         function renderPaymentScheduleHub() {
@@ -2445,33 +2446,25 @@
 
             paidClients.forEach(client => {
                 const clientPayments = appState.clientPayments.filter(p => p.clientName === client.name);
-                const clientRate = getExchangeRateOnDate(client.currency, client.campaignStart || '2026-01-01');
-                grandTotalContractKRW += (client.originalValue || 0) * clientRate;
+                grandTotalContractKRW += (client.originalValue || 0);
 
                 clientPayments.forEach(p => {
                     const amtKRW = parseFloat(p.amountInKRW || 0);
                     if (p.status === "Paid") { grandTotalPaidKRW += amtKRW; }
-                    else {
-                        const aging = getARAgingInfo(p.dueDate, p.status);
-                        if (aging.days <= 0) arCurrentKRW += amtKRW;
-                        else if (aging.days <= 30) arH30KRW += amtKRW;
-                        else if (aging.days <= 60) arH60KRW += amtKRW;
-                        else arH90KRW += amtKRW;
-                    }
+                    else { arCurrentKRW += amtKRW; }
                 });
             });
 
             const grandRemainingKRW = Math.max(0, grandTotalContractKRW - grandTotalPaidKRW);
-            const currencySymbol = getCurrencySymbol();
 
-            document.getElementById("sum-paid-contract").innerText = `${currencySymbol} ${getConvertedVal(grandTotalContractKRW).toLocaleString(undefined, {maximumFractionDigits: 0})}`;
-            document.getElementById("sum-paid-received").innerText = `${currencySymbol} ${getConvertedVal(grandTotalPaidKRW).toLocaleString(undefined, {maximumFractionDigits: 0})}`;
-            document.getElementById("sum-paid-remaining").innerText = `${currencySymbol} ${getConvertedVal(grandRemainingKRW).toLocaleString(undefined, {maximumFractionDigits: 0})}`;
+            document.getElementById("sum-paid-contract").innerText = `₩ ${grandTotalContractKRW.toLocaleString()}`;
+            document.getElementById("sum-paid-received").innerText = `₩ ${grandTotalPaidKRW.toLocaleString()}`;
+            document.getElementById("sum-paid-remaining").innerText = `₩ ${grandRemainingKRW.toLocaleString()}`;
 
-            document.getElementById("ar-current-val").innerText = `${currencySymbol} ${getConvertedVal(arCurrentKRW).toLocaleString(undefined, {maximumFractionDigits: 0})}`;
-            document.getElementById("ar-h30-val").innerText = `${currencySymbol} ${getConvertedVal(arH30KRW).toLocaleString(undefined, {maximumFractionDigits: 0})}`;
-            document.getElementById("ar-h60-val").innerText = `${currencySymbol} ${getConvertedVal(arH60KRW).toLocaleString(undefined, {maximumFractionDigits: 0})}`;
-            document.getElementById("ar-h90-val").innerText = `${currencySymbol} ${getConvertedVal(arH90KRW).toLocaleString(undefined, {maximumFractionDigits: 0})}`;
+            document.getElementById("ar-current-val").innerText = `₩ ${arCurrentKRW.toLocaleString()}`;
+            document.getElementById("ar-h30-val").innerText = `₩ ${arH30KRW.toLocaleString()}`;
+            document.getElementById("ar-h60-val").innerText = `₩ ${arH60KRW.toLocaleString()}`;
+            document.getElementById("ar-h90-val").innerText = `₩ ${arH90KRW.toLocaleString()}`;
 
             paidClients.forEach(client => {
                 const clientPayments = appState.clientPayments.filter(p => p.clientName === client.name);
@@ -2487,9 +2480,8 @@
                     rowsHtml += `
                         <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-700/30 transition-all border-b border-neutral-100 dark:border-neutral-700">
                             <td class="p-3.5 font-semibold text-black dark:text-white">${p.termDesc}</td>
-                            <td class="p-3.5 font-mono text-neutral-500 dark:text-neutral-400">${parseToStandardDate(p.dueDate)}</td>
                             <td class="p-3.5 font-mono text-neutral-700 dark:text-neutral-300">${p.paidDate ? parseToStandardDate(p.paidDate) : '-'}</td>
-                            <td class="p-3.5 text-right font-bold text-black dark:text-white">${parseFloat(p.amount).toLocaleString()} ${p.currency}</td>
+                            <td class="p-3.5 text-right font-bold text-black dark:text-white">₩ ${parseFloat(p.amount).toLocaleString()}</td>
                             <td class="p-3.5 text-center"><span class="px-2 py-0.5 rounded border text-[9px] font-bold ${aging.color}">${aging.label}</span></td>
                             <td class="p-3.5 text-center"><span class="px-2 py-0.5 rounded border text-[9px] font-bold bg-neutral-100 dark:bg-neutral-800 text-black dark:text-white border-neutral-200 dark:border-neutral-700">${p.status}</span></td>
                             <td class="p-3.5 text-center">
@@ -2510,15 +2502,15 @@
                                 <p class="text-xs text-neutral-400 mt-0.5">Service: ${client.service}</p>
                             </div>
                             <div class="flex items-center gap-6">
-                                <div class="text-right"><p class="text-[10px] font-bold text-neutral-400 uppercase">Contract Value</p><p class="text-sm font-bold text-black dark:text-white">${totalContractNative.toLocaleString()} ${client.currency}</p></div>
-                                <div class="text-right"><p class="text-[10px] font-bold text-emerald-500 uppercase">Total Paid</p><p class="text-sm font-bold text-emerald-600 dark:text-emerald-400">${totalPaidNative.toLocaleString()} ${client.currency}</p></div>
-                                <div class="text-right"><p class="text-[10px] font-bold text-rose-400 uppercase">Remaining</p><p class="text-sm font-bold text-rose-600 dark:text-rose-400">${remainingBalanceNative.toLocaleString()} ${client.currency}</p></div>
+                                <div class="text-right"><p class="text-[10px] font-bold text-neutral-400 uppercase">Contract Value</p><p class="text-sm font-bold text-black dark:text-white">₩ ${totalContractNative.toLocaleString()}</p></div>
+                                <div class="text-right"><p class="text-[10px] font-bold text-emerald-500 uppercase">Total Paid</p><p class="text-sm font-bold text-emerald-600 dark:text-emerald-400">₩ ${totalPaidNative.toLocaleString()}</p></div>
+                                <div class="text-right"><p class="text-[10px] font-bold text-rose-400 uppercase">Remaining</p><p class="text-sm font-bold text-rose-600 dark:text-rose-400">₩ ${remainingBalanceNative.toLocaleString()}</p></div>
                                 <button onclick="openPaymentFormForClient('${client.name}', '${client.currency}', ${client.originalValue || 0})" class="px-3.5 py-2 text-white accent-bg rounded-xl text-xs font-semibold shadow-sm">+ Add Term</button>
                             </div>
                         </div>
                         <div class="overflow-x-auto rounded-xl border border-neutral-100 dark:border-neutral-700">
                             <table class="w-full text-left border-collapse text-xs">
-                                <thead><tr class="bg-neutral-50 dark:bg-neutral-700/50 text-neutral-400 font-bold uppercase text-[9px]"><th class="p-3.5">% Term</th><th class="p-3.5">Due Date</th><th class="p-3.5">Paid Date</th><th class="p-3.5 text-right">Amount</th><th class="p-3.5 text-center">AR Risk</th><th class="p-3.5 text-center">Status</th><th class="p-3.5 text-center">Actions</th></tr></thead>
+                                <thead><tr class="bg-neutral-50 dark:bg-neutral-700/50 text-neutral-400 font-bold uppercase text-[9px]"><th class="p-3.5">% Term</th><th class="p-3.5">Paid Date</th><th class="p-3.5 text-right">Amount</th><th class="p-3.5 text-center">AR Status</th><th class="p-3.5 text-center">Status</th><th class="p-3.5 text-center">Actions</th></tr></thead>
                                 <tbody>${rowsHtml}</tbody>
                             </table>
                         </div>
@@ -2543,17 +2535,15 @@
             const editId = document.getElementById("edit-payment-schedule-id").value;
             const percentage = parseFloat(document.getElementById("pay-percentage").value) || 0;
             const amount = parseFloat(document.getElementById("pay-amount").value);
-            const currency = document.getElementById("pay-currency").value;
-            const dueDate = parseToStandardDate(document.getElementById("pay-due-date").value);
-            const paidDate = document.getElementById("pay-paid-date").value ? parseToStandardDate(document.getElementById("pay-paid-date").value) : "";
+            const paidDate = document.getElementById("pay-paid-date").value ? parseToStandardDate(document.getElementById("pay-paid-date").value) : new Date().toISOString().slice(0, 10);
 
             const payData = {
                 id: editId ? parseInt(editId) : Date.now(),
                 clientName: document.getElementById("pay-client-name").value,
                 percentage,
-                termDesc: percentage + "%",
-                dueDate, paidDate, currency, amount,
-                amountInKRW: amount * getExchangeRateOnDate(currency, paidDate || dueDate),
+                termDesc: percentage + "% Term",
+                dueDate: paidDate, paidDate, currency: "KRW", amount,
+                amountInKRW: amount,
                 status: document.getElementById("pay-status").value,
                 picture: ""
             };
@@ -2574,7 +2564,6 @@
             document.getElementById("edit-payment-schedule-id").value = p.id;
             document.getElementById("pay-percentage").value = p.percentage || 0;
             document.getElementById("pay-amount").value = p.amount;
-            document.getElementById("pay-due-date").value = parseToStandardDate(p.dueDate);
             document.getElementById("pay-paid-date").value = p.paidDate ? parseToStandardDate(p.paidDate) : "";
             document.getElementById("pay-status").value = p.status;
         }
@@ -2588,7 +2577,103 @@
             });
         }
 
-        /* REVISI 9: PAYROLL HUB UNLINKED STANDALONE LOG (Removed Proof Photo Column) */
+        /* WORKSPACE BARU: PERSONAL CARD & REIMBURSEMENTS LOGIC */
+        function toggleReimbursementForm() {
+            document.getElementById("edit-reimb-id").value = "";
+            document.getElementById("new-reimb-form").reset();
+            document.getElementById("reimb-date").value = new Date().toISOString().slice(0, 10);
+            document.getElementById("reimb-form-card").classList.toggle('hidden');
+        }
+        function cancelReimbursementForm() { document.getElementById("reimb-form-card").classList.add('hidden'); }
+
+        function addManualReimbursement(e) {
+            e.preventDefault();
+            const editId = document.getElementById("edit-reimb-id").value;
+            const fileInput = document.getElementById("reimb-picture");
+
+            const saveReimb = (pic) => {
+                const reimbData = {
+                    id: editId ? parseInt(editId) : Date.now(),
+                    date: parseToStandardDate(document.getElementById("reimb-date").value),
+                    description: document.getElementById("reimb-desc").value.trim(),
+                    payer: document.getElementById("reimb-payer-select").value,
+                    amount: parseFloat(document.getElementById("reimb-amount").value) || 0,
+                    status: document.getElementById("reimb-status").value,
+                    picture: pic
+                };
+
+                if (editId) { appState.reimbursements = appState.reimbursements.map(r => r.id === parseInt(editId) ? reimbData : r); }
+                else { appState.reimbursements.unshift(reimbData); }
+
+                saveState();
+                renderReimbursementsTable();
+                cancelReimbursementForm();
+                showToast("Personal Expense Logged!", "success");
+            };
+
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(event) { saveReimb(event.target.result); };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else { saveReimb(""); }
+        }
+
+        function renderReimbursementsTable() {
+            const tbody = document.getElementById("reimb-table-body");
+            if (!tbody) return;
+            tbody.innerHTML = "";
+
+            if (appState.reimbursements.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-neutral-400 italic">No personal card expenses logged yet.</td></tr>`;
+                return;
+            }
+
+            appState.reimbursements.forEach(r => {
+                const badgeColor = r.status === "Reimbursed" ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400 border-emerald-100" : "bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-400 border-amber-100";
+                const proofBtn = r.picture ? `<button onclick="openReceiptModal('${r.picture}')" class="text-vively font-bold text-xs"><i class="fa-solid fa-image mr-1"></i> View Proof</button>` : `<span class="text-neutral-400 text-[10px] italic">No Proof</span>`;
+
+                const row = `
+                    <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-700/30 transition-all">
+                        <td class="p-4 font-mono text-neutral-500">${r.date}</td>
+                        <td class="p-4 font-bold text-black dark:text-white">${r.description}</td>
+                        <td class="p-4 font-semibold text-neutral-700 dark:text-neutral-300">${r.payer}</td>
+                        <td class="p-4 text-right font-bold text-black dark:text-white">₩ ${r.amount.toLocaleString()}</td>
+                        <td class="p-4 text-center">${proofBtn}</td>
+                        <td class="p-4 text-center"><span class="px-2 py-0.5 rounded border text-[9px] font-bold ${badgeColor}">${r.status}</span></td>
+                        <td class="p-4 text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                <button onclick="loadReimbForEdit(${r.id})" class="text-neutral-400 hover:text-black dark:hover:text-white p-1.5"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                                <button onclick="triggerDeleteReimb(${r.id})" class="text-neutral-400 hover:text-rose-600 p-1.5"><i class="fa-solid fa-trash text-xs"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        }
+
+        function loadReimbForEdit(id) {
+            const r = appState.reimbursements.find(item => item.id === id);
+            if (!r) return;
+            document.getElementById("reimb-form-card").classList.remove('hidden');
+            document.getElementById("edit-reimb-id").value = r.id;
+            document.getElementById("reimb-date").value = r.date;
+            document.getElementById("reimb-desc").value = r.description;
+            document.getElementById("reimb-payer-select").value = r.payer;
+            document.getElementById("reimb-amount").value = r.amount;
+            document.getElementById("reimb-status").value = r.status;
+        }
+
+        function triggerDeleteReimb(id) {
+            showConfirmationModal("Delete Personal Expense", "Remove this record?", false, () => {
+                appState.reimbursements = appState.reimbursements.filter(r => r.id !== id);
+                saveState();
+                renderReimbursementsTable();
+                showToast("Entry Deleted!", "success");
+            });
+        }
+
+        /* PAYROLL HUB (REVISI 9: Removed Receipt Proof Column) */
         function renderCommissionsTable() {
             const tbody = document.getElementById("commissions-table-body");
             tbody.innerHTML = "";
@@ -2601,7 +2686,7 @@
                         <td class="p-4 font-semibold text-neutral-800 dark:text-neutral-200">${com.manager}</td>
                         <td class="p-4"><span class="px-2 py-0.5 rounded border text-[10px] bg-neutral-50 dark:bg-neutral-700 font-medium">${com.type || 'Salary'}</span></td>
                         <td class="p-4 text-neutral-500 dark:text-neutral-400">${com.client || 'Internal'}</td>
-                        <td class="p-4 text-right font-semibold">${parseFloat(com.val).toLocaleString()} ${com.currency}</td>
+                        <td class="p-4 text-right font-semibold">₩ ${parseFloat(com.val).toLocaleString()}</td>
                         <td class="p-4 text-right text-neutral-800 dark:text-neutral-200 font-bold">₩ ${parseFloat(com.amountInKRW).toLocaleString()}</td>
                         <td class="p-4 text-center"><span class="px-2 py-0.5 rounded border text-[9px] font-bold ${badge}">${com.status}</span></td>
                         <td class="p-4 text-center">
@@ -2633,7 +2718,7 @@
             document.getElementById("comm-project").value = com.project;
             document.getElementById("comm-manager-select").value = com.manager;
             document.getElementById("comm-client").value = com.client || "";
-            document.getElementById("comm-currency").value = com.currency;
+            document.getElementById("comm-currency").value = com.currency || "KRW";
             document.getElementById("comm-val").value = com.rawVal || com.val;
             document.getElementById("comm-tax-deduct").checked = !!com.isTaxDeducted;
             document.getElementById("comm-type").value = com.type || "Salary";
@@ -2646,7 +2731,6 @@
             const rawVal = parseFloat(document.getElementById("comm-val").value);
             const isTaxDeducted = document.getElementById("comm-tax-deduct").checked;
             const val = isTaxDeducted ? (rawVal * 0.967) : rawVal;
-            const currency = document.getElementById("comm-currency").value;
             const date = parseToStandardDate(document.getElementById("comm-date").value);
 
             const comData = {
@@ -2655,8 +2739,8 @@
                 project: document.getElementById("comm-project").value,
                 manager: document.getElementById("comm-manager-select").value,
                 client: document.getElementById("comm-client").value,
-                rawVal, val, isTaxDeducted, currency,
-                amountInKRW: val * getExchangeRateOnDate(currency, date),
+                rawVal, val, isTaxDeducted, currency: "KRW",
+                amountInKRW: val,
                 type: document.getElementById("comm-type").value,
                 status: document.getElementById("comm-status").value
             };
@@ -2682,9 +2766,9 @@
         /* EXPORT CSV FUNCTION */
         function exportCurrentTabCSV() { exportCSV('transactions'); }
         function exportCSV(type) {
-            let csvContent = "data:text/csv;charset=utf-8,Date,Description,Category,Amount,Currency,AmountKRW\n";
+            let csvContent = "data:text/csv;charset=utf-8,Date,Description,Category,Amount\n";
             appState.transactions.forEach(t => {
-                csvContent += `"${parseToStandardDate(t.date)}","${t.description}","${t.category}",${t.amount},"${t.currency}",${t.amountInKRW}\n`;
+                csvContent += `"${parseToStandardDate(t.date)}","${t.description}","${t.category}",${t.amountInKRW}\n`;
             });
             const encodedUri = encodeURI(csvContent);
             const a = document.createElement("a");
@@ -2707,8 +2791,8 @@
                 appState.transactions.forEach(t => {
                     const monthIdx = new Date(t.date).getMonth();
                     if (monthIdx >= 0 && monthIdx < 12) {
-                        if (t.type === "CREDIT") monthlyRevenue[monthIdx] += getConvertedVal(parseFloat(t.amountInKRW));
-                        else monthlyExpenses[monthIdx] += getConvertedVal(parseFloat(t.amountInKRW));
+                        if (t.type === "CREDIT") monthlyRevenue[monthIdx] += parseFloat(t.amountInKRW);
+                        else monthlyExpenses[monthIdx] += parseFloat(t.amountInKRW);
                     }
                 });
 
@@ -2729,7 +2813,7 @@
         }
         function closeReceiptModal() { document.getElementById("receipt-modal").classList.add("hidden"); }
 
-        /* REVISI 1: Open New Transaction Form Always Resets to Pure Blank Input */
+        /* REVISI 1: OPEN NEW TRANSACTION FORM ALWAYS RESETS TO PURE BLANK INPUT */
         function openNewTransactionForm() {
             document.getElementById("transaction-form-card").classList.remove('hidden');
             document.getElementById("edit-transaction-id").value = "";
@@ -2747,34 +2831,25 @@
             const category = document.getElementById("form-category").value;
             const isCash = document.getElementById("form-is-cash").checked;
             const amount = parseFloat(document.getElementById("form-amount").value);
-            const currency = document.getElementById("form-currency").value;
             
             const coaMatch = appState.coa.find(c => c.name === category);
             const type = (coaMatch && coaMatch.category === "Revenue") ? "CREDIT" : "DEBIT";
-            const fileInput = document.getElementById("form-picture");
 
-            const handleSave = (pic) => {
-                const txData = {
-                    id: editId ? parseInt(editId) : Date.now(),
-                    date, description: desc, details, category, amount, currency,
-                    amountInKRW: amount * getExchangeRateOnDate(currency, date),
-                    type, picture: pic, source: isCash ? "PETTY_CASH" : "MANUAL"
-                };
-
-                if (editId) { appState.transactions = appState.transactions.map(t => t.id === parseInt(editId) ? txData : t); }
-                else { appState.transactions.push(txData); }
-
-                saveState(); updateUI(); cancelTransactionForm();
-                showToast("Manual transaction saved!", "success");
+            const txData = {
+                id: editId ? parseInt(editId) : Date.now(),
+                date, description: desc, details, category, amount, currency: "KRW",
+                amountInKRW: amount,
+                type, picture: "", source: isCash ? "PETTY_CASH" : "MANUAL"
             };
 
-            if (fileInput.files && fileInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(event) { handleSave(event.target.result); };
-                reader.readAsDataURL(fileInput.files[0]);
-            } else { handleSave(""); }
+            if (editId) { appState.transactions = appState.transactions.map(t => t.id === parseInt(editId) ? txData : t); }
+            else { appState.transactions.push(txData); }
+
+            saveState(); updateUI(); cancelTransactionForm();
+            showToast("Transaction saved!", "success");
         }
 
+        /* REVISI 6: LOAD TRANSACTION & AUTO-SCROLL TO TOP EDIT FORM */
         function loadTransactionForEdit(id) {
             const tx = appState.transactions.find(t => t.id === id);
             if (!tx) return;
@@ -2785,8 +2860,10 @@
             document.getElementById("form-details").value = tx.details || "";
             document.getElementById("form-category").value = tx.category;
             document.getElementById("form-is-cash").checked = tx.source === "PETTY_CASH";
-            document.getElementById("form-currency").value = tx.currency;
             document.getElementById("form-amount").value = tx.amount;
+
+            // REVISI 6: Auto-scroll smoothly to top edit form
+            document.getElementById("transaction-form-card").scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
         function cancelTransactionForm() { 
