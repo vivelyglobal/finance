@@ -59,7 +59,7 @@
         </div>
     </div>
 
-    <!-- Main Workspace -->
+    <!-- Main Workspace App -->
     <div id="app-workspace" class="hidden min-h-screen flex flex-col bg-white">
         
         <!-- Header Navigation -->
@@ -84,7 +84,7 @@
                 <div class="h-4 w-[1px] bg-neutral-200"></div>
                 <span class="text-neutral-500 flex items-center gap-1.5">
                     <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
-                    <span>Database Active</span>
+                    <span>Local Database Active</span>
                 </span>
                 <div class="h-4 w-[1px] bg-neutral-200"></div>
                 <button onclick="handleLogout()" class="text-neutral-400 hover:text-rose-600 font-semibold transition-all flex items-center gap-1">
@@ -93,7 +93,7 @@
             </div>
         </header>
 
-        <!-- Main Layout -->
+        <!-- Main Content Layout -->
         <div class="flex flex-1">
             
             <!-- Sidebar Navigation -->
@@ -157,7 +157,7 @@
                 </div>
             </aside>
 
-            <!-- Main Content Area -->
+            <!-- Main Viewport -->
             <main class="flex-1 p-8 overflow-y-auto bg-white">
                 
                 <!-- Tab 1: Executive Dashboard -->
@@ -186,6 +186,9 @@
                                     <option value="12">December</option>
                                 </select>
                             </div>
+                            <button onclick="triggerClearConfirmation()" class="px-3.5 py-1.5 border border-rose-200 text-rose-600 rounded-xl text-xs font-semibold hover:bg-rose-50 hover:border-rose-500 transition-all">
+                                <i class="fa-solid fa-trash-can mr-1.5"></i> Clear All Data
+                            </button>
                         </div>
                     </div>
 
@@ -244,7 +247,7 @@
                         </div>
                     </div>
 
-                    <!-- COA Financial Report -->
+                    <!-- COA FINANCIAL REPORT -->
                     <div class="border border-neutral-100 rounded-2xl p-6 bg-white shadow-sm space-y-4">
                         <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-neutral-100 pb-4">
                             <div>
@@ -284,21 +287,20 @@
                     </div>
                 </section>
 
-                <!-- TAB: Bank Reconciliation (Linked to Google Sheets API) -->
+                <!-- TAB: Bank Reconciliation (CONNECTED DIRECTLY TO YOUR PUBLISHED GOOGLE SHEET) -->
                 <section id="tab-bank-recon" class="hidden space-y-8 animate-fade-in">
                     <div class="flex justify-between items-center border-b border-neutral-100 pb-5">
                         <div>
                             <h2 class="text-xl font-bold tracking-tight">Automated Bank Reconciliation (하나은행 / Hana Bank)</h2>
-                            <p class="text-xs text-neutral-500">Live synced via Google Sheets & Gmail API for vivelyglobal@gmail.com.</p>
+                            <p class="text-xs text-neutral-500">Live synced via Published Google Sheets for Hana Bank Database.</p>
                         </div>
                         <div class="flex items-center gap-3">
                             <button onclick="fetchGoogleSheetBankData()" class="px-4 py-2 accent-bg text-white font-semibold rounded-xl text-xs shadow-sm flex items-center gap-2">
-                                <i class="fa-solid fa-arrows-rotate"></i> Sync Google Sheet API
+                                <i class="fa-solid fa-arrows-rotate"></i> Sync Hana Bank Sheet
                             </button>
                         </div>
                     </div>
 
-                    <!-- Hana Bank Account Info -->
                     <div class="bg-white border border-neutral-200 rounded-2xl p-6 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div class="space-y-1">
                             <p class="text-[10px] font-bold text-neutral-400 uppercase">Connected Entity</p>
@@ -310,52 +312,53 @@
                         <div class="space-y-1">
                             <p class="text-[10px] font-bold text-neutral-400 uppercase">Google Sheet Reconciled Total</p>
                             <h3 class="text-xl font-bold text-emerald-600" id="recon-bank-total">₩ 0</h3>
-                            <p class="text-[10px] text-neutral-400">Automated Email Notification Log</p>
+                            <p class="text-[10px] text-neutral-400">Automated Hana Bank Feed Balance</p>
                         </div>
                         <div class="space-y-1">
-                            <p class="text-[10px] font-bold text-neutral-400 uppercase">Live Logged Bank Feed Items</p>
+                            <p class="text-[10px] font-bold text-neutral-400 uppercase">Live Logged Items</p>
                             <h3 class="text-xl font-bold text-black" id="recon-items-count">0 items</h3>
                             <p class="text-[10px] text-emerald-600 font-semibold">✓ Ready to pipe to Transaction Tracker</p>
                         </div>
                     </div>
 
-                    <!-- Verified Reconciliation Table -->
                     <div class="border border-neutral-100 rounded-2xl p-6 bg-white shadow-sm space-y-4">
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-black">Hana Bank Statements (Google Sheet Live Sync)</h4>
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-black">Hana Bank Statements (Google Sheet Sync)</h4>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left border-collapse text-xs">
                                 <thead>
                                     <tr class="bg-neutral-50 border-b border-neutral-100 text-neutral-500 font-bold uppercase tracking-wider text-[10px]">
                                         <th class="p-3.5">Date</th>
-                                        <th class="p-3.5">Hana Bank Email Description</th>
+                                        <th class="p-3.5">Hana Bank Feed Description</th>
                                         <th class="p-3.5 text-right">Amount (KRW)</th>
                                         <th class="p-3.5 text-center">Type</th>
-                                        <th class="p-3.5 text-center">Status</th>
+                                        <th class="p-3.5 text-center">Reconciliation Status</th>
                                     </tr>
                                 </thead>
                                 <tbody id="bank-sheet-table-body" class="divide-y divide-neutral-100 text-neutral-800">
-                                    <tr><td colspan="5" class="p-6 text-center text-neutral-400 italic">Click "Sync Google Sheet API" to fetch Hana Bank data.</td></tr>
+                                    <tr><td colspan="5" class="p-6 text-center text-neutral-400 italic">Click "Sync Hana Bank Sheet" to fetch data.</td></tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </section>
 
-                <!-- Tab: Transaction Tracker -->
+                <!-- Tab 2: Transaction Tracker -->
                 <section id="tab-transactions" class="hidden space-y-8 animate-fade-in">
                     <div class="flex justify-between items-center border-b border-neutral-100 pb-5">
                         <div>
                             <h2 class="text-xl font-bold tracking-tight">Transaction Tracker</h2>
-                            <p class="text-xs text-neutral-500">Track, manage, and categorize bank feeds and manual transactions.</p>
+                            <p class="text-xs text-neutral-500">Track, manage, and edit individual ledger items including physical proofs of purchase.</p>
                         </div>
                         <div class="flex gap-2">
                             <button onclick="exportCSV('transactions')" class="px-3.5 py-2 border border-neutral-200 text-neutral-700 rounded-xl text-xs font-semibold hover:bg-neutral-50 transition-all flex items-center gap-1.5">
                                 <i class="fa-solid fa-download"></i> Export CSV
                             </button>
+                            <button onclick="toggleTransactionForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
+                                <i class="fa-solid fa-plus mr-1.5"></i> Log Manual Cash Transaction
+                            </button>
                         </div>
                     </div>
 
-                    <!-- TRANSACTION SUMMARY MODULE -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="bg-neutral-50 border border-neutral-100 rounded-2xl p-4 flex items-center justify-between">
                             <div>
@@ -386,6 +389,82 @@
                         </div>
                     </div>
 
+                    <!-- Form Input Transaction Manual -->
+                    <div id="transaction-form-card" class="hidden bg-neutral-50 border border-neutral-100 rounded-2xl p-6 space-y-4">
+                        <h3 class="text-xs font-bold text-black uppercase tracking-wider text-neutral-500" id="transaction-form-title">Manual Transaction</h3>
+                        <form id="new-transaction-form" onsubmit="addManualTransaction(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                            <input type="hidden" id="edit-transaction-id" value="">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Transaction Date</label>
+                                <input type="date" id="form-date" required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Item Description</label>
+                                <input type="text" id="form-desc" placeholder="Summary..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Details</label>
+                                <input type="text" id="form-details" placeholder="Notes..." class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Account Category</label>
+                                <select id="form-category" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white"></select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Currency</label>
+                                <select id="form-currency" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                    <option value="KRW">KRW (₩)</option>
+                                    <option value="SGD">SGD (S$)</option>
+                                    <option value="USD">USD ($)</option>
+                                    <option value="IDR">IDR (Rp)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Amount</label>
+                                <input type="number" step="any" id="form-amount" placeholder="Amount..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Receipt Image Proof</label>
+                                <input type="file" id="form-picture" accept="image/*" class="w-full text-xs px-2 py-1.5 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div class="md:col-span-4 flex justify-end gap-2 pt-2 border-t border-neutral-100">
+                                <button type="button" onclick="cancelTransactionForm()" class="px-4 py-2 border border-neutral-200 rounded-lg text-xs font-semibold hover:bg-white transition-all">Cancel</button>
+                                <button type="submit" id="form-tx-submit" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-bold hover:opacity-95 transition-all">Submit Entry</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Filter panel -->
+                    <div class="flex flex-wrap gap-4 items-center justify-between bg-neutral-50 p-4 rounded-xl border border-neutral-100">
+                        <div class="flex flex-wrap gap-4 items-center">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-semibold text-neutral-500">Category Filter:</span>
+                                <select id="table-category-filter" onchange="renderTransactionsTable()" class="bg-white border border-neutral-200 text-black px-3 py-1.5 rounded-lg text-xs font-medium focus:outline-none focus:ring-1 accent-ring">
+                                    <option value="ALL">All Categories</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-semibold text-neutral-500">Month:</span>
+                                <select id="table-month-filter" onchange="renderTransactionsTable()" class="bg-white border border-neutral-200 text-black px-3 py-1.5 rounded-lg text-xs font-medium focus:outline-none focus:ring-1 accent-ring">
+                                    <option value="ALL">All Months</option>
+                                    <option value="01">January</option>
+                                    <option value="02">February</option>
+                                    <option value="03">March</option>
+                                    <option value="04">April</option>
+                                    <option value="05">May</option>
+                                    <option value="06">June</option>
+                                    <option value="07">July</option>
+                                    <option value="08">August</option>
+                                    <option value="09">September</option>
+                                    <option value="10">October</option>
+                                    <option value="11">November</option>
+                                    <option value="12">December</option>
+                                </select>
+                            </div>
+                        </div>
+                        <span class="text-xs text-neutral-500 font-semibold" id="table-filtered-counter">Showing 0 transactions</span>
+                    </div>
+
                     <!-- Transactions Table -->
                     <div class="border border-neutral-100 rounded-2xl overflow-hidden shadow-sm bg-white">
                         <div class="overflow-x-auto">
@@ -394,9 +473,11 @@
                                     <tr class="bg-neutral-50 border-b border-neutral-100 text-neutral-500 font-bold uppercase tracking-wider text-[10px]">
                                         <th class="p-4">Date</th>
                                         <th class="p-4">Item Description</th>
-                                        <th class="p-4">COA Category</th>
-                                        <th class="p-4 text-right">Amount (KRW Base)</th>
-                                        <th class="p-4 text-center">Source</th>
+                                        <th class="p-4">Category</th>
+                                        <th class="p-4 text-right">Original Amount</th>
+                                        <th class="p-4 text-right">Converted (KRW Base)</th>
+                                        <th class="p-4 text-center">Receipt / Source</th>
+                                        <th class="p-4 text-center">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="transactions-table-body" class="divide-y divide-neutral-100 text-neutral-800">
@@ -406,97 +487,779 @@
                     </div>
                 </section>
 
+                <!-- TAB: Chart of Accounts (COA) -->
+                <section id="tab-coa" class="hidden space-y-8 animate-fade-in">
+                    <div class="flex justify-between items-center border-b border-neutral-100 pb-5">
+                        <div>
+                            <h2 class="text-xl font-bold tracking-tight">Chart of Accounts (COA)</h2>
+                            <p class="text-xs text-neutral-500">Manage financial account structures, categories, and normal balances for accounting standards.</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="exportCSV('coa')" class="px-3.5 py-2 border border-neutral-200 text-neutral-700 rounded-xl text-xs font-semibold hover:bg-neutral-50 transition-all flex items-center gap-1.5">
+                                <i class="fa-solid fa-download"></i> Export CSV
+                            </button>
+                            <button onclick="toggleCOAForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
+                                <i class="fa-solid fa-plus mr-1.5"></i> Add COA
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- COA Form Card -->
+                    <div id="coa-form-card" class="hidden bg-neutral-50 border border-neutral-100 rounded-2xl p-6 space-y-4">
+                        <h3 class="text-xs font-bold text-black uppercase tracking-wider text-neutral-500" id="coa-form-title">Add New Account</h3>
+                        <form id="new-coa-form" onsubmit="addManualCOA(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                            <input type="hidden" id="edit-coa-id" value="">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Account Code</label>
+                                <input type="text" id="coa-code" placeholder="e.g. 1010, 5010..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Account Name</label>
+                                <input type="text" id="coa-name" placeholder="e.g. Software & Tools..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Category Type</label>
+                                <select id="coa-category" onchange="autoSetNormalBalance()" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                    <option value="Asset">Asset</option>
+                                    <option value="Liability">Liability</option>
+                                    <option value="Equity">Equity</option>
+                                    <option value="Revenue">Revenue</option>
+                                    <option value="Expense" selected>Expense</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Normal Balance Side</label>
+                                <select id="coa-side" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                    <option value="Debit">Debit Side</option>
+                                    <option value="Credit">Credit Side</option>
+                                </select>
+                            </div>
+                            <div class="md:col-span-4 flex justify-end gap-2 pt-2 border-t border-neutral-100">
+                                <button type="button" onclick="cancelCOAForm()" class="px-4 py-2 border border-neutral-200 rounded-lg text-xs font-semibold hover:bg-white transition-all">Cancel</button>
+                                <button type="submit" id="coa-submit-btn" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-bold hover:opacity-95 transition-all">Save Account</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- COA Table -->
+                    <div class="border border-neutral-100 rounded-2xl overflow-hidden shadow-sm bg-white">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-neutral-50 border-b border-neutral-100 text-neutral-500 font-bold uppercase tracking-wider text-[10px]">
+                                    <th class="p-4">Account Code</th>
+                                    <th class="p-4">Account Name</th>
+                                    <th class="p-4">Category</th>
+                                    <th class="p-4">Normal Balance Side</th>
+                                    <th class="p-4 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="coa-table-body" class="divide-y divide-neutral-100 text-neutral-800">
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- TAB: Employee Data -->
+                <section id="tab-employees" class="hidden space-y-8 animate-fade-in">
+                    <div class="flex justify-between items-center border-b border-neutral-100 pb-5">
+                        <div>
+                            <h2 class="text-xl font-bold tracking-tight">Employee & Staff Directory</h2>
+                            <p class="text-xs text-neutral-500">Manage team profiles, employment statuses, and banking details for seamless payroll logging.</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="exportCSV('employees')" class="px-3.5 py-2 border border-neutral-200 text-neutral-700 rounded-xl text-xs font-semibold hover:bg-neutral-50 transition-all flex items-center gap-1.5">
+                                <i class="fa-solid fa-download"></i> Export CSV
+                            </button>
+                            <button onclick="toggleEmployeeForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
+                                <i class="fa-solid fa-plus mr-1.5"></i> Add Employee
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Form Input Employee -->
+                    <div id="employee-form-card" class="hidden bg-neutral-50 border border-neutral-100 rounded-2xl p-6 space-y-4">
+                        <h3 class="text-xs font-bold text-black uppercase tracking-wider text-neutral-500" id="employee-form-title">New Employee Registration</h3>
+                        <form id="new-employee-form" onsubmit="addManualEmployee(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                            <input type="hidden" id="edit-employee-id" value="">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Full Name</label>
+                                <input type="text" id="emp-name" placeholder="Employee Full Name..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Employment Type</label>
+                                <select id="emp-type" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                    <option value="Full-Time">Full-Time</option>
+                                    <option value="Part-Time">Part-Time</option>
+                                    <option value="Intern">Intern</option>
+                                    <option value="Contractor / Freelance">Contractor / Freelance</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Status</label>
+                                <select id="emp-status" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                    <option value="On-Going">On-Going (Active)</option>
+                                    <option value="Completed">Completed (Inactive / Resigned)</option>
+                                    <option value="On-Leave">On-Leave</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Phone Number</label>
+                                <input type="text" id="emp-phone" placeholder="010-XXXX-XXXX" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Email Address</label>
+                                <input type="email" id="emp-email" placeholder="name@vively.com" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Bank Name</label>
+                                <input type="text" id="emp-bank" placeholder="e.g., KB Kookmin, Shinhan, Woori, KakaoBank..." class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Account Number</label>
+                                <input type="text" id="emp-account" placeholder="Account Number..." class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div class="flex gap-2">
+                                <button type="submit" id="emp-submit-btn" class="flex-1 px-4 py-2 text-white accent-bg rounded-lg text-xs font-semibold hover:opacity-95 transition-all">Save Employee</button>
+                                <button type="button" onclick="cancelEmployeeForm()" class="px-4 py-2 border border-neutral-200 rounded-lg text-xs font-semibold hover:bg-white transition-all">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Employee Directory Table -->
+                    <div class="border border-neutral-100 rounded-2xl overflow-hidden shadow-sm bg-white">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-neutral-50 border-b border-neutral-100 text-neutral-500 font-bold uppercase tracking-wider text-[10px]">
+                                    <th class="p-4">Full Name</th>
+                                    <th class="p-4">Employment Type</th>
+                                    <th class="p-4">Status</th>
+                                    <th class="p-4">Phone</th>
+                                    <th class="p-4">Email</th>
+                                    <th class="p-4">Bank</th>
+                                    <th class="p-4">Account Number</th>
+                                    <th class="p-4 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="employees-table-body" class="divide-y divide-neutral-100 text-neutral-800">
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Tab 3: Key Client Portfolio -->
+                <section id="tab-clients" class="hidden space-y-8 animate-fade-in">
+                    <div class="flex justify-between items-center border-b border-neutral-100 pb-5">
+                        <div>
+                            <h2 class="text-xl font-bold tracking-tight">Key Companies / Clients</h2>
+                            <p class="text-xs text-neutral-500">Portfolio accounts contract values, creator seeding numbers, and campaign periods.</p>
+                        </div>
+                        
+                        <div class="flex items-center gap-3">
+                            <button onclick="exportCSV('clients')" class="px-3.5 py-2 border border-neutral-200 text-neutral-700 rounded-xl text-xs font-semibold hover:bg-neutral-50 transition-all flex items-center gap-1.5">
+                                <i class="fa-solid fa-download"></i> Export CSV
+                            </button>
+                            <div class="bg-neutral-100 p-1 rounded-xl flex gap-1 border border-neutral-200">
+                                <button onclick="setClientLayout('card')" id="layout-btn-card" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-black shadow-sm">
+                                    <i class="fa-solid fa-grip mr-1"></i> Cards
+                                </button>
+                                <button onclick="setClientLayout('list')" id="layout-btn-list" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-neutral-500 hover:text-black">
+                                    <i class="fa-solid fa-list mr-1"></i> List Layout
+                                </button>
+                            </div>
+                            <button onclick="toggleClientForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
+                                <i class="fa-solid fa-plus mr-1.5"></i> Add Client
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Client Multi-Filter Panel -->
+                    <div class="flex flex-wrap gap-4 items-center justify-between bg-neutral-50 p-4 rounded-xl border border-neutral-100">
+                        <div class="flex flex-wrap gap-4 items-center">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-semibold text-neutral-500">Deal Model:</span>
+                                <select id="client-filter-deal" onchange="renderClientsView()" class="bg-white border border-neutral-200 text-black px-3 py-1.5 rounded-lg text-xs font-medium focus:outline-none focus:ring-1 accent-ring">
+                                    <option value="ALL">All Deal Models</option>
+                                    <option value="Paid Campaign">Paid Campaign</option>
+                                    <option value="Free Trial">Free Trial</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-semibold text-neutral-500">Industry:</span>
+                                <select id="client-filter-industry" onchange="renderClientsView()" class="bg-white border border-neutral-200 text-black px-3 py-1.5 rounded-lg text-xs font-medium focus:outline-none focus:ring-1 accent-ring">
+                                    <option value="ALL">All Industries</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-semibold text-neutral-500">Status:</span>
+                                <select id="client-filter-status" onchange="renderClientsView()" class="bg-white border border-neutral-200 text-black px-3 py-1.5 rounded-lg text-xs font-medium focus:outline-none focus:ring-1 accent-ring">
+                                    <option value="ALL">All Status</option>
+                                    <option value="Active">Active</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
+                            </div>
+                        </div>
+                        <span class="text-xs text-neutral-500 font-semibold" id="client-filtered-counter">Showing 0 clients</span>
+                    </div>
+
+                    <!-- Client Form Card -->
+                    <div id="client-form-card" class="hidden bg-neutral-50 border border-neutral-100 rounded-2xl p-6 space-y-4">
+                        <h3 class="text-xs font-bold text-black uppercase tracking-wider text-neutral-500" id="client-form-title">New Client Registration</h3>
+                        <form id="new-client-form" onsubmit="addManualClient(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                            <input type="hidden" id="edit-client-id" value="">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Company Name</label>
+                                <input type="text" id="client-name" placeholder="Name..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Industry</label>
+                                <input type="text" id="client-industry" placeholder="Industry..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Primary Service Line (Revenue COA)</label>
+                                <select id="client-service" onchange="toggleCustomInput('client-service', 'client-service-custom')" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                    <option value="KOL Seeding Revenue">KOL Seeding Revenue</option>
+                                    <option value="Group Purchase Revenue">Group Purchase Revenue</option>
+                                    <option value="Sales Program Revenue">Sales Program Revenue</option>
+                                    <option value="Localization Consulting Revenue">Localization Consulting Revenue</option>
+                                    <option value="Live Host Revenue">Live Host Revenue</option>
+                                    <option value="Legal Registration Revenue">Legal Registration Revenue</option>
+                                    <option value="CUSTOM_VAL">+ Add Custom Revenue Service...</option>
+                                </select>
+                                <input type="text" id="client-service-custom" placeholder="Type custom service name..." class="hidden mt-1.5 w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Deal Type</label>
+                                <select id="client-dealtype" onchange="toggleCustomInput('client-dealtype', 'client-dealtype-custom')" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                </select>
+                                <input type="text" id="client-dealtype-custom" placeholder="Type custom deal type..." class="hidden mt-1.5 w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Contract Currency</label>
+                                <select id="client-currency" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                    <option value="KRW">KRW (₩)</option>
+                                    <option value="SGD">SGD (S$)</option>
+                                    <option value="USD">USD ($)</option>
+                                    <option value="IDR">IDR (Rp)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Contract Value</label>
+                                <input type="number" id="client-value-raw" placeholder="e.g. 1500000" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Status</label>
+                                <select id="client-status" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                    <option value="Active">Active</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Creators Seeding (Qty)</label>
+                                <input type="number" id="client-creators" placeholder="e.g. 25" required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Campaign Start Date</label>
+                                <input type="date" id="client-start-date" required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="block text-[11px] font-semibold text-neutral-700">Campaign End Date</label>
+                                    <label class="inline-flex items-center gap-1 cursor-pointer text-[10px] text-neutral-500 font-medium">
+                                        <input type="checkbox" id="client-no-enddate" onchange="toggleOngoingCampaign()" class="rounded text-[#ff66c4] focus:ring-0">
+                                        <span>Ongoing</span>
+                                    </label>
+                                </div>
+                                <input type="date" id="client-end-date" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Signed Contract File (PDF/Image)</label>
+                                <input type="file" id="client-contract-file" accept="image/*,.pdf" class="w-full text-xs px-2 py-1.5 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div class="md:col-span-4 flex justify-end gap-2 pt-2 border-t border-neutral-100">
+                                <button type="submit" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-semibold hover:opacity-95 transition-all">Save Changes</button>
+                                <button type="button" onclick="cancelClientForm()" class="px-4 py-2 border border-neutral-200 rounded-lg text-xs font-semibold hover:bg-white transition-all">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Client Cards Container -->
+                    <div id="clients-cards-view" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    </div>
+
+                    <!-- Client List View -->
+                    <div id="clients-list-view" class="hidden border border-neutral-100 rounded-2xl overflow-hidden shadow-sm bg-white">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-neutral-50 border-b border-neutral-100 text-neutral-500 font-bold uppercase tracking-wider text-[10px]">
+                                    <th class="p-4">Company Name</th>
+                                    <th class="p-4">Industry</th>
+                                    <th class="p-4">Service</th>
+                                    <th class="p-4 text-right">Contract Value</th>
+                                    <th class="p-4 text-center">Creators Seeding</th>
+                                    <th class="p-4 text-center">Campaign Timeline</th>
+                                    <th class="p-4 text-center">Signed Contract</th>
+                                    <th class="p-4">Status</th>
+                                    <th class="p-4 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clients-list-body" class="divide-y divide-neutral-100 text-neutral-800">
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
                 <!-- TAB: Client Payment & AR Aging -->
                 <section id="tab-client-payments" class="hidden space-y-8 animate-fade-in">
                     <div class="flex justify-between items-center border-b border-neutral-100 pb-5">
                         <div>
-                            <h2 class="text-xl font-bold tracking-tight">Client Payment & AR Aging</h2>
-                            <p class="text-xs text-neutral-500">Manage payment terms and monitor Accounts Receivable (AR) aging for Paid Collab brands.</p>
+                            <h2 class="text-xl font-bold tracking-tight">Client Payment & Accounts Receivable (AR Aging)</h2>
+                            <p class="text-xs text-neutral-500">Manage payment terms and monitor Accounts Receivable (AR) overdue aging for Paid Collab brands.</p>
                         </div>
                     </div>
 
-                    <!-- GRAND SUMMARY CARDS -->
+                    <!-- GRAND SUMMARY CARDS FOR ALL PAID COLLAB BRANDS -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div class="bg-white border border-neutral-200 rounded-2xl p-5 shadow-sm">
                             <span class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Total Contract Value (All Paid Brands)</span>
                             <h3 class="text-xl font-bold text-black mt-2" id="sum-paid-contract">0</h3>
+                            <p class="text-[10px] text-neutral-400 mt-1">Accumulated Paid Campaign Contracts</p>
                         </div>
                         <div class="bg-white border border-neutral-200 rounded-2xl p-5 shadow-sm">
                             <span class="text-[10px] font-bold text-emerald-500 uppercase tracking-wider">Total Paid Amount Received</span>
                             <h3 class="text-xl font-bold text-emerald-600 mt-2" id="sum-paid-received">0</h3>
+                            <p class="text-[10px] text-neutral-400 mt-1">Verified Received Revenue</p>
                         </div>
                         <div class="bg-white border border-neutral-200 rounded-2xl p-5 shadow-sm">
-                            <span class="text-[10px] font-bold text-rose-500 uppercase tracking-wider">Total Remaining Balance</span>
+                            <span class="text-[10px] font-bold text-rose-500 uppercase tracking-wider">Total Remaining Balance (Sisa Pembayaran)</span>
                             <h3 class="text-xl font-bold text-rose-600 mt-2" id="sum-paid-remaining">0</h3>
+                            <p class="text-[10px] text-neutral-400 mt-1">Outstanding Receivable Balance</p>
                         </div>
                     </div>
 
+                    <!-- AR AGING BREAKDOWN MODULE -->
+                    <div class="bg-neutral-50 border border-neutral-200 rounded-2xl p-5 space-y-3">
+                        <div class="flex justify-between items-center border-b border-neutral-200 pb-2">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-black flex items-center gap-2">
+                                <i class="fa-solid fa-clock-rotate-left text-amber-500"></i> Accounts Receivable (AR) Aging Risk Status
+                            </h4>
+                            <span class="text-[10px] font-semibold text-neutral-400">Evaluated against current date (2026-07-22)</span>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-1">
+                            <div class="bg-white p-3 rounded-xl border border-neutral-200">
+                                <span class="text-[9px] font-bold text-emerald-600 uppercase">On-Time / Current</span>
+                                <p class="text-sm font-bold text-black mt-1" id="ar-current-val">₩ 0</p>
+                            </div>
+                            <div class="bg-white p-3 rounded-xl border border-neutral-200">
+                                <span class="text-[9px] font-bold text-amber-500 uppercase">Overdue 1 - 30 Days (H+30)</span>
+                                <p class="text-sm font-bold text-amber-600 mt-1" id="ar-h30-val">₩ 0</p>
+                            </div>
+                            <div class="bg-white p-3 rounded-xl border border-neutral-200">
+                                <span class="text-[9px] font-bold text-orange-600 uppercase">Overdue 31 - 60 Days (H+60)</span>
+                                <p class="text-sm font-bold text-orange-600 mt-1" id="ar-h60-val">₩ 0</p>
+                            </div>
+                            <div class="bg-white p-3 rounded-xl border border-neutral-200">
+                                <span class="text-[9px] font-bold text-rose-600 uppercase">Overdue > 60 Days (Critical)</span>
+                                <p class="text-sm font-bold text-rose-600 mt-1" id="ar-h90-val">₩ 0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Modal Form -->
+                    <div id="payment-schedule-form-card" class="hidden bg-neutral-50 border border-neutral-100 rounded-2xl p-6 space-y-4">
+                        <h3 class="text-xs font-bold text-black uppercase tracking-wider text-neutral-500" id="payment-schedule-form-title">Log Payment Term</h3>
+                        <form id="new-payment-schedule-form" onsubmit="addManualPaymentSchedule(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                            <input type="hidden" id="edit-payment-schedule-id" value="">
+                            <input type="hidden" id="pay-client-total-value" value="0">
+                            
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Target Client Brand</label>
+                                <input type="text" id="pay-client-display" readonly required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg bg-neutral-100 text-neutral-600 font-bold">
+                                <input type="hidden" id="pay-client-name">
+                            </div>
+                            
+                            <!-- PERCENTAGE INPUT -->
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Payment Percentage (%)</label>
+                                <input type="number" id="pay-percentage" placeholder="e.g., 50" oninput="calculatePaymentAmount()" required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Due Date</label>
+                                <input type="date" id="pay-due-date" required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Actual Paid Date (If Paid)</label>
+                                <input type="date" id="pay-paid-date" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Currency</label>
+                                <select id="pay-currency" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                    <option value="KRW">KRW (₩)</option>
+                                    <option value="SGD">SGD (S$)</option>
+                                    <option value="USD">USD ($)</option>
+                                    <option value="IDR">IDR (Rp)</option>
+                                </select>
+                            </div>
+                            
+                            <!-- AMOUNT INPUT -->
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Amount (Auto-calculated)</label>
+                                <input type="number" id="pay-amount" placeholder="Calculated Amount..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Payment Status</label>
+                                <select id="pay-status" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                    <option value="Paid">Paid (Added to Revenue & Tracker)</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Overdue">Overdue</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Payment Proof Image</label>
+                                <input type="file" id="pay-picture" accept="image/*" class="w-full text-xs px-2 py-1.5 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div class="md:col-span-4 flex justify-end gap-2 pt-2 border-t border-neutral-100">
+                                <button type="submit" id="pay-submit-btn" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-semibold hover:opacity-95 transition-all">Save Term Record</button>
+                                <button type="button" onclick="cancelPaymentScheduleForm()" class="px-4 py-2 border border-neutral-200 rounded-lg text-xs font-semibold hover:bg-white transition-all">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Cards Container for Paid Collab Clients -->
                     <div id="paid-clients-payment-container" class="space-y-6">
+                    </div>
+                </section>
+
+                <!-- Tab 4: Unified Compensation, Payouts & Salaries -->
+                <section id="tab-commissions" class="hidden space-y-8 animate-fade-in">
+                    <div class="flex justify-between items-center border-b border-neutral-100 pb-5">
+                        <div>
+                            <h2 class="text-xl font-bold tracking-tight">Payroll, Salaries & Commissions Hub</h2>
+                            <p class="text-xs text-neutral-500">Log both fixed corporate salaries and discretionary flat-rate PM commissions under one workspace.</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="exportCSV('commissions')" class="px-3.5 py-2 border border-neutral-200 text-neutral-700 rounded-xl text-xs font-semibold hover:bg-neutral-50 transition-all flex items-center gap-1.5">
+                                <i class="fa-solid fa-download"></i> Export CSV
+                            </button>
+                            <button onclick="toggleCommissionForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
+                                <i class="fa-solid fa-plus mr-1.5"></i> Log Payout / Salary
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- PM Commission / Salary Form -->
+                    <div id="commission-form-card" class="hidden bg-neutral-50 border border-neutral-100 rounded-2xl p-6 space-y-4">
+                        <h3 class="text-xs font-bold text-black uppercase tracking-wider text-neutral-500" id="commissions-form-title">Log Payout Details</h3>
+                        <form id="new-commission-form" onsubmit="addManualCommission(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                            <input type="hidden" id="edit-commission-id" value="">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Date of Payment</label>
+                                <input type="date" id="comm-date" required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Category type</label>
+                                <select id="comm-type" onchange="toggleCustomInput('comm-type', 'comm-type-custom')" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                </select>
+                                <input type="text" id="comm-type-custom" placeholder="Type custom category..." class="hidden mt-1.5 w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Item / Project Name</label>
+                                <input type="text" id="comm-project" placeholder="e.g. Creator Launch Campaign / June Salary" required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Recipient Name</label>
+                                <select id="comm-manager-select" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                    <option value="">-- Select from Employees --</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Client Company (Optional)</label>
+                                <input type="text" id="comm-client" placeholder="Company..." class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Payout Currency</label>
+                                <select id="comm-currency" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                    <option value="KRW">KRW (₩)</option>
+                                    <option value="SGD">SGD (S$)</option>
+                                    <option value="USD">USD ($)</option>
+                                    <option value="IDR">IDR (Rp)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Flat Payment Value</label>
+                                <input type="number" id="comm-val" placeholder="Direct payout..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            
+                            <!-- TAX CHECKBOX 3.3% -->
+                            <div class="flex items-center gap-2 py-2">
+                                <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-semibold text-neutral-700">
+                                    <input type="checkbox" id="comm-tax-deduct" class="rounded text-[#ff66c4] focus:ring-0 w-4 h-4">
+                                    <span>Deduct 3.3% Tax (PPh)</span>
+                                </label>
+                            </div>
+
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Status</label>
+                                <select id="comm-status" onchange="toggleCustomInput('comm-status', 'comm-status-custom')" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                </select>
+                                <input type="text" id="comm-status-custom" placeholder="Type custom status..." class="hidden mt-1.5 w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Payment Proof Image</label>
+                                <input type="file" id="comm-picture" accept="image/*" class="w-full text-xs px-2 py-1.5 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                            </div>
+                            <div class="md:col-span-2 flex justify-end gap-2 pt-2">
+                                <button type="button" onclick="cancelCommissionForm()" class="px-4 py-2 border border-neutral-200 rounded-lg text-xs font-semibold hover:bg-white transition-all">Cancel</button>
+                                <button type="submit" id="comm-submit-btn" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-semibold hover:opacity-95 transition-all">Save Record</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Filter Payroll -->
+                    <div class="flex gap-4 items-center bg-neutral-50 p-4 rounded-xl border border-neutral-100">
+                        <span class="text-xs font-semibold text-neutral-500">Filter Payroll by Month:</span>
+                        <select id="payroll-month-filter" onchange="renderCommissionsTable()" class="bg-white border border-neutral-200 text-black px-3 py-1.5 rounded-lg text-xs font-medium focus:outline-none focus:ring-1 accent-ring">
+                            <option value="ALL">All Months</option>
+                            <option value="01">January</option>
+                            <option value="02">February</option>
+                            <option value="03">March</option>
+                            <option value="04">April</option>
+                            <option value="05">May</option>
+                            <option value="06">June</option>
+                            <option value="07">July</option>
+                            <option value="08">August</option>
+                            <option value="09">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                    </div>
+
+                    <!-- Payroll Table -->
+                    <div class="border border-neutral-100 rounded-2xl overflow-hidden shadow-sm bg-white">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-neutral-50 border-b border-neutral-100 text-neutral-500 font-bold uppercase tracking-wider text-[10px]">
+                                    <th class="p-4">Payment Date</th>
+                                    <th class="p-4">Description Name</th>
+                                    <th class="p-4">Payout Recipient</th>
+                                    <th class="p-4">Type</th>
+                                    <th class="p-4">Associated Client</th>
+                                    <th class="p-4 text-right">Flat Value (Orig)</th>
+                                    <th class="p-4 text-right">Value (KRW Base)</th>
+                                    <th class="p-4 text-center">Receipt Proof</th>
+                                    <th class="p-4 text-center">Status</th>
+                                    <th class="p-4 text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="commissions-table-body" class="divide-y divide-neutral-100 text-neutral-800">
+                            </tbody>
+                        </table>
                     </div>
                 </section>
 
             </main>
         </div>
+
     </div>
 
-    <!-- Application JavaScript -->
-    <script>
-        // PASTE YOUR GOOGLE APPS SCRIPT WEB APP DEPLOYMENT URL HERE
-        const SHEET_API_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE"; 
+    <!-- Modals & Toasts -->
+    <div id="receipt-modal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-neutral-900 bg-opacity-70 flex items-center justify-center p-4">
+        <div class="bg-white border border-neutral-100 rounded-2xl p-6 max-w-lg w-full space-y-4 shadow-2xl relative">
+            <button onclick="closeReceiptModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-black transition-all p-1.5 text-lg"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-sm font-bold text-black uppercase tracking-wider">Proof Image Viewer</h3>
+            <div class="flex justify-center border border-neutral-100 rounded-xl overflow-hidden bg-neutral-50 p-2">
+                <img id="receipt-image-view" class="max-h-[400px] object-contain rounded-lg" src="" alt="Proof View">
+            </div>
+            <div class="flex justify-end pt-2">
+                <button onclick="closeReceiptModal()" class="px-4 py-2 border border-neutral-200 rounded-lg text-xs font-semibold text-neutral-700 hover:bg-neutral-50 transition-all">Close</button>
+            </div>
+        </div>
+    </div>
 
+    <!-- CONFIRM MODAL WITH PASSWORD -->
+    <div id="confirm-modal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-neutral-900 bg-opacity-50 flex items-center justify-center p-4">
+        <div class="bg-white border border-neutral-100 rounded-2xl p-6 max-w-sm w-full space-y-4 shadow-xl">
+            <h3 class="text-sm font-bold text-black uppercase tracking-wider" id="confirm-modal-title">Confirm Action</h3>
+            <p class="text-xs text-neutral-500 leading-relaxed" id="confirm-modal-desc">Are you sure you want to proceed?</p>
+            
+            <div id="confirm-password-container" class="hidden space-y-2 pt-1">
+                <label class="block text-[11px] font-bold text-neutral-700">Enter Admin Password to confirm:</label>
+                <input type="password" id="confirm-password-input" placeholder="••••••••" class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-xl focus:outline-none focus:ring-1 accent-ring bg-neutral-50 font-mono">
+                <p id="confirm-password-error" class="text-[10px] text-rose-500 font-semibold hidden"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Incorrect password!</p>
+            </div>
+
+            <div class="flex gap-2 justify-end pt-2">
+                <button id="confirm-btn-cancel" class="px-4 py-2 border border-neutral-200 rounded-lg text-xs font-semibold text-neutral-700 hover:bg-neutral-50 transition-all">Cancel</button>
+                <button id="confirm-btn-ok" class="px-4 py-2 text-white accent-bg rounded-lg text-xs font-semibold hover:opacity-90 transition-all">Yes, Proceed</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2 max-w-sm w-full"></div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // PUBLISHED GOOGLE SHEET CSV API LINK FOR HANA BANK DATABASE
+        const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQchV_2ir_FJAREPDvS68tPSOztknSSoC9vXgWxeOlK0ZGu8PDNG4rtuyU0PHqOa33yffHX3LsQWbca/pub?gid=0&single=true&output=csv";
+
+        let currentTabId = 'dashboard';
         let bankReconData = [];
-        let appState = {
-            coa: [
-                { code: '1010', name: 'Cash & Bank (KRW)', category: 'Asset' },
-                { code: '1200', name: 'Accounts Receivable', category: 'Asset' },
-                { code: '4010', name: 'KOL Seeding Revenue', category: 'Revenue' },
-                { code: '4020', name: 'Live Host Revenue', category: 'Revenue' },
-                { code: '5010', name: 'Salaries & Wages', category: 'Expense' },
-                { code: '5030', name: 'Software & Tools', category: 'Expense' },
-                { code: '5060', name: 'Office Meal Expense', category: 'Expense' },
-                { code: '5050', name: 'Marketing & Seeding Expenses', category: 'Expense' }
-            ],
-            transactions: []
-        };
 
         function handleLogin(e) {
             if (e) e.preventDefault();
-            if (document.getElementById("login-password").value === "20260619") {
-                document.getElementById("login-container").classList.add("hidden");
-                document.getElementById("app-workspace").classList.remove("hidden");
-                fetchGoogleSheetBankData();
+            const passwordInput = document.getElementById("login-password").value;
+            if (passwordInput === "20260619") {
+                sessionStorage.setItem("vively_logged_in", "true");
+                showWorkspace();
+                showToast("Access Granted. Welcome to vively!", "success");
+            } else {
+                document.getElementById("login-error-msg").classList.remove("hidden");
+                document.getElementById("login-password").value = "";
+                showToast("Access Denied: Incorrect Password!", "error");
             }
+        }
+
+        function showWorkspace() {
+            document.getElementById("login-container").classList.add("hidden");
+            document.getElementById("app-workspace").classList.remove("hidden");
+            initApp();
         }
 
         function handleLogout() {
+            sessionStorage.removeItem("vively_logged_in");
             document.getElementById("login-container").classList.remove("hidden");
             document.getElementById("app-workspace").classList.add("hidden");
+            document.getElementById("login-password").value = "";
+            document.getElementById("login-error-msg").classList.add("hidden");
+            showToast("Logged out successfully.", "success");
         }
 
-        function switchTab(tabId) {
-            ['dashboard', 'bank-recon', 'transactions', 'client-payments', 'commissions', 'coa', 'employees', 'clients'].forEach(t => {
-                const el = document.getElementById(`tab-${t}`);
-                if (el) el.classList.add('hidden');
-            });
-            const active = document.getElementById(`tab-${tabId}`);
-            if (active) active.classList.remove('hidden');
+        const BASE_FOREX = {
+            USD: 1350.00,
+            SGD: 1000.00,
+            IDR: 0.085,
+            KRW: 1.00
+        };
+
+        function getExchangeRateOnDate(currency, dateStr) {
+            if (currency === "KRW") return 1.00;
+            const date = new Date(dateStr);
+            const day = isNaN(date.getDate()) ? 15 : date.getDate();
+            const variation = 1 + (((day % 10) - 5) * 0.003); 
+            const baseRate = BASE_FOREX[currency] || 1.00;
+            return baseRate * variation;
         }
 
-        /* FETCH LIVE DATA FROM GOOGLE SHEETS API */
-        async function fetchGoogleSheetBankData() {
-            if (!SHEET_API_URL || SHEET_API_URL.includes("YOUR_GOOGLE_APPS_SCRIPT")) {
-                renderReconTable([]);
-                return;
+        const defaultCOA = [
+            { id: 101, code: '1010', name: 'Cash & Bank (KRW)', category: 'Asset', side: 'Debit' },
+            { id: 102, code: '1200', name: 'Accounts Receivable (Piutang)', category: 'Asset', side: 'Debit' },
+            { id: 201, code: '2010', name: 'Accounts Payable (Hutang)', category: 'Liability', side: 'Credit' },
+            { id: 301, code: '3010', name: "Owner's Capital", category: 'Equity', side: 'Credit' },
+            
+            // Revenue Accounts
+            { id: 401, code: '4010', name: 'KOL Seeding Revenue', category: 'Revenue', side: 'Credit' },
+            { id: 402, code: '4020', name: 'Group Purchase Revenue', category: 'Revenue', side: 'Credit' },
+            { id: 403, code: '4030', name: 'Sales Program Revenue', category: 'Revenue', side: 'Credit' },
+            { id: 404, code: '4040', name: 'Localization Consulting Revenue', category: 'Revenue', side: 'Credit' },
+            { id: 405, code: '4050', name: 'Live Host Revenue', category: 'Revenue', side: 'Credit' },
+            { id: 406, code: '4060', name: 'Legal Registration Revenue', category: 'Revenue', side: 'Credit' },
+
+            // Expense Accounts
+            { id: 501, code: '5010', name: 'Salaries & Wages', category: 'Expense', side: 'Debit' },
+            { id: 502, code: '5020', name: 'KOL / Creator Payouts', category: 'Expense', side: 'Debit' },
+            { id: 503, code: '5030', name: 'Software & Tools', category: 'Expense', side: 'Debit' },
+            { id: 504, code: '5040', name: 'PM Commissions', category: 'Expense', side: 'Debit' },
+            { id: 505, code: '5050', name: 'Marketing & Seeding Expenses', category: 'Expense', side: 'Debit' },
+            { id: 506, code: '5990', name: 'Misc / Other Expenses', category: 'Expense', side: 'Debit' }
+        ];
+
+        const defaultData = {
+            transactions: [],
+            clients: [],
+            clientPayments: [],
+            commissions: [],
+            employees: [],
+            coa: defaultCOA,
+            clientLayout: 'card',
+            customDealTypes: ["Paid Campaign", "Free Trial"],
+            customCommTypes: ["Salary", "Discretionary Commission", "Bonus Payout"],
+            customCommStatuses: ["Paid", "Pending"]
+        };
+
+        let appState = {};
+        let perfChart = null;
+        let pieChart = null;
+
+        function initApp() {
+            const savedState = localStorage.getItem("vively_standalone_db_v1");
+            if (savedState) {
+                appState = JSON.parse(savedState);
+                if (!appState.customDealTypes) appState.customDealTypes = [...defaultData.customDealTypes];
+                if (!appState.customCommTypes) appState.customCommTypes = [...defaultData.customCommTypes];
+                if (!appState.customCommStatuses) appState.customCommStatuses = [...defaultData.customCommStatuses];
+                if (!appState.employees) appState.employees = [];
+                if (!appState.transactions) appState.transactions = [];
+                if (!appState.clients) appState.clients = [];
+                if (!appState.clientPayments) appState.clientPayments = [];
+                if (!appState.coa || appState.coa.length === 0) appState.coa = [...defaultCOA];
+            } else {
+                appState = JSON.parse(JSON.stringify(defaultData));
+                saveState();
             }
 
+            renderForexSidebar();
+            populateDynamicSelects();
+            populateEmployeeDropdowns();
+            populateCOADropdowns();
+            populateClientIndustryFilter();
+            
+            // Auto-fetch Bank Data from Published Sheet
+            fetchGoogleSheetBankData();
+            updateUI();
+        }
+
+        function saveState() {
+            localStorage.setItem("vively_standalone_db_v1", JSON.stringify(appState));
+        }
+
+        /* FETCH LIVE DATA FROM GOOGLE SHEETS PUBLISHED CSV LINK */
+        async function fetchGoogleSheetBankData() {
+            if (!SHEET_CSV_URL) return;
+
             try {
-                const res = await fetch(SHEET_API_URL);
-                bankReconData = await res.json();
+                const res = await fetch(SHEET_CSV_URL);
+                const csvText = await res.text();
+                
+                const lines = csvText.split('\n');
+                bankReconData = [];
+
+                for (let i = 1; i < lines.length; i++) {
+                    if (!lines[i].trim()) continue;
+                    const cols = lines[i].split(',').map(c => c.replace(/^"|"$/g, '').trim());
+                    
+                    if (cols.length >= 3) {
+                        const date = cols[0];
+                        const description = cols[1];
+                        const amount = parseFloat(cols[2]) || 0;
+                        const type = (cols[3] || 'DEBIT').toUpperCase();
+                        const status = cols[4] || 'Reconciled';
+                        const category = cols[5] || 'Uncategorized';
+
+                        if (amount > 0) {
+                            bankReconData.push({ date, description, amount, type, status, category });
+                        }
+                    }
+                }
+
                 renderReconTable(bankReconData);
                 syncBankDataToTransactions();
                 updateUI();
             } catch (err) {
-                console.error("Failed fetching Google Sheet bank data:", err);
+                console.error("Failed fetching Google Sheet CSV bank data:", err);
             }
         }
 
@@ -517,12 +1280,12 @@
                 totalKRW += isCredit ? amountVal : -amountVal;
 
                 const row = `
-                    <tr class="hover:bg-neutral-50">
+                    <tr class="hover:bg-neutral-50 transition-all">
                         <td class="p-3.5 font-mono text-neutral-500">${item.date}</td>
-                        <td class="p-3.5 font-semibold">${item.description}</td>
+                        <td class="p-3.5 font-semibold text-black">${item.description}</td>
                         <td class="p-3.5 text-right font-bold ${isCredit ? 'text-emerald-600' : 'text-black'}">₩ ${amountVal.toLocaleString()}</td>
                         <td class="p-3.5 text-center"><span class="px-2 py-0.5 rounded text-[9px] font-bold ${isCredit ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}">${item.type}</span></td>
-                        <td class="p-3.5 text-center"><span class="px-2 py-0.5 rounded text-[9px] font-bold bg-neutral-100 border text-neutral-700">✓ ${item.status || 'Reconciled'}</span></td>
+                        <td class="p-3.5 text-center"><span class="px-2 py-0.5 rounded border text-[9px] font-bold bg-neutral-100 border-neutral-200 text-neutral-700">✓ ${item.status || 'Reconciled'}</span></td>
                     </tr>
                 `;
                 tbody.insertAdjacentHTML('beforeend', row);
@@ -537,74 +1300,1068 @@
             if (!bankReconData || bankReconData.length === 0) return;
 
             bankReconData.forEach(bankItem => {
-                const exists = appState.transactions.some(t => t.description === bankItem.description && t.date === bankItem.date);
+                const exists = appState.transactions.some(t => t.description === bankItem.description && t.date === bankItem.date && parseFloat(t.amount) === parseFloat(bankItem.amount));
                 if (!exists) {
                     appState.transactions.push({
                         id: Date.now() + Math.random(),
                         date: bankItem.date,
                         description: bankItem.description,
                         category: bankItem.category || "Uncategorized",
+                        amount: parseFloat(bankItem.amount),
+                        currency: "KRW",
                         amountInKRW: parseFloat(bankItem.amount),
                         type: bankItem.type,
-                        source: "HANA_BANK"
+                        source: "HANA_BANK",
+                        picture: ""
                     });
                 }
             });
+            saveState();
         }
 
+        /* RESOLVE REVENUE CATEGORY FUZZY MATCH */
+        function resolveRevenueCategory(rawServiceName) {
+            if (!rawServiceName) return "KOL Seeding Revenue";
+            let name = rawServiceName.trim();
+            if (!name.toLowerCase().includes("revenue")) { name = `${name} Revenue`; }
+
+            const exactMatch = appState.coa.find(c => c.name.toLowerCase() === name.toLowerCase());
+            if (exactMatch) return exactMatch.name;
+
+            const newCoa = { id: Date.now(), code: '4' + Math.floor(100 + Math.random() * 899), name: name, category: 'Revenue', side: 'Credit' };
+            appState.coa.push(newCoa);
+            saveState();
+            populateCOADropdowns();
+            return newCoa.name;
+        }
+
+        /* AUTO-SYNC PAID CLIENT PAYMENTS DIRECTLY TO TRANSACTIONS */
+        function syncPaidPaymentsToTransactions() {
+            if (!appState.clientPayments || appState.clientPayments.length === 0) return;
+
+            let updated = false;
+            appState.clientPayments.forEach(p => {
+                if (p.status === "Paid") {
+                    const existingTxIndex = appState.transactions.findIndex(t => t.linkedPaymentId === p.id);
+                    const clientObj = appState.clients.find(c => c.name === p.clientName);
+                    const serviceCategory = resolveRevenueCategory(clientObj ? clientObj.service : "KOL Seeding Revenue");
+
+                    const effectiveDate = p.paidDate || p.dueDate || new Date().toISOString().slice(0, 10);
+                    const rate = getExchangeRateOnDate(p.currency || 'KRW', effectiveDate);
+                    const amountInKRW = (p.amount || 0) * rate;
+
+                    const txData = {
+                        id: existingTxIndex !== -1 ? appState.transactions[existingTxIndex].id : (Date.now() + Math.floor(Math.random() * 1000)),
+                        date: effectiveDate,
+                        description: `[Payment Received] ${p.clientName} (${p.termDesc || 'Installment'})`,
+                        details: `Client Installment Payment (${p.termDesc || ''}) for ${p.clientName}`,
+                        category: serviceCategory,
+                        amount: p.amount,
+                        currency: p.currency || 'KRW',
+                        amountInKRW: amountInKRW,
+                        type: 'CREDIT',
+                        picture: p.picture || "",
+                        linkedPaymentId: p.id
+                    };
+
+                    if (existingTxIndex !== -1) { appState.transactions[existingTxIndex] = txData; }
+                    else { appState.transactions.push(txData); }
+                    updated = true;
+                }
+            });
+            if (updated) saveState();
+        }
+
+        function populateDynamicSelects() {
+            const dealSelect = document.getElementById("client-dealtype");
+            const savedDealVal = dealSelect.value;
+            dealSelect.innerHTML = appState.customDealTypes.map(t => `<option value="${t}">${t}</option>`).join('') + `<option value="CUSTOM_VAL">+ Add Custom...</option>`;
+            if (savedDealVal && appState.customDealTypes.includes(savedDealVal)) dealSelect.value = savedDealVal;
+
+            const commTypeSelect = document.getElementById("comm-type");
+            const savedCommTypeVal = commTypeSelect.value;
+            commTypeSelect.innerHTML = appState.customCommTypes.map(t => `<option value="${t}">${t}</option>`).join('') + `<option value="CUSTOM_VAL">+ Add Custom...</option>`;
+            if (savedCommTypeVal && appState.customCommTypes.includes(savedCommTypeVal)) commTypeSelect.value = savedCommTypeVal;
+
+            const commStatusSelect = document.getElementById("comm-status");
+            const savedCommStatusVal = commStatusSelect.value;
+            commStatusSelect.innerHTML = appState.customCommStatuses.map(t => `<option value="${t}">${t}</option>`).join('') + `<option value="CUSTOM_VAL">+ Add Custom...</option>`;
+            if (savedCommStatusVal && appState.customCommStatuses.includes(savedCommStatusVal)) commStatusSelect.value = savedCommStatusVal;
+        }
+
+        function populateEmployeeDropdowns() {
+            const select = document.getElementById("comm-manager-select");
+            const currentVal = select.value;
+            let options = `<option value="">-- Select Recipient --</option>`;
+            appState.employees.forEach(emp => { options += `<option value="${emp.name}">${emp.name} (${emp.type})</option>`; });
+            options += `<option value="CUSTOM_RECIPIENT">+ Other / Custom Name</option>`;
+            select.innerHTML = options;
+            if (currentVal) select.value = currentVal;
+        }
+
+        function populateCOADropdowns() {
+            const formCatSelect = document.getElementById("form-category");
+            const tableCatFilter = document.getElementById("table-category-filter");
+            
+            let formOpts = "";
+            let filterOpts = `<option value="ALL">All Categories</option>`;
+            const sortedCOA = [...appState.coa].sort((a, b) => parseInt(a.code) - parseInt(b.code));
+
+            sortedCOA.forEach(c => {
+                formOpts += `<option value="${c.name}">${c.name} (${c.category})</option>`;
+                filterOpts += `<option value="${c.name}">${c.name}</option>`;
+            });
+
+            formCatSelect.innerHTML = formOpts;
+            tableCatFilter.innerHTML = filterOpts;
+        }
+
+        function populateClientIndustryFilter() {
+            const select = document.getElementById("client-filter-industry");
+            if (!select) return;
+            const currentVal = select.value;
+            const industries = [...new Set(appState.clients.map(c => c.industry).filter(Boolean))];
+            
+            let opts = `<option value="ALL">All Industries</option>`;
+            industries.forEach(ind => { opts += `<option value="${ind}">${ind}</option>`; });
+            select.innerHTML = opts;
+            if (currentVal) select.value = currentVal;
+        }
+
+        function toggleCustomInput(selectId, inputId) {
+            const selectEl = document.getElementById(selectId);
+            const inputEl = document.getElementById(inputId);
+            if (selectEl.value === "CUSTOM_VAL") {
+                inputEl.classList.remove("hidden");
+                inputEl.setAttribute("required", "true");
+                inputEl.focus();
+            } else {
+                inputEl.classList.add("hidden");
+                inputEl.removeAttribute("required");
+                inputEl.value = "";
+            }
+        }
+
+        function resetToDefaultData() {
+            appState = JSON.parse(JSON.stringify(defaultData));
+            saveState();
+            populateDynamicSelects();
+            populateEmployeeDropdowns();
+            populateCOADropdowns();
+            populateClientIndustryFilter();
+            updateUI();
+            showToast("Workspace database cleared!", "success");
+        }
+
+        function renderForexSidebar() {
+            document.getElementById("forex-sgd").innerText = `${BASE_FOREX.SGD.toLocaleString()} KRW`;
+            document.getElementById("forex-usd").innerText = `${BASE_FOREX.USD.toLocaleString()} KRW`;
+            document.getElementById("forex-idr").innerText = `${BASE_FOREX.IDR.toLocaleString()} KRW`;
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById("toast-container");
+            const toast = document.createElement("div");
+            toast.className = `flex justify-between items-center p-3.5 rounded-xl border text-xs font-semibold bg-white shadow-xl transition-all duration-300 transform translate-y-2 opacity-0`;
+            
+            if (type === 'success') {
+                toast.classList.add('border-emerald-100', 'text-emerald-800');
+                toast.innerHTML = `<span class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-500 text-sm"></i> ${message}</span>`;
+            } else if (type === 'error') {
+                toast.classList.add('border-rose-100', 'text-rose-800');
+                toast.innerHTML = `<span class="flex items-center gap-2"><i class="fa-solid fa-circle-exclamation text-rose-500 text-sm"></i> ${message}</span>`;
+            }
+
+            container.appendChild(toast);
+            setTimeout(() => { toast.classList.remove('translate-y-2', 'opacity-0'); }, 50);
+            setTimeout(() => {
+                toast.classList.add('translate-y-2', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function triggerClearConfirmation() {
+            showConfirmationModal(
+                "Clear Ledger Database",
+                "Are you sure you want to permanently delete all localized entries? Action requires administrative confirmation.",
+                true,
+                () => { resetToDefaultData(); }
+            );
+        }
+
+        function showConfirmationModal(title, desc, requiresPassword, onConfirm) {
+            const modal = document.getElementById("confirm-modal");
+            document.getElementById("confirm-modal-title").innerText = title;
+            document.getElementById("confirm-modal-desc").innerText = desc;
+            
+            const passContainer = document.getElementById("confirm-password-container");
+            const passInput = document.getElementById("confirm-password-input");
+            const passError = document.getElementById("confirm-password-error");
+            
+            passInput.value = "";
+            passError.classList.add("hidden");
+
+            if (requiresPassword) passContainer.classList.remove("hidden");
+            else passContainer.classList.add("hidden");
+
+            modal.classList.remove("hidden");
+            
+            const btnOk = document.getElementById("confirm-btn-ok");
+            const btnCancel = document.getElementById("confirm-btn-cancel");
+            
+            const clearEvents = () => {
+                btnOk.replaceWith(btnOk.cloneNode(true));
+                btnCancel.replaceWith(btnCancel.cloneNode(true));
+            };
+
+            document.getElementById("confirm-btn-ok").onclick = () => {
+                if (requiresPassword) {
+                    if (passInput.value === "20260619") {
+                        onConfirm();
+                        modal.classList.add("hidden");
+                        clearEvents();
+                    } else {
+                        passError.classList.remove("hidden");
+                    }
+                } else {
+                    onConfirm();
+                    modal.classList.add("hidden");
+                    clearEvents();
+                }
+            };
+
+            document.getElementById("confirm-btn-cancel").onclick = () => {
+                modal.classList.add("hidden");
+                clearEvents();
+            };
+        }
+
+        function switchTab(tabId) {
+            currentTabId = tabId;
+            const tabs = ['dashboard', 'transactions', 'bank-recon', 'coa', 'employees', 'clients', 'client-payments', 'commissions'];
+            tabs.forEach(t => {
+                const element = document.getElementById(`tab-${t}`);
+                if (element) element.classList.add('hidden');
+                const btn = document.getElementById(`btn-${t}`);
+                if (btn) btn.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 hover:bg-neutral-50 hover:text-black border-l-4 border-transparent";
+            });
+
+            const currentTab = document.getElementById(`tab-${tabId}`);
+            if (currentTab) currentTab.classList.remove('hidden');
+            const currentBtn = document.getElementById(`btn-${tabId}`);
+            if (currentBtn) currentBtn.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all bg-neutral-50 text-black border-l-4 accent-border";
+            
+            if (tabId === 'dashboard') { setTimeout(renderCharts, 100); }
+        }
+
+        function changeGlobalCurrency() {
+            updateUI();
+            showToast(`Dashboard base viewing currency shifted!`, "success");
+        }
+
+        function getConvertedVal(krwVal) {
+            const displayCurrency = document.getElementById("global-currency-select").value;
+            if (displayCurrency === "KRW") return krwVal;
+            return krwVal / BASE_FOREX[displayCurrency];
+        }
+
+        function getCurrencySymbol() {
+            const cur = document.getElementById("global-currency-select").value;
+            if (cur === "KRW") return "₩";
+            if (cur === "USD") return "$";
+            if (cur === "SGD") return "S$";
+            if (cur === "IDR") return "Rp";
+            return "";
+        }
+
+        /* --- UPDATE EXECUTIVE DASHBOARD --- */
         function updateUI() {
-            renderDashboardCOAReport();
+            syncPaidPaymentsToTransactions();
+
+            let totalRevenue = 0;
+            let totalExpenses = 0;
+
+            const selectedMonthFilter = document.getElementById("dashboard-month-filter").value;
+
+            appState.transactions.forEach(t => {
+                const txMonth = t.date.split('-')[1];
+                if (selectedMonthFilter === "ALL" || selectedMonthFilter === txMonth) {
+                    if (t.type === "CREDIT") totalRevenue += parseFloat(t.amountInKRW);
+                    else totalExpenses += parseFloat(t.amountInKRW);
+                }
+            });
+
+            appState.commissions.forEach(c => {
+                if (c.status === "Paid") {
+                    const cMonth = c.date.split('-')[1];
+                    if (selectedMonthFilter === "ALL" || selectedMonthFilter === cMonth) {
+                        totalExpenses += parseFloat(c.amountInKRW);
+                    }
+                }
+            });
+
+            const netProfit = totalRevenue - totalExpenses;
+            const margin = totalRevenue > 0 ? ((netProfit / totalRevenue) * 100).toFixed(2) : "0.00";
+
+            const currencySymbol = getCurrencySymbol();
+            const currKey = document.getElementById("global-currency-select").value;
+
+            document.getElementById("metric-revenue").innerText = `${currencySymbol} ${getConvertedVal(totalRevenue).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
+            document.getElementById("metric-expenses").innerText = `${currencySymbol} ${getConvertedVal(totalExpenses).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
+            document.getElementById("metric-profit").innerText = `${currencySymbol} ${getConvertedVal(netProfit).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
+            document.getElementById("metric-margin").innerText = `${margin}%`;
+
             renderTransactionsTable();
+            renderCOATable();
+            renderEmployeesTable();
+            renderClientsView();
+            renderPaymentScheduleHub();
+            renderCommissionsTable();
+            renderDashboardCOAReport();
+            renderCharts();
         }
 
+        /* NUMERICALLY SORTED & FILTERABLE COA REPORT TABLE */
         function renderDashboardCOAReport() {
             const tbody = document.getElementById("dashboard-coa-report-body");
             if (!tbody) return;
             tbody.innerHTML = "";
 
+            const monthFilter = document.getElementById("dashboard-month-filter").value;
             const categoryFilter = document.getElementById("report-category-filter") ? document.getElementById("report-category-filter").value : "ALL";
 
-            let list = appState.coa.filter(c => categoryFilter === "ALL" || c.category === categoryFilter);
-            list.sort((a, b) => parseInt(a.code) - parseInt(b.code));
-
-            list.forEach(c => {
-                const row = `
-                    <tr class="hover:bg-neutral-50">
-                        <td class="p-3 font-mono font-bold text-neutral-500">${c.code}</td>
-                        <td class="p-3 font-semibold text-black">${c.name}</td>
-                        <td class="p-3"><span class="px-2 py-0.5 rounded border text-[10px] font-semibold bg-neutral-50">${c.category}</span></td>
-                        <td class="p-3 text-right font-bold text-black">₩ 0</td>
-                    </tr>
-                `;
-                tbody.insertAdjacentHTML('beforeend', row);
-            });
-        }
-
-        function renderTransactionsTable() {
-            const tbody = document.getElementById("transactions-table-body");
-            if (!tbody) return;
-            tbody.innerHTML = "";
+            const coaTotals = {};
+            appState.coa.forEach(c => { coaTotals[c.name] = { id: c.id, code: c.code, category: c.category, amountKRW: 0 }; });
 
             appState.transactions.forEach(t => {
-                const isCredit = t.type === "CREDIT";
+                const txMonth = t.date.split('-')[1];
+                if (monthFilter === "ALL" || monthFilter === txMonth) {
+                    if (coaTotals[t.category]) { coaTotals[t.category].amountKRW += parseFloat(t.amountInKRW || 0); }
+                }
+            });
+
+            appState.commissions.forEach(c => {
+                if (c.status === "Paid") {
+                    const comMonth = c.date.split('-')[1];
+                    if (monthFilter === "ALL" || monthFilter === comMonth) {
+                        const targetCategory = c.type || "Salaries & Wages";
+                        if (coaTotals[targetCategory]) { coaTotals[targetCategory].amountKRW += parseFloat(c.amountInKRW || 0); }
+                    }
+                }
+            });
+
+            let reportList = appState.coa.filter(c => categoryFilter === "ALL" || c.category === categoryFilter).map(c => {
+                return { code: c.code, name: c.name, category: c.category, amountKRW: coaTotals[c.name] ? coaTotals[c.name].amountKRW : 0 };
+            });
+
+            reportList.sort((a, b) => parseInt(a.code) - parseInt(b.code));
+
+            const currencySymbol = getCurrencySymbol();
+            const currKey = document.getElementById("global-currency-select").value;
+
+            if (reportList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-neutral-400 italic">No accounts match category filter.</td></tr>`;
+                return;
+            }
+
+            reportList.forEach(c => {
+                const converted = getConvertedVal(c.amountKRW);
+                const badgeColor = c.category === "Revenue" ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                                  (c.category === "Expense" ? "bg-rose-50 text-rose-600 border-rose-100" : "bg-neutral-50 text-neutral-600 border-neutral-100");
+
                 const row = `
-                    <tr class="hover:bg-neutral-50">
-                        <td class="p-4 font-mono text-neutral-500">${t.date}</td>
-                        <td class="p-4 font-semibold text-black">${t.description}</td>
-                        <td class="p-4"><span class="px-2 py-0.5 rounded border text-[10px] bg-neutral-50 font-medium">${t.category}</span></td>
-                        <td class="p-4 text-right font-bold ${isCredit ? 'text-emerald-600' : 'text-black'}">₩ ${t.amountInKRW.toLocaleString()}</td>
-                        <td class="p-4 text-center"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 font-bold text-[9px] rounded border border-emerald-200"><i class="fa-solid fa-building-columns mr-1"></i> Hana Bank Feed</span></td>
+                    <tr class="hover:bg-neutral-50 transition-all">
+                        <td class="p-3 font-mono font-bold text-neutral-500">${c.code}</td>
+                        <td class="p-3 font-semibold text-black">${c.name}</td>
+                        <td class="p-3"><span class="px-2 py-0.5 rounded border text-[10px] font-semibold ${badgeColor}">${c.category}</span></td>
+                        <td class="p-3 text-right font-bold text-black">${currencySymbol} ${converted.toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}</td>
                     </tr>
                 `;
                 tbody.insertAdjacentHTML('beforeend', row);
             });
         }
 
-        function getConvertedVal(val) { return val; }
-        function getCurrencySymbol() { return "₩"; }
+        /* TRANSACTION TRACKER TABLE */
+        function renderTransactionsTable() {
+            const tbody = document.getElementById("transactions-table-body");
+            tbody.innerHTML = "";
+
+            const catFilter = document.getElementById("table-category-filter").value;
+            const monthFilter = document.getElementById("table-month-filter").value;
+            
+            let count = 0;
+            let filteredIncomeKRW = 0;
+            let filteredExpenseKRW = 0;
+
+            const sortedTransactions = [...appState.transactions].sort((a, b) => {
+                if (b.date !== a.date) return b.date.localeCompare(a.date);
+                return b.id - a.id;
+            });
+
+            sortedTransactions.forEach(t => {
+                const txMonth = t.date.split('-')[1];
+                if (catFilter !== "ALL" && t.category !== catFilter) return;
+                if (monthFilter !== "ALL" && txMonth !== monthFilter) return;
+
+                count++;
+                if (t.type === "CREDIT") { filteredIncomeKRW += parseFloat(t.amountInKRW); } 
+                else { filteredExpenseKRW += parseFloat(t.amountInKRW); }
+
+                let proofCol = `<span class="text-neutral-400 text-[10px] italic">No proof</span>`;
+                if (t.picture) {
+                    proofCol = `<button onclick="openReceiptModal('${t.picture}')" class="text-[#ff66c4] hover:text-black transition-all p-1.5 font-bold"><i class="fa-solid fa-image text-sm mr-1"></i> View Proof</button>`;
+                } else if (t.source === "HANA_BANK") {
+                    proofCol = `<span class="px-2 py-0.5 rounded border text-[9px] font-bold bg-emerald-50 text-emerald-600 border-emerald-100"><i class="fa-solid fa-building-columns mr-1"></i> Hana Bank Feed</span>`;
+                }
+
+                const detailsHtml = t.details ? `<div class="text-[10px] text-neutral-400 font-normal mt-0.5">${t.details}</div>` : '';
+
+                const row = `
+                    <tr class="hover:bg-neutral-50 transition-all">
+                        <td class="p-4 font-mono text-neutral-500">${t.date}</td>
+                        <td class="p-4">
+                            <div class="font-semibold text-black">${t.description}</div>
+                            ${detailsHtml}
+                        </td>
+                        <td class="p-4"><span class="px-2 py-0.5 rounded-md border text-[10px] font-medium bg-neutral-50 text-neutral-600">${t.category}</span></td>
+                        <td class="p-4 text-right font-semibold text-neutral-600">${parseFloat(t.amount).toLocaleString(undefined, {maximumFractionDigits: 2})} ${t.currency}</td>
+                        <td class="p-4 text-right font-bold ${t.type === 'CREDIT' ? 'text-emerald-600' : 'text-black'}">₩ ${parseFloat(t.amountInKRW).toLocaleString(undefined, {maximumFractionDigits: 0})}</td>
+                        <td class="p-4 text-center">${proofCol}</td>
+                        <td class="p-4 text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                <button onclick="loadTransactionForEdit(${t.id})" class="text-neutral-400 hover:text-neutral-900 transition-all p-1.5"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                                <button onclick="triggerDeleteTransaction(${t.id})" class="text-neutral-400 hover:text-rose-600 transition-all p-1.5"><i class="fa-solid fa-trash text-xs"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+
+            const currencySymbol = getCurrencySymbol();
+            const currKey = document.getElementById("global-currency-select").value;
+            const netBalanceKRW = filteredIncomeKRW - filteredExpenseKRW;
+
+            document.getElementById("tx-summary-income").innerText = `${currencySymbol} ${getConvertedVal(filteredIncomeKRW).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
+            document.getElementById("tx-summary-expenses").innerText = `${currencySymbol} ${getConvertedVal(filteredExpenseKRW).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
+            document.getElementById("tx-summary-net").innerText = `${currencySymbol} ${getConvertedVal(netBalanceKRW).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
+            document.getElementById("table-filtered-counter").innerText = `Showing ${count} transaction${count !== 1 ? 's' : ''}`;
+        }
+
+        /* COA LOGIC */
+        function toggleCOAForm() { document.getElementById("coa-form-card").classList.toggle("hidden"); }
+        function cancelCOAForm() { document.getElementById("coa-form-card").classList.add("hidden"); }
+        function autoSetNormalBalance() {
+            const cat = document.getElementById("coa-category").value;
+            document.getElementById("coa-side").value = (cat === "Asset" || cat === "Expense") ? "Debit" : "Credit";
+        }
+
+        function addManualCOA(e) {
+            e.preventDefault();
+            const editId = document.getElementById("edit-coa-id").value;
+            const code = document.getElementById("coa-code").value.trim();
+            const name = document.getElementById("coa-name").value.trim();
+            const category = document.getElementById("coa-category").value;
+            const side = document.getElementById("coa-side").value;
+
+            const coaData = { id: editId ? parseInt(editId) : Date.now(), code, name, category, side };
+
+            if (editId) { appState.coa = appState.coa.map(c => c.id === parseInt(editId) ? coaData : c); }
+            else { appState.coa.push(coaData); }
+
+            saveState();
+            populateCOADropdowns();
+            renderCOATable();
+            updateUI();
+            cancelCOAForm();
+            showToast("COA Account Saved!", "success");
+        }
+
+        function renderCOATable() {
+            const tbody = document.getElementById("coa-table-body");
+            tbody.innerHTML = "";
+            const sortedCOA = [...appState.coa].sort((a, b) => parseInt(a.code) - parseInt(b.code));
+
+            sortedCOA.forEach(c => {
+                const catBadge = c.category === "Revenue" ? "bg-emerald-50 text-emerald-600 border-emerald-100" : (c.category === "Expense" ? "bg-rose-50 text-rose-600 border-rose-100" : "bg-neutral-50 text-neutral-700 border-neutral-200");
+                const row = `
+                    <tr class="hover:bg-neutral-50 transition-all">
+                        <td class="p-4 font-mono font-bold text-black">${c.code}</td>
+                        <td class="p-4 font-semibold text-black">${c.name}</td>
+                        <td class="p-4"><span class="px-2 py-0.5 rounded border text-[10px] font-semibold ${catBadge}">${c.category}</span></td>
+                        <td class="p-4 font-medium text-neutral-600">${c.side} Side</td>
+                        <td class="p-4 text-center">
+                            <div class="flex justify-center gap-2">
+                                <button onclick="loadCOAForEdit(${c.id})" class="text-neutral-400 hover:text-black p-1.5"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button onclick="triggerDeleteCOA(${c.id})" class="text-neutral-400 hover:text-rose-600 p-1.5"><i class="fa-solid fa-trash-can"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        }
+
+        function loadCOAForEdit(id) {
+            const item = appState.coa.find(c => c.id === id);
+            if (!item) return;
+            document.getElementById("coa-form-card").classList.remove("hidden");
+            document.getElementById("edit-coa-id").value = item.id;
+            document.getElementById("coa-code").value = item.code;
+            document.getElementById("coa-name").value = item.name;
+            document.getElementById("coa-category").value = item.category;
+            document.getElementById("coa-side").value = item.side;
+        }
+
+        function triggerDeleteCOA(id) {
+            showConfirmationModal("Delete COA Account", "Remove this account from Chart of Accounts?", false, () => {
+                appState.coa = appState.coa.filter(c => c.id !== id);
+                saveState();
+                populateCOADropdowns();
+                renderCOATable();
+                updateUI();
+                showToast("Account removed!", "success");
+            });
+        }
+
+        /* EMPLOYEES LOGIC */
+        function toggleEmployeeForm() { document.getElementById("employee-form-card").classList.toggle("hidden"); }
+        function cancelEmployeeForm() { document.getElementById("employee-form-card").classList.add("hidden"); }
+
+        function addManualEmployee(e) {
+            e.preventDefault();
+            const editId = document.getElementById("edit-employee-id").value;
+            const empData = {
+                id: editId ? parseInt(editId) : Date.now(),
+                name: document.getElementById("emp-name").value.trim(),
+                type: document.getElementById("emp-type").value,
+                status: document.getElementById("emp-status").value,
+                phone: document.getElementById("emp-phone").value.trim(),
+                email: document.getElementById("emp-email").value.trim(),
+                bank: document.getElementById("emp-bank").value.trim(),
+                account: document.getElementById("emp-account").value.trim()
+            };
+
+            if (editId) { appState.employees = appState.employees.map(emp => emp.id === parseInt(editId) ? empData : emp); }
+            else { appState.employees.unshift(empData); }
+
+            saveState();
+            populateEmployeeDropdowns();
+            renderEmployeesTable();
+            cancelEmployeeForm();
+            showToast("Employee record saved!", "success");
+        }
+
+        function renderEmployeesTable() {
+            const tbody = document.getElementById("employees-table-body");
+            tbody.innerHTML = "";
+            if (appState.employees.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="p-8 text-center text-neutral-400 italic">No employee records registered yet.</td></tr>`;
+                return;
+            }
+
+            appState.employees.forEach(emp => {
+                const statusColor = emp.status === "On-Going" ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-neutral-50 text-neutral-600 border-neutral-100";
+                const row = `
+                    <tr class="hover:bg-neutral-50 transition-all">
+                        <td class="p-4 font-bold text-black">${emp.name}</td>
+                        <td class="p-4 font-semibold text-neutral-600">${emp.type}</td>
+                        <td class="p-4"><span class="px-2 py-0.5 rounded text-[9px] font-semibold border ${statusColor}">${emp.status}</span></td>
+                        <td class="p-4 text-neutral-500">${emp.phone || '-'}</td>
+                        <td class="p-4 text-neutral-500">${emp.email || '-'}</td>
+                        <td class="p-4 font-semibold text-neutral-700">${emp.bank || '-'}</td>
+                        <td class="p-4 font-mono text-neutral-600">${emp.account || '-'}</td>
+                        <td class="p-4 text-center">
+                            <div class="flex justify-center gap-2">
+                                <button onclick="loadEmployeeForEdit(${emp.id})" class="text-neutral-400 hover:text-black p-1.5"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button onclick="triggerDeleteEmployee(${emp.id})" class="text-neutral-400 hover:text-rose-600 p-1.5"><i class="fa-solid fa-trash-can"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        }
+
+        function loadEmployeeForEdit(id) {
+            const emp = appState.employees.find(e => e.id === id);
+            if (!emp) return;
+            document.getElementById("employee-form-card").classList.remove("hidden");
+            document.getElementById("edit-employee-id").value = emp.id;
+            document.getElementById("emp-name").value = emp.name;
+            document.getElementById("emp-type").value = emp.type;
+            document.getElementById("emp-status").value = emp.status;
+            document.getElementById("emp-phone").value = emp.phone;
+            document.getElementById("emp-email").value = emp.email;
+            document.getElementById("emp-bank").value = emp.bank;
+            document.getElementById("emp-account").value = emp.account;
+        }
+
+        function triggerDeleteEmployee(id) {
+            showConfirmationModal("Delete Employee Record", "Remove this staff member?", false, () => {
+                appState.employees = appState.employees.filter(e => e.id !== id);
+                saveState();
+                populateEmployeeDropdowns();
+                renderEmployeesTable();
+                showToast("Employee removed", "success");
+            });
+        }
+
+        /* CLIENTS MANAGEMENT LOGIC */
+        function toggleClientForm() { document.getElementById("client-form-card").classList.toggle('hidden'); }
+        function cancelClientForm() { document.getElementById("client-form-card").classList.add('hidden'); }
+
+        function toggleOngoingCampaign() {
+            const isOngoing = document.getElementById("client-no-enddate").checked;
+            const endDateInput = document.getElementById("client-end-date");
+            endDateInput.disabled = isOngoing;
+            if (isOngoing) endDateInput.value = "";
+        }
+
+        function setClientLayout(layout) {
+            appState.clientLayout = layout;
+            saveState();
+            renderClientsView();
+        }
+
+        function renderClientsView() {
+            const cardContainer = document.getElementById("clients-cards-view");
+            const listBody = document.getElementById("clients-list-body");
+            cardContainer.innerHTML = ""; listBody.innerHTML = "";
+
+            const dealFilter = document.getElementById("client-filter-deal") ? document.getElementById("client-filter-deal").value : "ALL";
+            const indFilter = document.getElementById("client-filter-industry") ? document.getElementById("client-filter-industry").value : "ALL";
+            const statusFilter = document.getElementById("client-filter-status") ? document.getElementById("client-filter-status").value : "ALL";
+
+            let count = 0;
+            appState.clients.forEach(c => {
+                if (dealFilter !== "ALL" && c.dealType !== dealFilter) return;
+                if (indFilter !== "ALL" && c.industry !== indFilter) return;
+                if (statusFilter !== "ALL" && c.status !== statusFilter) return;
+
+                count++;
+                const statusColor = c.status === "Active" ? "bg-emerald-50 text-emerald-600 border-emerald-100" : (c.status === "Pending" ? "bg-amber-50 text-amber-600 border-amber-100" : "bg-neutral-50 text-neutral-600 border-neutral-100");
+                const formattedVal = typeof c.originalValue === 'number' ? c.originalValue.toLocaleString() : c.originalValue;
+                const timelineDisplay = c.isOngoing ? `${c.campaignStart || 'N/A'} ~ Ongoing` : `${c.campaignStart || 'N/A'} ~ ${c.campaignEnd || 'N/A'}`;
+
+                const contractButton = c.contractFile ? 
+                    `<button onclick="openReceiptModal('${c.contractFile}')" class="text-[#ff66c4] hover:text-black font-bold text-[11px]"><i class="fa-solid fa-file-contract mr-1"></i> View Contract</button>` : 
+                    `<span class="text-neutral-400 text-[10px] italic">No Contract</span>`;
+
+                const card = `
+                    <div class="bg-white border border-neutral-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between hover:shadow-md transition-all relative">
+                        <div class="absolute top-4 right-4 flex gap-1.5">
+                            <button onclick="loadClientForEdit(${c.id})" class="text-neutral-400 hover:text-neutral-900 p-1"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                            <button onclick="triggerDeleteClient(${c.id})" class="text-neutral-400 hover:text-rose-600 p-1"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-start pr-12">
+                                <h4 class="font-bold text-sm font-korean text-black">${c.name}</h4>
+                                <span class="px-2 py-0.5 rounded text-[9px] font-semibold border ${statusColor}">${c.status}</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-y-2 text-[11px] text-neutral-500 pt-3 border-t border-neutral-100">
+                                <span class="font-medium text-neutral-400">Industry:</span><span class="text-black font-semibold text-right">${c.industry}</span>
+                                <span class="font-medium text-neutral-400">Service Line:</span><span class="text-black font-semibold text-right">${c.service}</span>
+                                <span class="font-medium text-neutral-400">Deal Model:</span><span class="text-black font-semibold text-right">${c.dealType}</span>
+                                <span class="font-medium text-[#ff66c4] font-bold">Creators Seeding:</span><span class="text-black font-bold text-right">${c.creatorsSeeding || 0} creators</span>
+                                <span class="font-medium text-neutral-400">Campaign Timeline:</span><span class="text-neutral-800 font-medium text-right text-[10px]">${timelineDisplay}</span>
+                                <span class="font-medium text-neutral-400">Signed Contract:</span><span class="text-right">${contractButton}</span>
+                            </div>
+                        </div>
+                        <div class="pt-4 mt-4 border-t border-neutral-100 flex justify-between items-center text-xs">
+                            <span class="text-neutral-400 font-medium">Contract Value:</span>
+                            <span class="font-bold text-black">${formattedVal} ${c.currency}</span>
+                        </div>
+                    </div>
+                `;
+                cardContainer.insertAdjacentHTML('beforeend', card);
+            });
+            document.getElementById("client-filtered-counter").innerText = `Showing ${count} client${count !== 1 ? 's' : ''}`;
+        }
+
+        function loadClientForEdit(id) {
+            const client = appState.clients.find(c => c.id === id);
+            if (!client) return;
+            document.getElementById("client-form-card").classList.remove('hidden');
+            document.getElementById("edit-client-id").value = client.id;
+            document.getElementById("client-name").value = client.name || "";
+            document.getElementById("client-industry").value = client.industry || "";
+            document.getElementById("client-service").value = client.service || "KOL Seeding Revenue";
+            document.getElementById("client-dealtype").value = client.dealType || "";
+            document.getElementById("client-currency").value = client.currency || "KRW";
+            document.getElementById("client-value-raw").value = client.originalValue || 0;
+            document.getElementById("client-status").value = client.status || "Active";
+            document.getElementById("client-creators").value = client.creatorsSeeding || 0;
+            document.getElementById("client-start-date").value = client.campaignStart || "";
+            document.getElementById("client-no-enddate").checked = !!client.isOngoing;
+            document.getElementById("client-end-date").value = client.campaignEnd || "";
+        }
+
+        function addManualClient(e) {
+            e.preventDefault();
+            const editId = document.getElementById("edit-client-id").value;
+            const rawService = document.getElementById("client-service").value;
+            const service = resolveRevenueCategory(rawService);
+            const contractFileInput = document.getElementById("client-contract-file");
+
+            const saveClientData = (contractFileBase64) => {
+                const clientData = {
+                    id: editId ? parseInt(editId) : Date.now(),
+                    name: document.getElementById("client-name").value.trim(),
+                    industry: document.getElementById("client-industry").value.trim(),
+                    service,
+                    dealType: document.getElementById("client-dealtype").value,
+                    originalValue: parseFloat(document.getElementById("client-value-raw").value) || 0,
+                    currency: document.getElementById("client-currency").value,
+                    status: document.getElementById("client-status").value,
+                    creatorsSeeding: parseInt(document.getElementById("client-creators").value) || 0,
+                    campaignStart: document.getElementById("client-start-date").value,
+                    isOngoing: document.getElementById("client-no-enddate").checked,
+                    campaignEnd: document.getElementById("client-end-date").value,
+                    contractFile: contractFileBase64 || ""
+                };
+
+                if (editId) { appState.clients = appState.clients.map(c => c.id === parseInt(editId) ? clientData : c); }
+                else { appState.clients.unshift(clientData); }
+
+                saveState();
+                populateCOADropdowns();
+                renderClientsView();
+                renderPaymentScheduleHub();
+                updateUI();
+                cancelClientForm();
+                showToast("Client saved successfully!", "success");
+            };
+
+            if (contractFileInput.files && contractFileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (event) { saveClientData(event.target.result); };
+                reader.readAsDataURL(contractFileInput.files[0]);
+            } else { saveClientData(""); }
+        }
+
+        function triggerDeleteClient(id) {
+            showConfirmationModal("Delete Client Profile", "Remove this client?", false, () => {
+                appState.clients = appState.clients.filter(c => c.id !== id);
+                saveState();
+                renderClientsView();
+                renderPaymentScheduleHub();
+                showToast("Client deleted!", "success");
+            });
+        }
+
+        /* CLIENT PAYMENT HUB & AR AGING */
+        function calculatePaymentAmount() {
+            const pct = parseFloat(document.getElementById("pay-percentage").value) || 0;
+            const total = parseFloat(document.getElementById("pay-client-total-value").value) || 0;
+            document.getElementById("pay-amount").value = total * (pct / 100);
+        }
+
+        function getARAgingInfo(dueDateStr, status) {
+            if (status === "Paid") return { days: 0, label: "Paid / Cleared", color: "bg-emerald-50 text-emerald-600 border-emerald-100" };
+            const today = new Date("2026-07-22");
+            const due = new Date(dueDateStr);
+            const diffDays = Math.floor((today - due) / (1000 * 60 * 60 * 24));
+
+            if (diffDays <= 0) return { days: diffDays, label: "Current (On Time)", color: "bg-emerald-50 text-emerald-600 border-emerald-100" };
+            if (diffDays <= 30) return { days: diffDays, label: `Overdue +${diffDays}d (H+30)`, color: "bg-amber-50 text-amber-600 border-amber-100" };
+            if (diffDays <= 60) return { days: diffDays, label: `Overdue +${diffDays}d (H+60)`, color: "bg-orange-50 text-orange-600 border-orange-100" };
+            return { days: diffDays, label: `Critical +${diffDays}d (>H+60)`, color: "bg-rose-50 text-rose-600 border-rose-100" };
+        }
+
+        function renderPaymentScheduleHub() {
+            const container = document.getElementById("paid-clients-payment-container");
+            container.innerHTML = "";
+
+            const paidClients = appState.clients.filter(c => c.dealType === "Paid Campaign");
+            let grandTotalContractKRW = 0, grandTotalPaidKRW = 0;
+            let arCurrentKRW = 0, arH30KRW = 0, arH60KRW = 0, arH90KRW = 0;
+
+            paidClients.forEach(client => {
+                const clientPayments = appState.clientPayments.filter(p => p.clientName === client.name);
+                const clientRate = getExchangeRateOnDate(client.currency, client.campaignStart || '2026-01-01');
+                grandTotalContractKRW += (client.originalValue || 0) * clientRate;
+
+                clientPayments.forEach(p => {
+                    const amtKRW = parseFloat(p.amountInKRW || 0);
+                    if (p.status === "Paid") { grandTotalPaidKRW += amtKRW; }
+                    else {
+                        const aging = getARAgingInfo(p.dueDate, p.status);
+                        if (aging.days <= 0) arCurrentKRW += amtKRW;
+                        else if (aging.days <= 30) arH30KRW += amtKRW;
+                        else if (aging.days <= 60) arH60KRW += amtKRW;
+                        else arH90KRW += amtKRW;
+                    }
+                });
+            });
+
+            const grandRemainingKRW = Math.max(0, grandTotalContractKRW - grandTotalPaidKRW);
+            const currencySymbol = getCurrencySymbol();
+            const currKey = document.getElementById("global-currency-select").value;
+
+            document.getElementById("sum-paid-contract").innerText = `${currencySymbol} ${getConvertedVal(grandTotalContractKRW).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
+            document.getElementById("sum-paid-received").innerText = `${currencySymbol} ${getConvertedVal(grandTotalPaidKRW).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
+            document.getElementById("sum-paid-remaining").innerText = `${currencySymbol} ${getConvertedVal(grandRemainingKRW).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
+
+            document.getElementById("ar-current-val").innerText = `${currencySymbol} ${getConvertedVal(arCurrentKRW).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
+            document.getElementById("ar-h30-val").innerText = `${currencySymbol} ${getConvertedVal(arH30KRW).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
+            document.getElementById("ar-h60-val").innerText = `${currencySymbol} ${getConvertedVal(arH60KRW).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
+            document.getElementById("ar-h90-val").innerText = `${currencySymbol} ${getConvertedVal(arH90KRW).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
+
+            paidClients.forEach(client => {
+                const clientPayments = appState.clientPayments.filter(p => p.clientName === client.name);
+                let totalPaidNative = 0;
+                clientPayments.forEach(p => { if (p.status === "Paid") totalPaidNative += parseFloat(p.amount); });
+
+                const totalContractNative = client.originalValue || 0;
+                const remainingBalanceNative = Math.max(0, totalContractNative - totalPaidNative);
+
+                let rowsHtml = "";
+                clientPayments.forEach(p => {
+                    const aging = getARAgingInfo(p.dueDate, p.status);
+                    rowsHtml += `
+                        <tr class="hover:bg-neutral-50 transition-all border-b border-neutral-100">
+                            <td class="p-3.5 font-semibold text-black">${p.termDesc}</td>
+                            <td class="p-3.5 font-mono text-neutral-500">${p.dueDate}</td>
+                            <td class="p-3.5 font-mono text-neutral-700">${p.paidDate || '-'}</td>
+                            <td class="p-3.5 text-right font-bold text-black">${parseFloat(p.amount).toLocaleString()} ${p.currency}</td>
+                            <td class="p-3.5 text-center"><span class="px-2 py-0.5 rounded border text-[9px] font-bold ${aging.color}">${aging.label}</span></td>
+                            <td class="p-3.5 text-center"><span class="px-2 py-0.5 rounded border text-[9px] font-bold bg-neutral-100 text-black">${p.status}</span></td>
+                            <td class="p-3.5 text-center">
+                                <div class="flex justify-center gap-1.5">
+                                    <button onclick="loadPaymentScheduleForEdit(${p.id})" class="text-neutral-400 hover:text-black p-1"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                                    <button onclick="triggerDeletePaymentSchedule(${p.id})" class="text-neutral-400 hover:text-rose-600 p-1"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                const cardHtml = `
+                    <div class="bg-white border border-neutral-200 rounded-2xl p-6 shadow-sm space-y-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-100 pb-4">
+                            <div>
+                                <h3 class="text-base font-bold text-black font-korean flex items-center gap-2">${client.name} <span class="text-[10px] font-normal px-2 py-0.5 rounded bg-neutral-100 text-neutral-600">${client.industry}</span></h3>
+                                <p class="text-xs text-neutral-400 mt-0.5">Service: ${client.service}</p>
+                            </div>
+                            <div class="flex items-center gap-6">
+                                <div class="text-right"><p class="text-[10px] font-bold text-neutral-400 uppercase">Contract Value</p><p class="text-sm font-bold text-black">${totalContractNative.toLocaleString()} ${client.currency}</p></div>
+                                <div class="text-right"><p class="text-[10px] font-bold text-emerald-500 uppercase">Total Paid</p><p class="text-sm font-bold text-emerald-600">${totalPaidNative.toLocaleString()} ${client.currency}</p></div>
+                                <div class="text-right"><p class="text-[10px] font-bold text-rose-400 uppercase">Remaining</p><p class="text-sm font-bold text-rose-600">${remainingBalanceNative.toLocaleString()} ${client.currency}</p></div>
+                                <button onclick="openPaymentFormForClient('${client.name}', '${client.currency}', ${client.originalValue || 0})" class="px-3.5 py-2 text-white accent-bg rounded-xl text-xs font-semibold shadow-sm">+ Add Term</button>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto rounded-xl border border-neutral-100">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead><tr class="bg-neutral-50 text-neutral-400 font-bold uppercase text-[9px]"><th class="p-3.5">% Term</th><th class="p-3.5">Due Date</th><th class="p-3.5">Paid Date</th><th class="p-3.5 text-right">Amount</th><th class="p-3.5 text-center">AR Risk</th><th class="p-3.5 text-center">Status</th><th class="p-3.5 text-center">Actions</th></tr></thead>
+                                <tbody>${rowsHtml}</tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', cardHtml);
+            });
+        }
+
+        function openPaymentFormForClient(clientName, currency, contractValue) {
+            document.getElementById("payment-schedule-form-card").classList.remove("hidden");
+            document.getElementById("pay-client-display").value = clientName;
+            document.getElementById("pay-client-name").value = clientName;
+            document.getElementById("pay-currency").value = currency || "KRW";
+            document.getElementById("pay-client-total-value").value = contractValue;
+        }
+
+        function cancelPaymentScheduleForm() { document.getElementById("payment-schedule-form-card").classList.add("hidden"); }
+
+        function addManualPaymentSchedule(e) {
+            e.preventDefault();
+            const editId = document.getElementById("edit-payment-schedule-id").value;
+            const percentage = parseFloat(document.getElementById("pay-percentage").value) || 0;
+            const amount = parseFloat(document.getElementById("pay-amount").value);
+            const currency = document.getElementById("pay-currency").value;
+            const dueDate = document.getElementById("pay-due-date").value;
+            const paidDate = document.getElementById("pay-paid-date").value;
+
+            const payData = {
+                id: editId ? parseInt(editId) : Date.now(),
+                clientName: document.getElementById("pay-client-name").value,
+                percentage,
+                termDesc: percentage + "%",
+                dueDate, paidDate, currency, amount,
+                amountInKRW: amount * getExchangeRateOnDate(currency, paidDate || dueDate),
+                status: document.getElementById("pay-status").value,
+                picture: ""
+            };
+
+            if (editId) { appState.clientPayments = appState.clientPayments.map(p => p.id === parseInt(editId) ? payData : p); }
+            else { appState.clientPayments.unshift(payData); }
+
+            saveState();
+            updateUI();
+            cancelPaymentScheduleForm();
+            showToast("Payment Milestone Saved!", "success");
+        }
+
+        function loadPaymentScheduleForEdit(id) {
+            const p = appState.clientPayments.find(item => item.id === id);
+            if (!p) return;
+            openPaymentFormForClient(p.clientName, p.currency, 0);
+            document.getElementById("edit-payment-schedule-id").value = p.id;
+            document.getElementById("pay-percentage").value = p.percentage || 0;
+            document.getElementById("pay-amount").value = p.amount;
+            document.getElementById("pay-due-date").value = p.dueDate;
+            document.getElementById("pay-paid-date").value = p.paidDate || "";
+            document.getElementById("pay-status").value = p.status;
+        }
+
+        function triggerDeletePaymentSchedule(id) {
+            showConfirmationModal("Delete Payment Term", "Remove this term?", false, () => {
+                appState.clientPayments = appState.clientPayments.filter(p => p.id !== id);
+                saveState();
+                updateUI();
+                showToast("Term deleted", "success");
+            });
+        }
+
+        /* PAYROLL HUB */
+        function renderCommissionsTable() {
+            const tbody = document.getElementById("commissions-table-body");
+            tbody.innerHTML = "";
+            appState.commissions.forEach(com => {
+                const badge = com.status === "Paid" ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-amber-50 text-amber-600 border-amber-100";
+                const row = `
+                    <tr class="hover:bg-neutral-50 transition-all">
+                        <td class="p-4 text-neutral-500 font-mono">${com.date}</td>
+                        <td class="p-4 font-bold text-black">${com.project}</td>
+                        <td class="p-4 font-semibold text-neutral-800">${com.manager}</td>
+                        <td class="p-4"><span class="px-2 py-0.5 rounded border text-[10px] bg-neutral-50 font-medium">${com.type || 'Salary'}</span></td>
+                        <td class="p-4 text-neutral-500">${com.client || 'Internal'}</td>
+                        <td class="p-4 text-right font-semibold">${parseFloat(com.val).toLocaleString()} ${com.currency}</td>
+                        <td class="p-4 text-right text-neutral-800 font-bold">₩ ${parseFloat(com.amountInKRW).toLocaleString()}</td>
+                        <td class="p-4 text-center"><span class="text-neutral-400 italic text-[10px]">Logged</span></td>
+                        <td class="p-4 text-center"><span class="px-2 py-0.5 rounded border text-[9px] font-bold ${badge}">${com.status}</span></td>
+                        <td class="p-4 text-center">
+                            <button onclick="triggerDeleteCommission(${com.id})" class="text-neutral-400 hover:text-rose-600 p-1.5"><i class="fa-solid fa-trash text-xs"></i></button>
+                        </td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        }
+
+        function toggleCommissionForm() { document.getElementById("commission-form-card").classList.toggle('hidden'); }
+        function cancelCommissionForm() { document.getElementById("commission-form-card").classList.add('hidden'); }
+
+        function addManualCommission(e) {
+            e.preventDefault();
+            const rawVal = parseFloat(document.getElementById("comm-val").value);
+            const isTaxDeducted = document.getElementById("comm-tax-deduct").checked;
+            const val = isTaxDeducted ? (rawVal * 0.967) : rawVal;
+            const currency = document.getElementById("comm-currency").value;
+            const date = document.getElementById("comm-date").value;
+
+            const comData = {
+                id: Date.now(),
+                date,
+                project: document.getElementById("comm-project").value,
+                manager: document.getElementById("comm-manager-select").value,
+                client: document.getElementById("comm-client").value,
+                rawVal, val, isTaxDeducted, currency,
+                amountInKRW: val * getExchangeRateOnDate(currency, date),
+                type: document.getElementById("comm-type").value,
+                status: document.getElementById("comm-status").value
+            };
+
+            appState.commissions.unshift(comData);
+            saveState();
+            updateUI();
+            cancelCommissionForm();
+            showToast("Payroll saved!", "success");
+        }
+
+        function triggerDeleteCommission(id) {
+            showConfirmationModal("Delete Payroll Log", "Remove entry?", false, () => {
+                appState.commissions = appState.commissions.filter(c => c.id !== id);
+                saveState();
+                updateUI();
+                showToast("Payroll deleted!", "success");
+            });
+        }
+
+        /* EXPORT FUNCTION */
+        function exportCurrentTabCSV() { exportCSV('transactions'); }
+        function exportCSV(type) {
+            let csvContent = "data:text/csv;charset=utf-8,Date,Description,Category,Amount,Currency,AmountKRW\n";
+            appState.transactions.forEach(t => {
+                csvContent += `"${t.date}","${t.description}","${t.category}",${t.amount},"${t.currency}",${t.amountInKRW}\n`;
+            });
+            const encodedUri = encodeURI(csvContent);
+            const a = document.createElement("a");
+            a.setAttribute("href", encodedUri);
+            a.setAttribute("download", `vively_export_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        }
+
+        function renderCharts() {
+            try {
+                if (perfChart) perfChart.destroy();
+                if (pieChart) pieChart.destroy();
+                const canvasPerf = document.getElementById('chart-performance');
+                const canvasPie = document.getElementById('chart-expenses-pie');
+                if (!canvasPerf || !canvasPie) return;
+
+                const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                const monthlyRevenue = Array(12).fill(0), monthlyExpenses = Array(12).fill(0);
+
+                appState.transactions.forEach(t => {
+                    const monthIdx = new Date(t.date).getMonth();
+                    if (monthIdx >= 0 && monthIdx < 12) {
+                        if (t.type === "CREDIT") monthlyRevenue[monthIdx] += getConvertedVal(parseFloat(t.amountInKRW));
+                        else monthlyExpenses[monthIdx] += getConvertedVal(parseFloat(t.amountInKRW));
+                    }
+                });
+
+                perfChart = new Chart(canvasPerf, {
+                    type: 'bar',
+                    data: { labels, datasets: [
+                        { label: 'Revenue', data: monthlyRevenue, backgroundColor: '#000000', borderRadius: 4 },
+                        { label: 'Expenses', data: monthlyExpenses, backgroundColor: '#ff66c4', borderRadius: 4 }
+                    ]},
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+
+                const categories = {};
+                appState.transactions.forEach(t => {
+                    if (t.type === "DEBIT") {
+                        categories[t.category] = (categories[t.category] || 0) + getConvertedVal(parseFloat(t.amountInKRW));
+                    }
+                });
+
+                pieChart = new Chart(canvasPie, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(categories).length > 0 ? Object.keys(categories) : ['No Expenses'],
+                        datasets: [{
+                            data: Object.values(categories).length > 0 ? Object.values(categories) : [1],
+                            backgroundColor: ['#ff66c4', '#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ec4899']
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            } catch(e) { console.error(e); }
+        }
+
+        function openReceiptModal(pic) {
+            document.getElementById("receipt-image-view").src = pic;
+            document.getElementById("receipt-modal").classList.remove("hidden");
+        }
+        function closeReceiptModal() { document.getElementById("receipt-modal").classList.add("hidden"); }
 
         window.onload = function() {
-            switchTab('dashboard');
+            if (sessionStorage.getItem("vively_logged_in") === "true") { showWorkspace(); }
+            else { document.getElementById("login-container").classList.remove("hidden"); }
         };
     </script>
 </body>
