@@ -1103,7 +1103,7 @@
 
     <!-- JavaScript Application Logic -->
     <script>
-        // PUBLISHED GOOGLE SHEET CSV API LINK FOR HANA BANK DATABASE
+        // PUBLISHED GOOGLE SHEET CSV LINK FOR HANA BANK DATABASE
         const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQchV_2ir_FJAREPDvS68tPSOztknSSoC9vXgWxeOlK0ZGu8PDNG4rtuyU0PHqOa33yffHX3LsQWbca/pub?gid=0&single=true&output=csv";
 
         let currentTabId = 'dashboard';
@@ -1226,26 +1226,38 @@
             localStorage.setItem("vively_standalone_db_v1", JSON.stringify(appState));
         }
 
-        /* FETCH LIVE DATA FROM GOOGLE SHEETS PUBLISHED CSV LINK */
+        /* FETCH LIVE DATA FROM GOOGLE SHEETS PUBLISHED CSV LINK (ROBUST PARSER) */
         async function fetchGoogleSheetBankData() {
             if (!SHEET_CSV_URL) return;
 
             try {
-                const res = await fetch(SHEET_CSV_URL);
+                // Add timestamp to bypass browser cache
+                const res = await fetch(SHEET_CSV_URL + "&t=" + new Date().getTime());
                 const csvText = await res.text();
                 
-                const lines = csvText.split('\n');
+                const lines = csvText.split(/\r?\n/);
                 bankReconData = [];
 
                 for (let i = 1; i < lines.length; i++) {
                     if (!lines[i].trim()) continue;
-                    const cols = lines[i].split(',').map(c => c.replace(/^"|"$/g, '').trim());
                     
-                    if (cols.length >= 3) {
-                        const date = cols[0];
-                        const description = cols[1];
-                        const amount = parseFloat(cols[2]) || 0;
-                        const type = (cols[3] || 'DEBIT').toUpperCase();
+                    // Regex match CSV columns safely
+                    const cols = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim());
+                    
+                    if (cols.length >= 2) {
+                        const date = cols[0] || new Date().toISOString().slice(0, 10);
+                        const description = cols[1] || "Hana Bank Feed Item";
+                        
+                        // Extract ONLY digits/dots from Amount (Handles "KRW 30 ski", "30,000", etc.)
+                        const rawAmountStr = cols[2] ? cols[2].replace(/[^0-9.]/g, '') : "0";
+                        const amount = parseFloat(rawAmountStr) || 0;
+                        
+                        const rawType = (cols[3] || '').toUpperCase();
+                        let type = "DEBIT";
+                        if (rawType.includes("CREDIT") || rawType.includes("입금") || rawType.includes("INCOME") || rawType.includes("REVENUE")) {
+                            type = "CREDIT";
+                        }
+                        
                         const status = cols[4] || 'Reconciled';
                         const category = cols[5] || 'Uncategorized';
 
@@ -1258,8 +1270,10 @@
                 renderReconTable(bankReconData);
                 syncBankDataToTransactions();
                 updateUI();
+                showToast("Hana Bank Google Sheet Synced!", "success");
             } catch (err) {
                 console.error("Failed fetching Google Sheet CSV bank data:", err);
+                showToast("Failed to fetch Google Sheet data!", "error");
             }
         }
 
@@ -2358,6 +2372,65 @@
             document.getElementById("receipt-modal").classList.remove("hidden");
         }
         function closeReceiptModal() { document.getElementById("receipt-modal").classList.add("hidden"); }
+
+        function addManualTransaction(e) {
+            e.preventDefault();
+            const editId = document.getElementById("edit-transaction-id").value;
+            const date = document.getElementById("form-date").value;
+            const desc = document.getElementById("form-desc").value.trim();
+            const details = document.getElementById("form-details").value.trim();
+            const category = document.getElementById("form-category").value;
+            const amount = parseFloat(document.getElementById("form-amount").value);
+            const currency = document.getElementById("form-currency").value;
+            
+            const coaMatch = appState.coa.find(c => c.name === category);
+            const type = (coaMatch && coaMatch.category === "Revenue") ? "CREDIT" : "DEBIT";
+            const fileInput = document.getElementById("form-picture");
+
+            const handleSave = (pic) => {
+                const txData = {
+                    id: editId ? parseInt(editId) : Date.now(),
+                    date, description: desc, details, category, amount, currency,
+                    amountInKRW: amount * getExchangeRateOnDate(currency, date),
+                    type, picture: pic, source: "MANUAL"
+                };
+
+                if (editId) { appState.transactions = appState.transactions.map(t => t.id === parseInt(editId) ? txData : t); }
+                else { appState.transactions.push(txData); }
+
+                saveState(); updateUI(); cancelTransactionForm();
+                showToast("Transaction saved!", "success");
+            };
+
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(event) { handleSave(event.target.result); };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else { handleSave(""); }
+        }
+
+        function loadTransactionForEdit(id) {
+            const tx = appState.transactions.find(t => t.id === id);
+            if (!tx) return;
+            document.getElementById("transaction-form-card").classList.remove('hidden');
+            document.getElementById("edit-transaction-id").value = tx.id;
+            document.getElementById("form-date").value = tx.date;
+            document.getElementById("form-desc").value = tx.description;
+            document.getElementById("form-details").value = tx.details || "";
+            document.getElementById("form-category").value = tx.category;
+            document.getElementById("form-currency").value = tx.currency;
+            document.getElementById("form-amount").value = tx.amount;
+        }
+
+        function cancelTransactionForm() { document.getElementById("transaction-form-card").classList.add('hidden'); }
+        function toggleTransactionForm() { document.getElementById("transaction-form-card").classList.toggle('hidden'); }
+
+        function triggerDeleteTransaction(id) {
+            showConfirmationModal("Delete Transaction", "Permanently delete this entry?", false, () => {
+                appState.transactions = appState.transactions.filter(t => t.id !== id);
+                saveState(); updateUI(); showToast("Deleted!", "success");
+            });
+        }
 
         window.onload = function() {
             if (sessionStorage.getItem("vively_logged_in") === "true") { showWorkspace(); }
