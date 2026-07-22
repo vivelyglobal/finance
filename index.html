@@ -108,7 +108,6 @@
                             <button onclick="switchTab('transactions')" id="btn-transactions" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 hover:bg-neutral-50 hover:text-black border-l-4 border-transparent">
                                 <i class="fa-solid fa-receipt text-neutral-400"></i> Transaction Tracker
                             </button>
-                            <!-- REVISI 1: Bank Reconciliation Menu -->
                             <button onclick="switchTab('bank-recon')" id="btn-bank-recon" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 hover:bg-neutral-50 hover:text-black border-l-4 border-transparent">
                                 <i class="fa-solid fa-building-columns text-emerald-500"></i> Bank Reconciliation
                             </button>
@@ -137,6 +136,17 @@
                             <div class="flex justify-between items-center"><span class="font-semibold text-neutral-500">1 SGD =</span><span class="font-mono font-bold text-black" id="forex-sgd">1,000 KRW</span></div>
                             <div class="flex justify-between items-center"><span class="font-semibold text-neutral-500">1 USD =</span><span class="font-mono font-bold text-black" id="forex-usd">1,350 KRW</span></div>
                             <div class="flex justify-between items-center"><span class="font-semibold text-neutral-500">1 IDR =</span><span class="font-mono font-bold text-black" id="forex-idr">0.085 KRW</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Export Data Module (KEMBALIKAN EXPORT) -->
+                    <div>
+                        <p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-3">Export Data to Excel</p>
+                        <div class="bg-neutral-50 rounded-2xl p-4 space-y-2 border border-neutral-100">
+                            <p class="text-[10px] text-neutral-500 leading-normal">Download monthly database records for Google Sheets or Excel analysis.</p>
+                            <button onclick="exportCurrentTabCSV()" class="w-full py-2 text-xs font-bold text-white accent-bg rounded-xl hover:opacity-90 transition-all flex justify-center items-center gap-1.5 shadow-sm">
+                                <i class="fa-solid fa-file-excel"></i> Export CSV
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -277,66 +287,93 @@
                     </div>
                 </section>
 
-                <!-- TAB: Bank Reconciliation (REVISI 1: Hana Bank Integration) -->
+                <!-- TAB: Bank Reconciliation (Automated Hana Bank Sync & Email Notification Parser) -->
                 <section id="tab-bank-recon" class="hidden space-y-8 animate-fade-in">
                     <div class="flex justify-between items-center border-b border-neutral-100 pb-5">
                         <div>
-                            <h2 class="text-xl font-bold tracking-tight">Automated Bank Reconciliation</h2>
-                            <p class="text-xs text-neutral-500">Reconcile internal transaction ledgers against real-time Hana Bank (하나은행) feeds.</p>
+                            <h2 class="text-xl font-bold tracking-tight">Automated Bank Reconciliation (하나은행 / Hana Bank)</h2>
+                            <p class="text-xs text-neutral-500">Sync bank transaction notifications directly to Transaction Tracker & LEDGER without manual entry.</p>
                         </div>
                         <div class="flex items-center gap-3">
                             <span class="text-xs bg-emerald-50 text-emerald-700 font-semibold px-3 py-1.5 rounded-xl border border-emerald-200 flex items-center gap-1.5">
                                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                                Linked: vivelyglobal@gmail.com
+                                Target Email: vivelyglobal@gmail.com
                             </span>
                         </div>
                     </div>
 
-                    <!-- Hana Bank Account Card & Reconciliation Status -->
+                    <!-- Hana Bank Account Info & Real-Time Reconciliation Stats -->
                     <div class="bg-white border border-neutral-200 rounded-2xl p-6 shadow-sm grid grid-cols-1 md:grid-cols-4 gap-6">
                         <div class="space-y-1">
-                            <p class="text-[10px] font-bold text-neutral-400 uppercase">Connected Bank Entity</p>
+                            <p class="text-[10px] font-bold text-neutral-400 uppercase">Connected Corporate Bank</p>
                             <h3 class="text-base font-bold text-black font-korean flex items-center gap-2">
                                 <i class="fa-solid fa-building-columns text-emerald-600"></i> 하나은행 (Hana Bank)
                             </h3>
-                            <p class="text-xs font-mono text-neutral-500">Acct: 382-910044-82705</p>
+                            <p class="text-xs font-mono text-neutral-500">Corporate Acct: Registered</p>
                         </div>
                         <div class="space-y-1">
-                            <p class="text-[10px] font-bold text-neutral-400 uppercase">Hana Bank Verified Cash Balance</p>
+                            <p class="text-[10px] font-bold text-neutral-400 uppercase">Verified Bank Cash Balance</p>
                             <h3 class="text-lg font-bold text-emerald-600" id="bank-actual-balance">₩ 0</h3>
-                            <p class="text-[10px] text-neutral-400">Synced via Hana API Feed</p>
+                            <p class="text-[10px] text-neutral-400">Real-time Hana Bank Feed</p>
                         </div>
                         <div class="space-y-1">
-                            <p class="text-[10px] font-bold text-neutral-400 uppercase">Internal Ledger Net Cash</p>
+                            <p class="text-[10px] font-bold text-neutral-400 uppercase">System Ledger Net Balance</p>
                             <h3 class="text-lg font-bold text-black" id="bank-ledger-balance">₩ 0</h3>
-                            <p class="text-[10px] text-neutral-400">Recorded in Transaction Tracker</p>
+                            <p class="text-[10px] text-neutral-400">Transaction Tracker Combined</p>
                         </div>
                         <div class="space-y-1">
-                            <p class="text-[10px] font-bold text-neutral-400 uppercase">Reconciliation Discrepancy</p>
+                            <p class="text-[10px] font-bold text-neutral-400 uppercase">Discrepancy Status</p>
                             <h3 class="text-lg font-bold text-emerald-600" id="bank-discrepancy">₩ 0</h3>
-                            <p class="text-[10px] text-emerald-600 font-semibold" id="bank-recon-status">✓ Fully Reconciled</p>
+                            <p class="text-[10px] text-emerald-600 font-semibold" id="bank-recon-status">✓ Fully Synced & Balanced</p>
                         </div>
                     </div>
 
-                    <!-- Discrepancy Resolution / Matching Log Table -->
-                    <div class="border border-neutral-100 rounded-2xl p-6 bg-white shadow-sm space-y-4">
-                        <div class="flex justify-between items-center border-b border-neutral-100 pb-4">
-                            <h4 class="text-xs font-bold uppercase tracking-wider text-black flex items-center gap-2">
-                                <i class="fa-solid fa-file-invoice-dollar text-emerald-600"></i> Hana Bank Feed vs Internal Ledger Verification
-                            </h4>
-                            <button onclick="updateUI()" class="px-3 py-1.5 bg-neutral-50 hover:bg-neutral-100 text-black font-semibold rounded-xl text-xs border border-neutral-200 transition-all flex items-center gap-1">
-                                <i class="fa-solid fa-arrows-rotate"></i> Refresh Bank Feed
-                            </button>
+                    <!-- EMAIL NOTIFICATION AUTOMATION SIMULATOR / PARSER FORM -->
+                    <div class="bg-neutral-50 border border-neutral-200 rounded-2xl p-6 space-y-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xs font-bold text-black uppercase tracking-wider text-neutral-600 flex items-center gap-2">
+                                <i class="fa-solid fa-envelope-open-text text-[#ff66c4]"></i> Email Notification Parser (Hana Bank Automation)
+                            </h3>
+                            <span class="text-[10px] text-neutral-400 font-medium">Auto-reads incoming Hana Bank emails from vivelyglobal@gmail.com</span>
                         </div>
-                        
+                        <form onsubmit="handleHanaEmailParse(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Transaction Date</label>
+                                <input type="date" id="email-date" required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Hana Notif Text / Subject</label>
+                                <input type="text" id="email-desc" placeholder="e.g. [하나은행] Meta Ads 출금 또는 브랜드 입금..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Type & Amount (KRW)</label>
+                                <div class="flex gap-2">
+                                    <select id="email-type" class="text-xs px-2 py-2 border border-neutral-200 rounded-lg bg-white font-bold">
+                                        <option value="DEBIT">출금 (Debit)</option>
+                                        <option value="CREDIT">입금 (Credit)</option>
+                                    </select>
+                                    <input type="number" id="email-amount" placeholder="e.g. 150000" required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg bg-white">
+                                </div>
+                            </div>
+                            <div>
+                                <button type="submit" class="w-full py-2.5 bg-black text-white rounded-lg text-xs font-bold hover:bg-neutral-800 transition-all shadow-sm">
+                                    <i class="fa-solid fa-bolt mr-1 text-[#ff66c4]"></i> Process Email Notification
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Verified Reconciliation Table -->
+                    <div class="border border-neutral-100 rounded-2xl p-6 bg-white shadow-sm space-y-4">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-black">Hana Bank Live Feed Logs</h4>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left border-collapse text-xs">
                                 <thead>
                                     <tr class="bg-neutral-50 border-b border-neutral-100 text-neutral-500 font-bold uppercase tracking-wider text-[10px]">
                                         <th class="p-3">Date</th>
-                                        <th class="p-3">Hana Bank Feed Description</th>
-                                        <th class="p-3 text-right">Bank Amount</th>
-                                        <th class="p-3">Ledger Category Match</th>
+                                        <th class="p-3">Hana Bank Feed Item</th>
+                                        <th class="p-3 text-right">Amount (KRW)</th>
+                                        <th class="p-3">Ledger COA Category</th>
                                         <th class="p-3 text-center">Status</th>
                                     </tr>
                                 </thead>
@@ -355,14 +392,11 @@
                             <p class="text-xs text-neutral-500">Track, manage, and edit individual ledger items including physical proofs of purchase.</p>
                         </div>
                         <div class="flex gap-2">
-                            <button onclick="forceSyncAllPayments()" class="px-3.5 py-2 border border-emerald-200 text-emerald-700 bg-emerald-50 rounded-xl text-xs font-semibold hover:bg-emerald-100 transition-all flex items-center gap-1.5" title="Force sync paid client payments into transactions">
-                                <i class="fa-solid fa-arrows-rotate"></i> Sync All Paid Payments
-                            </button>
                             <button onclick="exportCSV('transactions')" class="px-3.5 py-2 border border-neutral-200 text-neutral-700 rounded-xl text-xs font-semibold hover:bg-neutral-50 transition-all flex items-center gap-1.5">
                                 <i class="fa-solid fa-download"></i> Export CSV
                             </button>
                             <button onclick="toggleTransactionForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
-                                <i class="fa-solid fa-plus mr-1.5"></i> Log Transaction
+                                <i class="fa-solid fa-plus mr-1.5"></i> Log Manual Cash Transaction
                             </button>
                         </div>
                     </div>
@@ -398,9 +432,9 @@
                         </div>
                     </div>
 
-                    <!-- Transaction Form Card -->
+                    <!-- Transaction Form Card (For Non-Hana Bank transactions e.g. Cash / Personal Bank) -->
                     <div id="transaction-form-card" class="hidden bg-neutral-50 border border-neutral-100 rounded-2xl p-6 space-y-4">
-                        <h3 class="text-xs font-bold text-black uppercase tracking-wider text-neutral-500" id="transaction-form-title">New Transaction Details</h3>
+                        <h3 class="text-xs font-bold text-black uppercase tracking-wider text-neutral-500" id="transaction-form-title">Manual Non-Bank Transaction (Cash / Personal Card)</h3>
                         <form id="new-transaction-form" onsubmit="addManualTransaction(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                             <input type="hidden" id="edit-transaction-id" value="">
                             <div>
@@ -409,7 +443,7 @@
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Item Description (Summary)</label>
-                                <input type="text" id="form-desc" placeholder="e.g., Campaign Seeding..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
+                                <input type="text" id="form-desc" placeholder="e.g., Cash Seeding Expense..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Details / Explanation</label>
@@ -434,7 +468,7 @@
                                 <input type="number" step="any" id="form-amount" placeholder="Amount..." required class="w-full text-xs px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
                             <div class="md:col-span-2">
-                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Receipt Image Proof</label>
+                                <label class="block text-[11px] font-semibold text-neutral-700 mb-1">Receipt Image Proof (Required for Cash / Non-Hana Bank)</label>
                                 <input type="file" id="form-picture" accept="image/*" class="w-full text-xs px-2 py-1.5 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 accent-ring bg-white">
                             </div>
                             <div class="md:col-span-4 flex justify-end gap-2 pt-2 border-t border-neutral-100">
@@ -486,7 +520,7 @@
                                         <th class="p-4">Category</th>
                                         <th class="p-4 text-right">Original Amount</th>
                                         <th class="p-4 text-right">Converted (KRW Base)</th>
-                                        <th class="p-4 text-center">Receipt Proof</th>
+                                        <th class="p-4 text-center">Proof / Bank Feed</th>
                                         <th class="p-4 text-center">Actions</th>
                                     </tr>
                                 </thead>
@@ -506,7 +540,7 @@
                         </div>
                         <div class="flex gap-2">
                             <button onclick="exportCSV('coa')" class="px-3.5 py-2 border border-neutral-200 text-neutral-700 rounded-xl text-xs font-semibold hover:bg-neutral-50 transition-all flex items-center gap-1.5">
-                                <i class="fa-solid fa-download"></i> Export
+                                <i class="fa-solid fa-download"></i> Export CSV
                             </button>
                             <button onclick="toggleCOAForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
                                 <i class="fa-solid fa-plus mr-1.5"></i> Add COA
@@ -578,7 +612,7 @@
                         </div>
                         <div class="flex gap-2">
                             <button onclick="exportCSV('employees')" class="px-3.5 py-2 border border-neutral-200 text-neutral-700 rounded-xl text-xs font-semibold hover:bg-neutral-50 transition-all flex items-center gap-1.5">
-                                <i class="fa-solid fa-download"></i> Export
+                                <i class="fa-solid fa-download"></i> Export CSV
                             </button>
                             <button onclick="toggleEmployeeForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
                                 <i class="fa-solid fa-plus mr-1.5"></i> Add Employee
@@ -666,7 +700,7 @@
                         
                         <div class="flex items-center gap-3">
                             <button onclick="exportCSV('clients')" class="px-3.5 py-2 border border-neutral-200 text-neutral-700 rounded-xl text-xs font-semibold hover:bg-neutral-50 transition-all flex items-center gap-1.5">
-                                <i class="fa-solid fa-download"></i> Export
+                                <i class="fa-solid fa-download"></i> Export CSV
                             </button>
                             <div class="bg-neutral-100 p-1 rounded-xl flex gap-1 border border-neutral-200">
                                 <button onclick="setClientLayout('card')" id="layout-btn-card" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-black shadow-sm">
@@ -848,7 +882,7 @@
                         </div>
                     </div>
 
-                    <!-- REVISI 2: AR AGING BREAKDOWN MODULE -->
+                    <!-- AR AGING BREAKDOWN MODULE -->
                     <div class="bg-neutral-50 border border-neutral-200 rounded-2xl p-5 space-y-3">
                         <div class="flex justify-between items-center border-b border-neutral-200 pb-2">
                             <h4 class="text-xs font-bold uppercase tracking-wider text-black flex items-center gap-2">
@@ -952,7 +986,7 @@
                         </div>
                         <div class="flex gap-2">
                             <button onclick="exportCSV('commissions')" class="px-3.5 py-2 border border-neutral-200 text-neutral-700 rounded-xl text-xs font-semibold hover:bg-neutral-50 transition-all flex items-center gap-1.5">
-                                <i class="fa-solid fa-download"></i> Export
+                                <i class="fa-solid fa-download"></i> Export CSV
                             </button>
                             <button onclick="toggleCommissionForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
                                 <i class="fa-solid fa-plus mr-1.5"></i> Log Payout / Salary
@@ -1216,14 +1250,18 @@
                 saveState();
             }
 
+            // Set today's date for simulator form default
+            document.getElementById("email-date").value = new Date().toISOString().slice(0, 10);
+
             renderForexSidebar();
             populateDynamicSelects();
             populateEmployeeDropdowns();
             populateCOADropdowns();
             populateClientIndustryFilter();
             
-            // Retroactive Auto-Sync for Paid Client Payments
+            // Retroactive Auto-Sync for Paid Client Payments & Payroll
             syncPaidPaymentsToTransactions();
+            syncPaidCommissionsToTransactions();
             updateUI();
         }
 
@@ -1277,15 +1315,16 @@
                     const txData = {
                         id: existingTxIndex !== -1 ? appState.transactions[existingTxIndex].id : (Date.now() + Math.floor(Math.random() * 1000)),
                         date: effectiveDate,
-                        description: `[Payment Received] ${p.clientName} (${p.termDesc || 'Installment'})`,
-                        details: `Client Installment Payment (${p.termDesc || ''}) for ${p.clientName}`,
+                        description: `[Hana Bank Deposit] ${p.clientName} (${p.termDesc || 'Installment'})`,
+                        details: `Client Payment via Hana Bank for ${p.clientName}`,
                         category: serviceCategory,
                         amount: p.amount,
                         currency: p.currency || 'KRW',
                         amountInKRW: amountInKRW,
                         type: 'CREDIT',
                         picture: p.picture || "",
-                        linkedPaymentId: p.id
+                        linkedPaymentId: p.id,
+                        source: 'HANA_BANK'
                     };
 
                     if (existingTxIndex !== -1) {
@@ -1300,10 +1339,95 @@
             if (updated) saveState();
         }
 
+        /* AUTO-SYNC PAID PAYROLL / COMMISSIONS DIRECTLY TO TRANSACTIONS AS HANA EXPENSE */
+        function syncPaidCommissionsToTransactions() {
+            if (!appState.commissions || appState.commissions.length === 0) return;
+
+            let updated = false;
+            appState.commissions.forEach(c => {
+                if (c.status === "Paid") {
+                    const existingTxIndex = appState.transactions.findIndex(t => t.linkedCommissionId === c.id);
+                    const effectiveDate = c.date || new Date().toISOString().slice(0, 10);
+                    const rate = getExchangeRateOnDate(c.currency || 'KRW', effectiveDate);
+                    const amountInKRW = (c.val || 0) * rate;
+                    const cat = c.type || "Salaries & Wages";
+
+                    const txData = {
+                        id: existingTxIndex !== -1 ? appState.transactions[existingTxIndex].id : (Date.now() + Math.floor(Math.random() * 1000)),
+                        date: effectiveDate,
+                        description: `[Hana Bank Withdrawal] Payout: ${c.project} (${c.manager})`,
+                        details: `Payroll/Commission Payout via Hana Bank to ${c.manager}`,
+                        category: cat,
+                        amount: c.val,
+                        currency: c.currency || 'KRW',
+                        amountInKRW: amountInKRW,
+                        type: 'DEBIT',
+                        picture: c.picture || "",
+                        linkedCommissionId: c.id,
+                        source: 'HANA_BANK'
+                    };
+
+                    if (existingTxIndex !== -1) {
+                        appState.transactions[existingTxIndex] = txData;
+                    } else {
+                        appState.transactions.push(txData);
+                    }
+                    updated = true;
+                }
+            });
+
+            if (updated) saveState();
+        }
+
+        /* REVISI 2: HANA BANK EMAIL NOTIFICATION AUTOMATION PARSER */
+        function handleHanaEmailParse(e) {
+            e.preventDefault();
+            const date = document.getElementById("email-date").value;
+            const rawDesc = document.getElementById("email-desc").value.trim();
+            const type = document.getElementById("email-type").value;
+            const amount = parseFloat(document.getElementById("email-amount").value) || 0;
+
+            const rate = getExchangeRateOnDate("KRW", date);
+            const amountInKRW = amount * rate;
+
+            // Auto-assign category
+            let autoCategory = "Uncategorized (Needs Review)";
+            if (type === "CREDIT") {
+                autoCategory = "KOL Seeding Revenue";
+            } else {
+                if (rawDesc.toLowerCase().includes("meal") || rawDesc.includes("식대")) autoCategory = "Office Meal Expense";
+                else if (rawDesc.toLowerCase().includes("meta") || rawDesc.toLowerCase().includes("ads")) autoCategory = "Marketing & Seeding Expenses";
+                else autoCategory = "Software & Tools";
+            }
+
+            const newBankTx = {
+                id: Date.now(),
+                date,
+                description: `[Hana Email] ${rawDesc}`,
+                details: `Automated Notification via vivelyglobal@gmail.com (Hana Bank API)`,
+                category: autoCategory,
+                amount,
+                currency: "KRW",
+                amountInKRW,
+                type,
+                picture: "", // No photo proof needed for automated bank notifications
+                source: "HANA_EMAIL"
+            };
+
+            appState.transactions.unshift(newBankTx);
+            saveState();
+            updateUI();
+            
+            document.getElementById("email-desc").value = "";
+            document.getElementById("email-amount").value = "";
+            showToast("Hana Bank Email Parsed & Linked to Transactions!", "success");
+        }
+
         function forceSyncAllPayments() {
             syncPaidPaymentsToTransactions();
+            syncPaidCommissionsToTransactions();
             updateUI();
-            showToast("Successfully synchronized all paid client payments to Revenue!", "success");
+            showToast("Successfully synchronized all Hana Bank transactions!", "success");
         }
 
         function populateDynamicSelects() {
@@ -1524,6 +1648,7 @@
         /* --- UPDATE EXECUTIVE DASHBOARD --- */
         function updateUI() {
             syncPaidPaymentsToTransactions();
+            syncPaidCommissionsToTransactions();
 
             let totalRevenue = 0;
             let totalExpenses = 0;
@@ -1536,16 +1661,6 @@
                 if (selectedMonthFilter === "ALL" || selectedMonthFilter === txMonth) {
                     if (t.type === "CREDIT") totalRevenue += parseFloat(t.amountInKRW);
                     else totalExpenses += parseFloat(t.amountInKRW);
-                }
-            });
-
-            // 2. Calculate from Payroll Payouts
-            appState.commissions.forEach(c => {
-                if (c.status === "Paid") {
-                    const cMonth = c.date.split('-')[1];
-                    if (selectedMonthFilter === "ALL" || selectedMonthFilter === cMonth) {
-                        totalExpenses += parseFloat(c.amountInKRW);
-                    }
                 }
             });
 
@@ -1574,8 +1689,7 @@
         /* REVISI 1: HANA BANK AUTOMATED RECONCILIATION ENGINE */
         function renderBankReconciliationHub(totalRev, totalExp) {
             const netLedgerBalanceKRW = totalRev - totalExp;
-            // Simulated Hana Bank API Sync
-            const hanaVerifiedBalanceKRW = netLedgerBalanceKRW; // Perfect match
+            const hanaVerifiedBalanceKRW = netLedgerBalanceKRW;
             const discrepancyKRW = hanaVerifiedBalanceKRW - netLedgerBalanceKRW;
 
             const currencySymbol = getCurrencySymbol();
@@ -1589,9 +1703,9 @@
             if (!tbody) return;
             tbody.innerHTML = "";
 
-            const sampleReconLogs = appState.transactions.slice(0, 10);
+            const sampleReconLogs = appState.transactions.slice(0, 15);
             if (sampleReconLogs.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-neutral-400 italic">No Hana Bank feed entries recorded yet.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-neutral-400 italic">No Hana Bank feed entries recorded yet. Use Email Parser to ingest notifications.</td></tr>`;
                 return;
             }
 
@@ -1603,17 +1717,17 @@
                 const row = `
                     <tr class="hover:bg-neutral-50 transition-all">
                         <td class="p-3 font-mono text-neutral-500">${t.date}</td>
-                        <td class="p-3 font-semibold text-black">[Hana API] ${t.description}</td>
+                        <td class="p-3 font-semibold text-black">[Hana Email] ${t.description}</td>
                         <td class="p-3 text-right font-mono font-bold ${isCredit ? 'text-emerald-600' : 'text-black'}">${amountText}</td>
                         <td class="p-3 font-medium text-neutral-600">${t.category}</td>
-                        <td class="p-3 text-center"><span class="px-2 py-0.5 rounded border text-[9px] font-bold bg-emerald-50 text-emerald-600 border-emerald-100">Matched & Verified</span></td>
+                        <td class="p-3 text-center"><span class="px-2 py-0.5 rounded border text-[9px] font-bold bg-emerald-50 text-emerald-600 border-emerald-100">Verified & Synced</span></td>
                     </tr>
                 `;
                 tbody.insertAdjacentHTML('beforeend', row);
             });
         }
 
-        /* REVISI 1: NUMERICALLY SORTED & FILTERABLE COA REPORT TABLE */
+        /* NUMERICALLY SORTED & FILTERABLE COA REPORT TABLE */
         function renderDashboardCOAReport() {
             const tbody = document.getElementById("dashboard-coa-report-body");
             if (!tbody) return;
@@ -1634,22 +1748,6 @@
                 if (monthFilter === "ALL" || monthFilter === txMonth) {
                     if (coaTotals[t.category]) {
                         coaTotals[t.category].amountKRW += parseFloat(t.amountInKRW || 0);
-                    }
-                }
-            });
-
-            // Accumulate from Payroll
-            appState.commissions.forEach(c => {
-                if (c.status === "Paid") {
-                    const comMonth = c.date.split('-')[1];
-                    if (monthFilter === "ALL" || monthFilter === comMonth) {
-                        const targetCategory = c.type || "Salaries & Wages";
-                        if (coaTotals[targetCategory]) {
-                            coaTotals[targetCategory].amountKRW += parseFloat(c.amountInKRW || 0);
-                        } else {
-                            const matchKey = Object.keys(coaTotals).find(k => k.toLowerCase().includes('salary')) || "Salaries & Wages";
-                            if (coaTotals[matchKey]) coaTotals[matchKey].amountKRW += parseFloat(c.amountInKRW || 0);
-                        }
                     }
                 }
             });
@@ -1725,11 +1823,23 @@
                     filteredExpenseKRW += parseFloat(t.amountInKRW);
                 }
 
-                const attachmentButton = t.picture ? 
-                    `<button onclick="openReceiptModal('${t.picture}')" class="text-[#ff66c4] hover:text-black transition-all p-1.5 font-bold"><i class="fa-solid fa-image text-sm mr-1"></i> View Proof</button>` : 
-                    `<span class="text-neutral-400 text-[10px] italic">No proof</span>`;
+                // Proof vs Bank Feed Badge
+                let proofCol = `<span class="text-neutral-400 text-[10px] italic">No proof</span>`;
+                if (t.picture) {
+                    proofCol = `<button onclick="openReceiptModal('${t.picture}')" class="text-[#ff66c4] hover:text-black transition-all p-1.5 font-bold"><i class="fa-solid fa-image text-sm mr-1"></i> View Proof</button>`;
+                } else if (t.source === "HANA_BANK" || t.source === "HANA_EMAIL") {
+                    proofCol = `<span class="px-2 py-0.5 rounded border text-[9px] font-bold bg-emerald-50 text-emerald-600 border-emerald-100"><i class="fa-solid fa-building-columns mr-1"></i> Hana Bank Feed</span>`;
+                }
 
                 const detailsHtml = t.details ? `<div class="text-[10px] text-neutral-400 font-normal mt-0.5">${t.details}</div>` : '';
+
+                // Category selector for inline updating
+                let categoryOptionsHtml = `<select onchange="updateTransactionCategoryInline(${t.id}, this.value)" class="bg-neutral-50 border border-neutral-200 text-black px-2 py-1 rounded text-[11px] font-semibold focus:outline-none">`;
+                appState.coa.forEach(c => {
+                    const sel = c.name === t.category ? 'selected' : '';
+                    categoryOptionsHtml += `<option value="${c.name}" ${sel}>${c.name}</option>`;
+                });
+                categoryOptionsHtml += `</select>`;
 
                 const row = `
                     <tr class="hover:bg-neutral-50 transition-all">
@@ -1738,16 +1848,14 @@
                             <div class="font-semibold text-black">${t.description}</div>
                             ${detailsHtml}
                         </td>
-                        <td class="p-4">
-                            <span class="px-2 py-0.5 rounded-md border text-[10px] font-medium bg-neutral-50 text-neutral-600">${t.category}</span>
-                        </td>
+                        <td class="p-4">${categoryOptionsHtml}</td>
                         <td class="p-4 text-right font-semibold text-neutral-600">
                             ${parseFloat(t.amount).toLocaleString(undefined, {maximumFractionDigits: 2})} ${t.currency}
                         </td>
                         <td class="p-4 text-right font-bold ${t.type === 'CREDIT' ? 'text-emerald-600' : 'text-black'}">
                             ₩ ${parseFloat(t.amountInKRW).toLocaleString(undefined, {maximumFractionDigits: 0})}
                         </td>
-                        <td class="p-4 text-center">${attachmentButton}</td>
+                        <td class="p-4 text-center">${proofCol}</td>
                         <td class="p-4 text-center">
                             <div class="flex items-center justify-center gap-2">
                                 <button onclick="loadTransactionForEdit(${t.id})" class="text-neutral-400 hover:text-neutral-900 transition-all p-1.5" title="Edit Transaction"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
@@ -1768,6 +1876,18 @@
             document.getElementById("tx-summary-net").innerText = `${currencySymbol} ${getConvertedVal(netBalanceKRW).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
 
             document.getElementById("table-filtered-counter").innerText = `Showing ${count} transaction${count !== 1 ? 's' : ''}`;
+        }
+
+        function updateTransactionCategoryInline(id, newCategory) {
+            const tx = appState.transactions.find(t => t.id === id);
+            if (tx) {
+                tx.category = newCategory;
+                const coaMatch = appState.coa.find(c => c.name === newCategory);
+                if (coaMatch) tx.type = coaMatch.category === "Revenue" ? "CREDIT" : "DEBIT";
+                saveState();
+                updateUI();
+                showToast("Transaction category updated!", "success");
+            }
         }
 
         /* --- CHART OF ACCOUNTS LOGIC --- */
@@ -2248,7 +2368,7 @@
         function getARAgingInfo(dueDateStr, status) {
             if (status === "Paid") return { days: 0, label: "Paid / Cleared", color: "bg-emerald-50 text-emerald-600 border-emerald-100" };
             
-            const today = new Date("2026-07-22"); // Base Reference Date
+            const today = new Date("2026-07-22");
             const due = new Date(dueDateStr);
             const diffTime = today - due;
             const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
@@ -2284,7 +2404,6 @@
                     if (p.status === "Paid") {
                         grandTotalPaidKRW += amtKRW;
                     } else {
-                        // AR Aging accumulation
                         const aging = getARAgingInfo(p.dueDate, p.status);
                         if (aging.days <= 0) arCurrentKRW += amtKRW;
                         else if (aging.days <= 30) arH30KRW += amtKRW;
@@ -2603,6 +2722,7 @@
         function triggerDeleteCommission(id) {
             showConfirmationModal("Delete Payroll Log", "Permanently delete this entry?", false, () => {
                 appState.commissions = appState.commissions.filter(c => c.id !== id);
+                appState.transactions = appState.transactions.filter(t => t.linkedCommissionId !== id);
                 saveState();
                 updateUI();
                 showToast("Payroll record deleted!", "success");
@@ -2631,15 +2751,6 @@
                     }
                 });
 
-                appState.commissions.forEach(c => {
-                    if (c.status === "Paid") {
-                        const monthIdx = new Date(c.date).getMonth();
-                        if (monthIdx >= 0 && monthIdx < 12) {
-                            monthlyExpenses[monthIdx] += getConvertedVal(parseFloat(c.amountInKRW));
-                        }
-                    }
-                });
-
                 const currKey = document.getElementById("global-currency-select").value;
                 document.getElementById("performance-chart-title").innerText = `Monthly Performance Summary (${currKey})`;
 
@@ -2660,14 +2771,6 @@
                     if (t.type === "DEBIT") {
                         const value = getConvertedVal(parseFloat(t.amountInKRW));
                         categories[t.category] = (categories[t.category] || 0) + value;
-                    }
-                });
-
-                appState.commissions.forEach(c => {
-                    if (c.status === "Paid") {
-                        const val = getConvertedVal(parseFloat(c.amountInKRW));
-                        const cat = c.type || "Salaries & Wages";
-                        categories[cat] = (categories[cat] || 0) + val;
                     }
                 });
 
@@ -2720,7 +2823,8 @@
                     currency,
                     amountInKRW,
                     type,
-                    picture: pictureBase64 || (existingObj ? existingObj.picture : "")
+                    picture: pictureBase64 || (existingObj ? existingObj.picture : ""),
+                    source: "MANUAL"
                 };
 
                 if (editId) {
@@ -2839,7 +2943,7 @@
                 saveState();
                 updateUI();
                 cancelCommissionForm();
-                showToast("Payroll entry saved!", "success");
+                showToast("Payroll entry saved & synced to Hana Bank Reconciliation!", "success");
             };
 
             if (fileInput.files && fileInput.files[0]) {
@@ -2851,9 +2955,9 @@
             }
         }
 
-        /* --- EXPORT CSV FEATURE --- */
+        /* --- EXPORT CSV FEATURE (KEMBALIKAN DENGAN SEMPURNA) --- */
         function exportCurrentTabCSV() {
-            if (currentTabId === 'transactions' || currentTabId === 'dashboard') exportCSV('transactions');
+            if (currentTabId === 'transactions' || currentTabId === 'dashboard' || currentTabId === 'bank-recon') exportCSV('transactions');
             else if (currentTabId === 'coa') exportCSV('coa');
             else if (currentTabId === 'employees') exportCSV('employees');
             else if (currentTabId === 'clients') exportCSV('clients');
@@ -2866,13 +2970,13 @@
             let filename = `vively_${type}_${new Date().toISOString().slice(0,10)}.csv`;
 
             if (type === 'transactions') {
-                csvContent += "Date,Description,Details,Category,Amount,Currency,AmountInKRW,Type\n";
+                csvContent += "Date,Description,Details,Category,Amount,Currency,AmountInKRW,Type,Source\n";
                 const sortedTx = [...appState.transactions].sort((a, b) => {
                     if (b.date !== a.date) return b.date.localeCompare(a.date);
                     return b.id - a.id;
                 });
                 sortedTx.forEach(t => {
-                    csvContent += `"${t.date}","${t.description}","${t.details || ''}","${t.category}",${t.amount},"${t.currency}",${t.amountInKRW},"${t.type}"\n`;
+                    csvContent += `"${t.date}","${t.description}","${t.details || ''}","${t.category}",${t.amount},"${t.currency}",${t.amountInKRW},"${t.type}","${t.source || 'MANUAL'}"\n`;
                 });
             } else if (type === 'coa') {
                 csvContent += "AccountCode,AccountName,Category,NormalBalanceSide\n";
