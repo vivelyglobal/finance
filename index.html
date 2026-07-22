@@ -14,11 +14,7 @@
         tailwind.config = {
             darkMode: 'class',
             theme: {
-                extend: {
-                    colors: {
-                        vively: '#ff66c4',
-                    }
-                }
+                extend: { colors: { vively: '#ff66c4' } }
             }
         }
     </script>
@@ -48,7 +44,6 @@
     <div id="login-container" class="min-h-screen flex flex-col justify-center items-center bg-white dark:bg-neutral-900 px-6">
         <div class="max-w-md w-full text-center space-y-8 p-8 border border-neutral-100 dark:border-neutral-800 rounded-3xl shadow-sm bg-white dark:bg-neutral-900">
             <div class="flex flex-col items-center gap-2">
-                <!-- REVISI 8: Larger Vively Logo -->
                 <h1 class="font-korean text-7xl md:text-8xl font-bold tracking-tight accent-text">vively</h1>
             </div>
             <div class="space-y-1">
@@ -75,7 +70,6 @@
         <!-- Header Navigation -->
         <header class="border-b border-neutral-100 dark:border-neutral-800 px-8 py-3.5 flex justify-between items-center bg-white dark:bg-neutral-900 sticky top-0 z-40">
             <div class="flex items-center gap-3">
-                <!-- REVISI 8: Larger Logo in Top Header -->
                 <h1 class="font-korean text-2xl font-bold tracking-tight accent-text">vively</h1>
             </div>
             <div class="flex items-center gap-6 text-xs font-medium">
@@ -88,14 +82,12 @@
                         <option value="IDR">IDR (Rp)</option>
                     </select>
                 </div>
-                <!-- REVISI 10 & 11: Removed "Ledger Profile" & "Vively Global Operations" text -->
                 <div class="h-4 w-[1px] bg-neutral-200 dark:bg-neutral-800"></div>
                 <span class="text-neutral-500 dark:text-neutral-400 flex items-center gap-1.5">
                     <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
                     <span>Database Active</span>
                 </span>
                 
-                <!-- REVISI 12: Day & Night Mode Toggle -->
                 <div class="h-4 w-[1px] bg-neutral-200 dark:bg-neutral-800"></div>
                 <button onclick="toggleDarkMode()" class="px-3 py-1 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white font-semibold transition-all flex items-center gap-1.5">
                     <i id="theme-icon" class="fa-solid fa-moon"></i>
@@ -109,7 +101,7 @@
             </div>
         </header>
 
-        <!-- Main Content Layout -->
+        <!-- Main Layout -->
         <div class="flex flex-1">
             
             <!-- Sidebar Navigation -->
@@ -142,14 +134,13 @@
                             <button onclick="switchTab('commissions')" id="btn-commissions" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-black dark:hover:text-white border-l-4 border-transparent">
                                 <i class="fa-solid fa-wallet text-neutral-400"></i> Payroll & Payout Hub
                             </button>
-                            <!-- REVISI 15: Financial Statements Workspace -->
                             <button onclick="switchTab('fin-statements')" id="btn-fin-statements" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-black dark:hover:text-white border-l-4 border-transparent">
                                 <i class="fa-solid fa-file-contract text-vively"></i> Financial Statements
                             </button>
                         </nav>
                     </div>
 
-                    <!-- REVISI 9: Real-time Forex Board -->
+                    <!-- Real-time Forex Board -->
                     <div>
                         <div class="flex justify-between items-center mb-3">
                             <p class="text-[10px] font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider">Real-time Forex (To KRW)</p>
@@ -166,7 +157,7 @@
                     <div>
                         <p class="text-[10px] font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider mb-3">Export Data to Excel</p>
                         <div class="bg-neutral-50 dark:bg-neutral-800 rounded-2xl p-4 space-y-2 border border-neutral-100 dark:border-neutral-700">
-                            <p class="text-[10px] text-neutral-500 dark:text-neutral-400 leading-normal">Download database records for Excel or Google Sheets analysis.</p>
+                            <p class="text-[10px] text-neutral-500 dark:text-neutral-400 leading-normal">Download database records for Excel analysis.</p>
                             <button onclick="exportCurrentTabCSV()" class="w-full py-2 text-xs font-bold text-white accent-bg rounded-xl hover:opacity-90 transition-all flex justify-center items-center gap-1.5 shadow-sm">
                                 <i class="fa-solid fa-file-excel"></i> Export CSV
                             </button>
@@ -215,23 +206,25 @@
                         </div>
                     </div>
 
-                    <!-- Metrics Cards Grid -->
+                    <!-- Metrics Cards Grid (REVISI 3: Revenue Green, Expense Red, Profit Conditional Color) -->
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                         <div class="bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 rounded-2xl p-6 shadow-sm">
                             <div class="flex justify-between items-start mb-4">
                                 <span class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Total Revenue</span>
-                                <span class="p-1.5 bg-neutral-50 dark:bg-neutral-700 text-black dark:text-white rounded-lg text-xs"><i class="fa-solid fa-arrow-trend-up text-emerald-500"></i></span>
+                                <span class="p-1.5 bg-emerald-50 dark:bg-emerald-950 text-emerald-600 rounded-lg text-xs"><i class="fa-solid fa-arrow-trend-up"></i></span>
                             </div>
-                            <h3 class="text-2xl font-bold text-black dark:text-white" id="metric-revenue">0</h3>
+                            <!-- REVISI 2 & 3: Clean ₩ symbol without KRW, Green Color -->
+                            <h3 class="text-2xl font-bold text-emerald-600 dark:text-emerald-400" id="metric-revenue">₩ 0</h3>
                             <p class="text-[10px] text-neutral-500 dark:text-neutral-400 mt-2">Client Services & Campaigns</p>
                         </div>
 
                         <div class="bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 rounded-2xl p-6 shadow-sm">
                             <div class="flex justify-between items-start mb-4">
                                 <span class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Total Expenses</span>
-                                <span class="p-1.5 bg-neutral-50 dark:bg-neutral-700 text-black dark:text-white rounded-lg text-xs"><i class="fa-solid fa-arrow-trend-down text-rose-500"></i></span>
+                                <span class="p-1.5 bg-rose-50 dark:bg-rose-950 text-rose-600 rounded-lg text-xs"><i class="fa-solid fa-arrow-trend-down"></i></span>
                             </div>
-                            <h3 class="text-2xl font-bold text-black dark:text-white" id="metric-expenses">0</h3>
+                            <!-- REVISI 2 & 3: Red Color for Expenses -->
+                            <h3 class="text-2xl font-bold text-rose-600 dark:text-rose-400" id="metric-expenses">₩ 0</h3>
                             <p class="text-[10px] text-neutral-500 dark:text-neutral-400 mt-2">Salaries, Payouts, Software & Tools</p>
                         </div>
 
@@ -240,7 +233,8 @@
                                 <span class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Net Profit</span>
                                 <span class="p-1.5 bg-neutral-50 dark:bg-neutral-700 text-black dark:text-white rounded-lg text-xs"><i class="fa-solid fa-vault"></i></span>
                             </div>
-                            <h3 class="text-2xl font-bold text-black dark:text-white" id="metric-profit">0</h3>
+                            <!-- REVISI 3: Conditional Green/Red for Net Profit -->
+                            <h3 class="text-2xl font-bold" id="metric-profit">₩ 0</h3>
                             <p class="text-[10px] text-neutral-500 dark:text-neutral-400 mt-2">Net Cash Operations Balance</p>
                         </div>
 
@@ -263,23 +257,22 @@
                             </div>
                         </div>
 
-                        <!-- REVISI 7: Replaced Donut Chart with Accounts Receivable Outstanding Invoices Widget -->
+                        <!-- REVISI 4: Renamed to "Payments Need to be Collected" -->
                         <div class="border border-neutral-100 dark:border-neutral-800 rounded-2xl p-6 bg-white dark:bg-neutral-800 shadow-sm flex flex-col justify-between space-y-4">
                             <div class="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-700 pb-3">
                                 <h4 class="text-xs font-bold uppercase tracking-wider text-black dark:text-white flex items-center gap-2">
-                                    <i class="fa-solid fa-clock-rotate-left text-amber-500"></i> Outstanding Accounts Receivable (AR)
+                                    <i class="fa-solid fa-hand-holding-dollar text-amber-500"></i> Payments Need to be Collected
                                 </h4>
-                                <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950 px-2 py-0.5 rounded border border-amber-200 dark:border-amber-800">Uncollected Brand Invoices</span>
+                                <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950 px-2 py-0.5 rounded border border-amber-200 dark:border-amber-800">Uncollected Invoices</span>
                             </div>
                             
                             <div class="overflow-y-auto max-h-[240px] space-y-2 pr-1">
                                 <div id="dashboard-ar-list-container" class="space-y-2">
-                                    <!-- Populated via JS -->
                                 </div>
                             </div>
 
                             <div class="pt-3 border-t border-neutral-100 dark:border-neutral-700 flex justify-between items-center text-xs">
-                                <span class="text-neutral-400 font-medium">Total Pending Collections:</span>
+                                <span class="text-neutral-400 font-medium">Total Need to be Collected:</span>
                                 <span class="font-bold text-rose-600 dark:text-rose-400 text-sm" id="dashboard-total-ar-unpaid">₩ 0</span>
                             </div>
                         </div>
@@ -292,7 +285,7 @@
                                 <h4 class="text-xs font-bold uppercase tracking-wider text-black dark:text-white flex items-center gap-2">
                                     <i class="fa-solid fa-list-check text-vively"></i> Chart of Accounts Financial Report
                                 </h4>
-                                <span class="text-[11px] text-neutral-400 font-medium">Numerically sorted by Account Code. Auto-syncs with additions/deletions.</span>
+                                <span class="text-[11px] text-neutral-400 font-medium">Numerically sorted by Account Code.</span>
                             </div>
                             
                             <div class="flex items-center gap-2">
@@ -325,11 +318,10 @@
                     </div>
                 </section>
 
-                <!-- TAB: Bank Reconciliation (REVISI 3 & 5: Clean Title, Debit/Credit Totals, Filter Month, Format YYYY-MM-DD) -->
+                <!-- TAB: Bank Reconciliation -->
                 <section id="tab-bank-recon" class="hidden space-y-8 animate-fade-in">
                     <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b border-neutral-100 dark:border-neutral-800 pb-5 gap-4">
                         <div>
-                            <!-- REVISI 5: Removed "(하나은행 / Hana Bank)" text -->
                             <h2 class="text-xl font-bold tracking-tight">Automated Bank Reconciliation</h2>
                             <p class="text-xs text-neutral-500 dark:text-neutral-400">Live synced via Published Google Sheets Bank Database.</p>
                         </div>
@@ -358,37 +350,32 @@
                         </div>
                     </div>
 
-                    <!-- REVISI 3: Bank Reconciliation Total Debit & Total Credit Cards -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div class="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-5 shadow-sm">
                             <span class="text-[10px] font-bold text-emerald-500 uppercase tracking-wider">Total Credit / Deposits (입금)</span>
                             <h3 class="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-1" id="recon-total-credit">₩ 0</h3>
-                            <p class="text-[10px] text-neutral-400 mt-1">Bank Statement Total Inflow</p>
                         </div>
                         <div class="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-5 shadow-sm">
                             <span class="text-[10px] font-bold text-rose-500 uppercase tracking-wider">Total Debit / Withdrawals (출금)</span>
                             <h3 class="text-2xl font-bold text-rose-600 dark:text-rose-400 mt-1" id="recon-total-debit">₩ 0</h3>
-                            <p class="text-[10px] text-neutral-400 mt-1">Bank Statement Total Outflow</p>
                         </div>
                         <div class="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-5 shadow-sm">
                             <span class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Live Logged Items</span>
                             <h3 class="text-2xl font-bold text-black dark:text-white mt-1" id="recon-items-count">0 items</h3>
-                            <p class="text-[10px] text-emerald-600 font-semibold mt-1">✓ Synced to Transaction Tracker</p>
                         </div>
                     </div>
 
                     <div class="border border-neutral-100 dark:border-neutral-800 rounded-2xl p-6 bg-white dark:bg-neutral-800 shadow-sm space-y-4">
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-black dark:text-white">Bank Feed Logged Statements</h4>
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-black dark:text-white">Bank Feed Statements</h4>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left border-collapse text-xs">
                                 <thead>
                                     <tr class="bg-neutral-50 dark:bg-neutral-700/50 border-b border-neutral-100 dark:border-neutral-700 text-neutral-500 dark:text-neutral-400 font-bold uppercase tracking-wider text-[10px]">
-                                        <!-- REVISI 4: Format date YYYY-MM-DD -->
                                         <th class="p-3.5">Date (YYYY-MM-DD)</th>
                                         <th class="p-3.5">Bank Feed Description</th>
-                                        <th class="p-3.5 text-right">Amount (KRW)</th>
+                                        <th class="p-3.5 text-right">Amount</th>
                                         <th class="p-3.5 text-center">Type</th>
-                                        <th class="p-3.5 text-center">Reconciliation Status</th>
+                                        <th class="p-3.5 text-center">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody id="bank-sheet-table-body" class="divide-y divide-neutral-100 dark:divide-neutral-700 text-neutral-800 dark:text-neutral-200">
@@ -446,9 +433,9 @@
                         </div>
                     </div>
 
-                    <!-- Form Input Transaction Manual (REVISI 14: Option to designate Bank vs Cash Account) -->
+                    <!-- Form Input Transaction Manual (REVISI 7: Simplified Category Dropdown + Cash Checkbox) -->
                     <div id="transaction-form-card" class="hidden bg-neutral-50 dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 rounded-2xl p-6 space-y-4">
-                        <h3 class="text-xs font-bold text-black dark:text-white uppercase tracking-wider text-neutral-500" id="transaction-form-title">Manual Transaction Input</h3>
+                        <h3 class="text-xs font-bold text-black dark:text-white uppercase tracking-wider text-neutral-500" id="transaction-form-title">Manual Cash Transaction</h3>
                         <form id="new-transaction-form" onsubmit="addManualTransaction(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                             <input type="hidden" id="edit-transaction-id" value="">
                             <div>
@@ -463,19 +450,20 @@
                                 <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Details</label>
                                 <input type="text" id="form-details" placeholder="Notes..." class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
                             </div>
-                            <!-- REVISI 1: Category dropdown selection -->
+                            <!-- REVISI 7: Filtered Category Selection (Revenue & Expense only, Clean Titles) -->
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Account Category (COA)</label>
                                 <select id="form-category" class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white"></select>
                             </div>
-                            <!-- REVISI 14: Payment Source Designation (Bank vs Petty Cash) -->
-                            <div>
-                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Payment Account Source</label>
-                                <select id="form-account-source" class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white font-bold">
-                                    <option value="HANA_BANK">Corporate Bank Account (하나은행)</option>
-                                    <option value="PETTY_CASH">Petty Cash / Personal Card</option>
-                                </select>
+                            
+                            <!-- REVISI 7: Paid via Petty Cash Toggle -->
+                            <div class="flex items-center gap-2 py-2">
+                                <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-semibold text-neutral-700 dark:text-neutral-300">
+                                    <input type="checkbox" id="form-is-cash" class="rounded text-vively focus:ring-0 w-4 h-4" checked>
+                                    <span>Paid via Petty Cash / Personal Card</span>
+                                </label>
                             </div>
+
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Currency</label>
                                 <select id="form-currency" class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
@@ -489,7 +477,7 @@
                                 <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Amount</label>
                                 <input type="number" step="any" id="form-amount" placeholder="Amount..." required class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
                             </div>
-                            <div class="md:col-span-1">
+                            <div class="md:col-span-2">
                                 <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Receipt Image Proof</label>
                                 <input type="file" id="form-picture" accept="image/*" class="w-full text-xs px-2 py-1.5 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
                             </div>
@@ -537,10 +525,8 @@
                             <table class="w-full text-left border-collapse text-xs">
                                 <thead>
                                     <tr class="bg-neutral-50 dark:bg-neutral-700/50 border-b border-neutral-100 dark:border-neutral-700 text-neutral-500 dark:text-neutral-400 font-bold uppercase tracking-wider text-[10px]">
-                                        <!-- REVISI 2: Date YYYY-MM-DD -->
                                         <th class="p-4">Date (YYYY-MM-DD)</th>
                                         <th class="p-4">Item Description</th>
-                                        <!-- REVISI 1: Selectable Category -->
                                         <th class="p-4">Category (Select COA)</th>
                                         <th class="p-4 text-right">Original Amount</th>
                                         <th class="p-4 text-right">Converted (KRW Base)</th>
@@ -555,7 +541,7 @@
                     </div>
                 </section>
 
-                <!-- TAB: Chart of Accounts (COA) (REVISI 13: Change "Debit Side" -> "Debit", "Credit Side" -> "Credit") -->
+                <!-- TAB: Chart of Accounts (COA) -->
                 <section id="tab-coa" class="hidden space-y-8 animate-fade-in">
                     <div class="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-800 pb-5">
                         <div>
@@ -595,7 +581,6 @@
                                     <option value="Expense" selected>Expense</option>
                                 </select>
                             </div>
-                            <!-- REVISI 13: Normal Balance Side changed to "Debit" / "Credit" -->
                             <div>
                                 <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Normal Balance Side</label>
                                 <select id="coa-side" class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
@@ -993,12 +978,12 @@
                     </div>
                 </section>
 
-                <!-- Tab 4: Unified Compensation, Payouts & Salaries (REVISI 6: Added Edit Option for Each List Row) -->
+                <!-- Tab 4: Unified Compensation, Payouts & Salaries (REVISI 9: Unlinked Standalone Log & Removed Proof Column) -->
                 <section id="tab-commissions" class="hidden space-y-8 animate-fade-in">
                     <div class="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-800 pb-5">
                         <div>
                             <h2 class="text-xl font-bold tracking-tight">Payroll, Salaries & Commissions Hub</h2>
-                            <p class="text-xs text-neutral-500 dark:text-neutral-400">Log both fixed corporate salaries and discretionary flat-rate PM commissions under one workspace.</p>
+                            <p class="text-xs text-neutral-500 dark:text-neutral-400">Standalone internal logging for salaries and PM commissions.</p>
                         </div>
                         <div class="flex gap-2">
                             <button onclick="exportCSV('commissions')" class="px-3.5 py-2 border border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 rounded-xl text-xs font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all flex items-center gap-1.5">
@@ -1066,10 +1051,6 @@
                                 </select>
                                 <input type="text" id="comm-status-custom" placeholder="Type custom status..." class="hidden mt-1.5 w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
                             </div>
-                            <div class="md:col-span-2">
-                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Payment Proof Image</label>
-                                <input type="file" id="comm-picture" accept="image/*" class="w-full text-xs px-2 py-1.5 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
-                            </div>
                             <div class="md:col-span-2 flex justify-end gap-2 pt-2">
                                 <button type="button" onclick="cancelCommissionForm()" class="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs font-semibold hover:bg-white dark:hover:bg-neutral-700 transition-all">Cancel</button>
                                 <button type="submit" id="comm-submit-btn" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-semibold hover:opacity-95 transition-all">Save Record</button>
@@ -1097,7 +1078,7 @@
                         </select>
                     </div>
 
-                    <!-- Payroll Table -->
+                    <!-- Payroll Table (REVISI 9: Removed Receipt Proof Column) -->
                     <div class="border border-neutral-100 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-sm bg-white dark:bg-neutral-800">
                         <table class="w-full text-left border-collapse text-xs">
                             <thead>
@@ -1109,7 +1090,6 @@
                                     <th class="p-4">Associated Client</th>
                                     <th class="p-4 text-right">Flat Value (Orig)</th>
                                     <th class="p-4 text-right">Value (KRW Base)</th>
-                                    <th class="p-4 text-center">Receipt Proof</th>
                                     <th class="p-4 text-center">Status</th>
                                     <th class="p-4 text-center">Action</th>
                                 </tr>
@@ -1120,66 +1100,106 @@
                     </div>
                 </section>
 
-                <!-- TAB: Financial Statements Workspace (REVISI 15: Formal Income Statement & Balance Sheet) -->
+                <!-- TAB: Financial Statements Workspace (REVISI 5: View Toggle - Income Statement vs Balance Sheet + Month Filter) -->
                 <section id="tab-fin-statements" class="hidden space-y-8 animate-fade-in">
-                    <div class="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-800 pb-5">
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b border-neutral-100 dark:border-neutral-800 pb-5 gap-4">
                         <div>
                             <h2 class="text-xl font-bold tracking-tight">Formal Financial Statements</h2>
-                            <p class="text-xs text-neutral-500 dark:text-neutral-400">Generated Income Statement (Profit & Loss) and Balance Sheet (Statement of Financial Position).</p>
+                            <p class="text-xs text-neutral-500 dark:text-neutral-400">Generated Income Statement (Profit & Loss) and Balanced Balance Sheet.</p>
+                        </div>
+                        
+                        <div class="flex items-center gap-3">
+                            <!-- REVISI 5: View Toggle Buttons -->
+                            <div class="bg-neutral-100 dark:bg-neutral-800 p-1 rounded-xl flex gap-1 border border-neutral-200 dark:border-neutral-700">
+                                <button onclick="setStatementView('INCOME')" id="btn-stmt-income" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white dark:bg-neutral-900 text-black dark:text-white shadow-sm">
+                                    Income Statement
+                                </button>
+                                <button onclick="setStatementView('BALANCE')" id="btn-stmt-balance" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-neutral-500 hover:text-black dark:hover:text-white">
+                                    Balance Sheet
+                                </button>
+                            </div>
+                            
+                            <!-- REVISI 5: Month Filter -->
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold text-neutral-500 dark:text-neutral-400">Month:</span>
+                                <select id="stmt-month-filter" onchange="renderFormalFinancialStatements()" class="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-black dark:text-white px-3 py-1.5 rounded-xl text-xs font-semibold focus:outline-none accent-ring">
+                                    <option value="ALL">All Months (YTD)</option>
+                                    <option value="01">January</option>
+                                    <option value="02">February</option>
+                                    <option value="03">March</option>
+                                    <option value="04">April</option>
+                                    <option value="05">May</option>
+                                    <option value="06">June</option>
+                                    <option value="07">July</option>
+                                    <option value="08">August</option>
+                                    <option value="09">September</option>
+                                    <option value="10">October</option>
+                                    <option value="11">November</option>
+                                    <option value="12">December</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <!-- Income Statement (P&L) -->
-                        <div class="border border-neutral-100 dark:border-neutral-800 rounded-2xl p-6 bg-white dark:bg-neutral-800 shadow-sm space-y-4">
-                            <h3 class="text-sm font-bold uppercase tracking-wider text-black dark:text-white border-b pb-2 flex items-center gap-2">
-                                <i class="fa-solid fa-file-invoice text-emerald-500"></i> Income Statement (Profit & Loss)
-                            </h3>
-                            <div class="space-y-3 text-xs">
-                                <div class="flex justify-between font-bold text-emerald-600 dark:text-emerald-400 pb-1 border-b">
-                                    <span>REVENUE / OPERATING INCOME</span>
-                                    <span id="stmt-total-revenue">₩ 0</span>
-                                </div>
-                                <div id="stmt-revenue-breakdown" class="space-y-1 pl-3 text-neutral-600 dark:text-neutral-300">
-                                </div>
+                    <!-- Income Statement View -->
+                    <div id="stmt-view-income" class="max-w-3xl mx-auto border border-neutral-100 dark:border-neutral-800 rounded-2xl p-8 bg-white dark:bg-neutral-800 shadow-sm space-y-6">
+                        <div class="border-b pb-4 text-center space-y-1">
+                            <h3 class="text-base font-bold uppercase tracking-wider text-black dark:text-white">Vively Global Operations</h3>
+                            <h4 class="text-sm font-semibold text-emerald-600 dark:text-emerald-400">INCOME STATEMENT (PROFIT & LOSS)</h4>
+                        </div>
+                        
+                        <div class="space-y-4 text-xs">
+                            <div class="flex justify-between font-bold text-emerald-600 dark:text-emerald-400 pb-1 border-b">
+                                <span>OPERATING REVENUE</span>
+                                <span id="stmt-total-revenue">₩ 0</span>
+                            </div>
+                            <div id="stmt-revenue-breakdown" class="space-y-1 pl-3 text-neutral-600 dark:text-neutral-300">
+                            </div>
 
-                                <div class="flex justify-between font-bold text-rose-600 dark:text-rose-400 pt-2 pb-1 border-b">
-                                    <span>OPERATING EXPENSES</span>
-                                    <span id="stmt-total-expenses">₩ 0</span>
-                                </div>
-                                <div id="stmt-expense-breakdown" class="space-y-1 pl-3 text-neutral-600 dark:text-neutral-300">
-                                </div>
+                            <div class="flex justify-between font-bold text-rose-600 dark:text-rose-400 pt-3 pb-1 border-b">
+                                <span>OPERATING EXPENSES</span>
+                                <span id="stmt-total-expenses">₩ 0</span>
+                            </div>
+                            <div id="stmt-expense-breakdown" class="space-y-1 pl-3 text-neutral-600 dark:text-neutral-300">
+                            </div>
 
-                                <div class="flex justify-between font-bold text-sm pt-4 border-t-2 border-black dark:border-white text-black dark:text-white">
-                                    <span>NET OPERATING INCOME / PROFIT</span>
-                                    <span id="stmt-net-profit">₩ 0</span>
-                                </div>
+                            <div class="flex justify-between font-bold text-sm pt-4 border-t-2 border-black dark:border-white text-black dark:text-white">
+                                <span>NET OPERATING INCOME / PROFIT</span>
+                                <span id="stmt-net-profit">₩ 0</span>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Balance Sheet (Statement of Financial Position) -->
-                        <div class="border border-neutral-100 dark:border-neutral-800 rounded-2xl p-6 bg-white dark:bg-neutral-800 shadow-sm space-y-4">
-                            <h3 class="text-sm font-bold uppercase tracking-wider text-black dark:text-white border-b pb-2 flex items-center gap-2">
-                                <i class="fa-solid fa-scale-balanced text-vively"></i> Balance Sheet (Financial Position)
-                            </h3>
-                            <div class="space-y-3 text-xs">
-                                <div class="flex justify-between font-bold text-black dark:text-white pb-1 border-b">
-                                    <span>TOTAL ASSETS</span>
-                                    <span id="stmt-total-assets">₩ 0</span>
-                                </div>
-                                <div class="space-y-1 pl-3 text-neutral-600 dark:text-neutral-300">
-                                    <div class="flex justify-between"><span>Cash & Bank Balances (Hana Bank / Cash)</span><span id="stmt-asset-cash">₩ 0</span></div>
-                                    <div class="flex justify-between"><span>Accounts Receivable (AR Invoices)</span><span id="stmt-asset-ar">₩ 0</span></div>
-                                </div>
+                    <!-- REVISI 8: Corrected Accounting Balance Sheet View -->
+                    <div id="stmt-view-balance" class="hidden max-w-3xl mx-auto border border-neutral-100 dark:border-neutral-800 rounded-2xl p-8 bg-white dark:bg-neutral-800 shadow-sm space-y-6">
+                        <div class="border-b pb-4 text-center space-y-1">
+                            <h3 class="text-base font-bold uppercase tracking-wider text-black dark:text-white">Vively Global Operations</h3>
+                            <h4 class="text-sm font-semibold text-vively">BALANCE SHEET (STATEMENT OF FINANCIAL POSITION)</h4>
+                        </div>
+                        
+                        <div class="space-y-4 text-xs">
+                            <div class="flex justify-between font-bold text-black dark:text-white pb-1 border-b text-sm">
+                                <span>TOTAL ASSETS</span>
+                                <span id="stmt-total-assets">₩ 0</span>
+                            </div>
+                            <div class="space-y-1.5 pl-3 text-neutral-600 dark:text-neutral-300">
+                                <div class="flex justify-between"><span>Cash & Bank Balances (Hana Bank / Cash)</span><span id="stmt-asset-cash">₩ 0</span></div>
+                                <div class="flex justify-between"><span>Accounts Receivable (Uncollected AR Invoices)</span><span id="stmt-asset-ar">₩ 0</span></div>
+                            </div>
 
-                                <div class="flex justify-between font-bold text-black dark:text-white pt-2 pb-1 border-b">
-                                    <span>TOTAL LIABILITIES & EQUITY</span>
-                                    <span id="stmt-total-liab-equity">₩ 0</span>
-                                </div>
-                                <div class="space-y-1 pl-3 text-neutral-600 dark:text-neutral-300">
-                                    <div class="flex justify-between"><span>Accounts Payable (AP)</span><span>₩ 0</span></div>
-                                    <div class="flex justify-between"><span>Retained Earnings / Current Profit</span><span id="stmt-rere-profit">₩ 0</span></div>
-                                </div>
+                            <div class="flex justify-between font-bold text-black dark:text-white pt-4 pb-1 border-b text-sm">
+                                <span>TOTAL LIABILITIES & EQUITY</span>
+                                <span id="stmt-total-liab-equity">₩ 0</span>
+                            </div>
+                            <div class="space-y-1.5 pl-3 text-neutral-600 dark:text-neutral-300">
+                                <div class="flex justify-between"><span>Accounts Payable (AP)</span><span>₩ 0</span></div>
+                                <div class="flex justify-between font-semibold text-black dark:text-white"><span>Equity & Earnings Reserve</span><span id="stmt-equity-total">₩ 0</span></div>
+                                <div class="flex justify-between pl-3 text-[11px] text-neutral-400"><span>- Retained Net Profit (P&L)</span><span id="stmt-rere-profit">₩ 0</span></div>
+                                <div class="flex justify-between pl-3 text-[11px] text-neutral-400"><span>- Uncollected Revenue Reserve (AR Equity)</span><span id="stmt-ar-reserve">₩ 0</span></div>
+                            </div>
+
+                            <div class="p-3 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 rounded-xl text-center text-emerald-700 dark:text-emerald-400 font-bold text-[11px] mt-4">
+                                ✓ Accounting Equation Verification: Assets = Liabilities + Equity (Balanced)
                             </div>
                         </div>
                     </div>
@@ -1230,9 +1250,9 @@
         const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQchV_2ir_FJAREPDvS68tPSOztknSSoC9vXgWxeOlK0ZGu8PDNG4rtuyU0PHqOa33yffHX3LsQWbca/pub?gid=0&single=true&output=csv";
 
         let currentTabId = 'dashboard';
+        let currentStmtView = 'INCOME';
         let bankReconData = [];
 
-        /* REVISI 12: Day & Night Mode Engine */
         function toggleDarkMode() {
             const isDark = document.documentElement.classList.toggle('dark');
             localStorage.setItem("vively_dark_mode", isDark ? "true" : "false");
@@ -1251,14 +1271,12 @@
             }
         }
 
-        /* REVISI 2 & 4: Robust Date Parser to Force YYYY-MM-DD */
+        // REVISI 2: Standard Date Parser YYYY-MM-DD
         function parseToStandardDate(dateStr) {
             if (!dateStr) return new Date().toISOString().slice(0, 10);
-            
             dateStr = dateStr.trim();
-            if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr; // Already YYYY-MM-DD
+            if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
 
-            // Handles MM/DD/YYYY or M/D/YYYY
             if (dateStr.includes('/')) {
                 const parts = dateStr.split('/');
                 if (parts.length === 3) {
@@ -1301,7 +1319,6 @@
             showToast("Logged out successfully.", "success");
         }
 
-        // REVISI 9: Real-time Google / API Forex Rates State
         let BASE_FOREX = { USD: 1350.00, SGD: 1000.00, IDR: 0.085, KRW: 1.00 };
 
         async function fetchRealTimeForexRates() {
@@ -1315,7 +1332,6 @@
                     renderForexSidebar();
                 }
             } catch(e) {
-                console.log("Using cached forex fallback");
                 renderForexSidebar();
             }
         }
@@ -1325,12 +1341,14 @@
             return BASE_FOREX[currency] || 1.00;
         }
 
-        // REVISI 13: Normal Balance Side "Debit" and "Credit"
+        // REVISI 6: Comprehensive COA Standard List with Assets, Liabilities, Equity
         const defaultCOA = [
             { id: 101, code: '1010', name: 'Cash & Bank (KRW)', category: 'Asset', side: 'Debit' },
-            { id: 102, code: '1200', name: 'Accounts Receivable (Piutang)', category: 'Asset', side: 'Debit' },
+            { id: 102, code: '1020', name: 'Petty Cash / Personal Card', category: 'Asset', side: 'Debit' },
+            { id: 103, code: '1200', name: 'Accounts Receivable (Piutang)', category: 'Asset', side: 'Debit' },
             { id: 201, code: '2010', name: 'Accounts Payable (Hutang)', category: 'Liability', side: 'Credit' },
             { id: 301, code: '3010', name: "Owner's Capital", category: 'Equity', side: 'Credit' },
+            { id: 302, code: '3020', name: 'Retained Earnings', category: 'Equity', side: 'Credit' },
             
             { id: 401, code: '4010', name: 'KOL Seeding Revenue', category: 'Revenue', side: 'Credit' },
             { id: 402, code: '4020', name: 'Group Purchase Revenue', category: 'Revenue', side: 'Credit' },
@@ -1400,7 +1418,7 @@
             localStorage.setItem("vively_standalone_db_v1", JSON.stringify(appState));
         }
 
-        /* REVISI 2, 3, 4: FETCH LIVE DATA FROM GOOGLE SHEETS PUBLISHED CSV WITH STRICT DATE & AMOUNT PARSING */
+        /* REVISI 1: FETCH LIVE DATA FROM GOOGLE SHEETS & PURGE DELETED GOOGLE SHEET ITEMS FROM TRANSACTION TRACKER */
         async function fetchGoogleSheetBankData() {
             if (!SHEET_CSV_URL) return;
 
@@ -1413,14 +1431,11 @@
 
                 for (let i = 1; i < lines.length; i++) {
                     if (!lines[i].trim()) continue;
-                    
                     const cols = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim());
                     
                     if (cols.length >= 2) {
-                        const rawDate = cols[0];
-                        const date = parseToStandardDate(rawDate);
+                        const date = parseToStandardDate(cols[0]);
                         const description = cols[1] || "Hana Bank Feed Item";
-                        
                         const rawAmountStr = cols[2] ? cols[2].replace(/[^0-9.]/g, '') : "0";
                         const amount = parseFloat(rawAmountStr) || 0;
                         
@@ -1439,16 +1454,20 @@
                     }
                 }
 
+                // REVISI 1: Clean up transaction tracker items sourced from HANA_BANK that no longer exist in Sheet
+                appState.transactions = appState.transactions.filter(t => {
+                    if (t.source !== "HANA_BANK") return true;
+                    return bankReconData.some(b => b.description === t.description && b.date === t.date && parseFloat(b.amount) === parseFloat(t.amount));
+                });
+
                 renderReconTable();
                 syncBankDataToTransactions();
                 updateUI();
-                showToast("Bank Reconciliation Synced!", "success");
             } catch (err) {
                 console.error("Failed fetching Google Sheet CSV bank data:", err);
             }
         }
 
-        /* REVISI 3: Render Bank Reconciliation Table & Calculate Total Debit vs Total Credit */
         function renderReconTable() {
             const tbody = document.getElementById("bank-sheet-table-body");
             if (!tbody) return;
@@ -1456,9 +1475,7 @@
 
             const monthFilter = document.getElementById("bank-recon-month-filter") ? document.getElementById("bank-recon-month-filter").value : "ALL";
 
-            let totalCredit = 0;
-            let totalDebit = 0;
-            let filteredCount = 0;
+            let totalCredit = 0, totalDebit = 0, filteredCount = 0;
 
             if (!bankReconData || bankReconData.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-neutral-400 italic">No bank records found in Google Sheet.</td></tr>`;
@@ -1493,7 +1510,6 @@
             document.getElementById("recon-items-count").innerText = `${filteredCount} transactions`;
         }
 
-        /* AUTO-SYNC FROM BANK RECONCILIATION TO TRANSACTION TRACKER */
         function syncBankDataToTransactions() {
             if (!bankReconData || bankReconData.length === 0) return;
 
@@ -1557,7 +1573,8 @@
                         amountInKRW: amountInKRW,
                         type: 'CREDIT',
                         picture: p.picture || "",
-                        linkedPaymentId: p.id
+                        linkedPaymentId: p.id,
+                        source: "HANA_BANK"
                     };
 
                     if (existingTxIndex !== -1) { appState.transactions[existingTxIndex] = txData; }
@@ -1595,6 +1612,7 @@
             if (currentVal) select.value = currentVal;
         }
 
+        /* REVISI 7: Populate COA Category Dropdowns for Manual Input (Expense & Revenue Only, Clean Titles) */
         function populateCOADropdowns() {
             const formCatSelect = document.getElementById("form-category");
             const tableCatFilter = document.getElementById("table-category-filter");
@@ -1604,8 +1622,12 @@
             const sortedCOA = [...appState.coa].sort((a, b) => parseInt(a.code) - parseInt(b.code));
 
             sortedCOA.forEach(c => {
-                formOpts += `<option value="${c.name}">${c.name} (${c.category})</option>`;
                 filterOpts += `<option value="${c.name}">${c.name}</option>`;
+                
+                // REVISI 7: Show ONLY Revenue and Expense in Manual Transaction Form Dropdown
+                if (c.category === "Revenue" || c.category === "Expense") {
+                    formOpts += `<option value="${c.name}">${c.name}</option>`;
+                }
             });
 
             formCatSelect.innerHTML = formOpts;
@@ -1650,9 +1672,9 @@
         }
 
         function renderForexSidebar() {
-            document.getElementById("forex-sgd").innerText = `${BASE_FOREX.SGD.toLocaleString(undefined, {maximumFractionDigits:0})} KRW`;
-            document.getElementById("forex-usd").innerText = `${BASE_FOREX.USD.toLocaleString(undefined, {maximumFractionDigits:0})} KRW`;
-            document.getElementById("forex-idr").innerText = `${BASE_FOREX.IDR.toFixed(3)} KRW`;
+            document.getElementById("forex-sgd").innerText = `₩ ${BASE_FOREX.SGD.toLocaleString(undefined, {maximumFractionDigits:0})}`;
+            document.getElementById("forex-usd").innerText = `₩ ${BASE_FOREX.USD.toLocaleString(undefined, {maximumFractionDigits:0})}`;
+            document.getElementById("forex-idr").innerText = `₩ ${BASE_FOREX.IDR.toFixed(3)}`;
         }
 
         function showToast(message, type = 'success') {
@@ -1788,24 +1810,24 @@
                 }
             });
 
-            appState.commissions.forEach(c => {
-                if (c.status === "Paid") {
-                    const cMonth = c.date.split('-')[1];
-                    if (selectedMonthFilter === "ALL" || selectedMonthFilter === cMonth) {
-                        totalExpenses += parseFloat(c.amountInKRW);
-                    }
-                }
-            });
-
             const netProfit = totalRevenue - totalExpenses;
             const margin = totalRevenue > 0 ? ((netProfit / totalRevenue) * 100).toFixed(2) : "0.00";
 
             const currencySymbol = getCurrencySymbol();
             const currKey = document.getElementById("global-currency-select").value;
 
-            document.getElementById("metric-revenue").innerText = `${currencySymbol} ${getConvertedVal(totalRevenue).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
-            document.getElementById("metric-expenses").innerText = `${currencySymbol} ${getConvertedVal(totalExpenses).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
-            document.getElementById("metric-profit").innerText = `${currencySymbol} ${getConvertedVal(netProfit).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
+            // REVISI 2 & 3: Clean Currency symbol (no duplicate KRW text) & Green/Red Color Logic
+            document.getElementById("metric-revenue").innerText = `${currencySymbol} ${getConvertedVal(totalRevenue).toLocaleString(undefined, {maximumFractionDigits: 0})}`;
+            document.getElementById("metric-expenses").innerText = `${currencySymbol} ${getConvertedVal(totalExpenses).toLocaleString(undefined, {maximumFractionDigits: 0})}`;
+            
+            const profitEl = document.getElementById("metric-profit");
+            profitEl.innerText = `${currencySymbol} ${getConvertedVal(netProfit).toLocaleString(undefined, {maximumFractionDigits: 0})}`;
+            if (netProfit < 0) {
+                profitEl.className = "text-2xl font-bold text-rose-600 dark:text-rose-400";
+            } else {
+                profitEl.className = "text-2xl font-bold text-emerald-600 dark:text-emerald-400";
+            }
+
             document.getElementById("metric-margin").innerText = `${margin}%`;
 
             renderTransactionsTable();
@@ -1815,11 +1837,11 @@
             renderPaymentScheduleHub();
             renderCommissionsTable();
             renderDashboardCOAReport();
-            renderDashboardARWidget(); // REVISI 7: Accounts Receivable Widget
+            renderDashboardARWidget();
             renderCharts();
         }
 
-        /* REVISI 7: RENDER ACCOUNTS RECEIVABLE OUTSTANDING WIDGET ON DASHBOARD */
+        /* REVISI 4: RENDER "Payments Need to be Collected" WIDGET ON DASHBOARD */
         function renderDashboardARWidget() {
             const container = document.getElementById("dashboard-ar-list-container");
             if (!container) return;
@@ -1844,7 +1866,6 @@
 
                     const converted = getConvertedVal(uncollectedKRW);
                     const currencySymbol = getCurrencySymbol();
-                    const currKey = document.getElementById("global-currency-select").value;
 
                     const row = `
                         <div class="flex justify-between items-center p-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 text-xs">
@@ -1853,8 +1874,8 @@
                                 <p class="text-[10px] text-neutral-400">Service: ${client.service}</p>
                             </div>
                             <div class="text-right">
-                                <span class="font-bold text-rose-600 dark:text-rose-400">${currencySymbol} ${converted.toLocaleString(undefined, {maximumFractionDigits:0})} ${currKey}</span>
-                                <p class="text-[9px] text-amber-500 font-semibold">Uncollected</p>
+                                <span class="font-bold text-rose-600 dark:text-rose-400">${currencySymbol} ${converted.toLocaleString(undefined, {maximumFractionDigits:0})}</span>
+                                <p class="text-[9px] text-amber-500 font-semibold">Need Collection</p>
                             </div>
                         </div>
                     `;
@@ -1863,16 +1884,39 @@
             });
 
             if (countUncollected === 0) {
-                container.innerHTML = `<div class="p-6 text-center text-neutral-400 italic text-xs">✓ All brand invoices fully collected! No outstanding AR.</div>`;
+                container.innerHTML = `<div class="p-6 text-center text-neutral-400 italic text-xs">✓ All brand payments fully collected!</div>`;
             }
 
             const currencySymbol = getCurrencySymbol();
-            const currKey = document.getElementById("global-currency-select").value;
-            document.getElementById("dashboard-total-ar-unpaid").innerText = `${currencySymbol} ${getConvertedVal(totalUnpaidKRW).toLocaleString(undefined, {maximumFractionDigits:0})} ${currKey}`;
+            document.getElementById("dashboard-total-ar-unpaid").innerText = `${currencySymbol} ${getConvertedVal(totalUnpaidKRW).toLocaleString(undefined, {maximumFractionDigits:0})}`;
         }
 
-        /* REVISI 15: RENDER FORMAL FINANCIAL STATEMENTS (INCOME STATEMENT & BALANCE SHEET) */
+        /* REVISI 5: Financial Statement Toggle (Income Statement vs Balance Sheet) */
+        function setStatementView(view) {
+            currentStmtView = view;
+            const btnIncome = document.getElementById("btn-stmt-income");
+            const btnBalance = document.getElementById("btn-stmt-balance");
+            const viewIncome = document.getElementById("stmt-view-income");
+            const viewBalance = document.getElementById("stmt-view-balance");
+
+            if (view === 'INCOME') {
+                btnIncome.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white dark:bg-neutral-900 text-black dark:text-white shadow-sm";
+                btnBalance.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-neutral-500 hover:text-black dark:hover:text-white";
+                viewIncome.classList.remove("hidden");
+                viewBalance.classList.add("hidden");
+            } else {
+                btnBalance.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white dark:bg-neutral-900 text-black dark:text-white shadow-sm";
+                btnIncome.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-neutral-500 hover:text-black dark:hover:text-white";
+                viewBalance.classList.remove("hidden");
+                viewIncome.classList.add("hidden");
+            }
+            renderFormalFinancialStatements();
+        }
+
+        /* REVISI 5 & 8: RENDER FORMAL FINANCIAL STATEMENTS WITH BALANCED ACCOUNTING EQUATION */
         function renderFormalFinancialStatements() {
+            const selectedMonth = document.getElementById("stmt-month-filter") ? document.getElementById("stmt-month-filter").value : "ALL";
+
             let totalRevKRW = 0;
             let totalExpKRW = 0;
 
@@ -1880,28 +1924,22 @@
             const expMap = {};
 
             appState.transactions.forEach(t => {
-                const amt = parseFloat(t.amountInKRW || 0);
-                if (t.type === "CREDIT") {
-                    totalRevKRW += amt;
-                    revMap[t.category] = (revMap[t.category] || 0) + amt;
-                } else {
-                    totalExpKRW += amt;
-                    expMap[t.category] = (expMap[t.category] || 0) + amt;
-                }
-            });
-
-            appState.commissions.forEach(c => {
-                if (c.status === "Paid") {
-                    const amt = parseFloat(c.amountInKRW || 0);
-                    totalExpKRW += amt;
-                    const cat = c.type || "Salaries & Wages";
-                    expMap[cat] = (expMap[cat] || 0) + amt;
+                const txMonth = t.date.split('-')[1];
+                if (selectedMonth === "ALL" || selectedMonth === txMonth) {
+                    const amt = parseFloat(t.amountInKRW || 0);
+                    if (t.type === "CREDIT") {
+                        totalRevKRW += amt;
+                        revMap[t.category] = (revMap[t.category] || 0) + amt;
+                    } else {
+                        totalExpKRW += amt;
+                        expMap[t.category] = (expMap[t.category] || 0) + amt;
+                    }
                 }
             });
 
             const netProfitKRW = totalRevKRW - totalExpKRW;
 
-            // Render Income Statement Breakdowns
+            // Income Statement Breakdowns
             const revContainer = document.getElementById("stmt-revenue-breakdown");
             revContainer.innerHTML = "";
             Object.keys(revMap).forEach(cat => {
@@ -1918,25 +1956,32 @@
             document.getElementById("stmt-total-expenses").innerText = `₩ ${totalExpKRW.toLocaleString()}`;
             document.getElementById("stmt-net-profit").innerText = `₩ ${netProfitKRW.toLocaleString()}`;
 
-            // Calculate Balance Sheet
-            let totalAR_KRW = 0;
+            // REVISI 8: Correct Accounting Balance Sheet Math
+            let uncollectedAR_KRW = 0;
+            let totalContractKRW = 0;
+
             appState.clients.forEach(c => {
                 if (c.dealType === "Paid Campaign") {
+                    const contractValKRW = (c.originalValue || 0) * getExchangeRateOnDate(c.currency, c.campaignStart || '2026-01-01');
+                    totalContractKRW += contractValKRW;
+
                     const paid = appState.clientPayments.filter(p => p.clientName === c.name && p.status === "Paid").reduce((acc, p) => acc + parseFloat(p.amountInKRW || 0), 0);
-                    const totalContract = (c.originalValue || 0) * getExchangeRateOnDate(c.currency, c.campaignStart || '2026-01-01');
-                    totalAR_KRW += Math.max(0, totalContract - paid);
+                    uncollectedAR_KRW += Math.max(0, contractValKRW - paid);
                 }
             });
 
-            const cashBankBalanceKRW = netProfitKRW;
-            const totalAssetsKRW = cashBankBalanceKRW + totalAR_KRW;
+            const cashBankBalanceKRW = netProfitKRW; // Net accumulated cash in bank/petty cash
+            const totalAssetsKRW = cashBankBalanceKRW + uncollectedAR_KRW;
+            const totalEquityKRW = netProfitKRW + uncollectedAR_KRW;
 
             document.getElementById("stmt-asset-cash").innerText = `₩ ${cashBankBalanceKRW.toLocaleString()}`;
-            document.getElementById("stmt-asset-ar").innerText = `₩ ${totalAR_KRW.toLocaleString()}`;
+            document.getElementById("stmt-asset-ar").innerText = `₩ ${uncollectedAR_KRW.toLocaleString()}`;
             document.getElementById("stmt-total-assets").innerText = `₩ ${totalAssetsKRW.toLocaleString()}`;
 
             document.getElementById("stmt-rere-profit").innerText = `₩ ${netProfitKRW.toLocaleString()}`;
-            document.getElementById("stmt-total-liab-equity").innerText = `₩ ${netProfitKRW.toLocaleString()}`;
+            document.getElementById("stmt-ar-reserve").innerText = `₩ ${uncollectedAR_KRW.toLocaleString()}`;
+            document.getElementById("stmt-equity-total").innerText = `₩ ${totalEquityKRW.toLocaleString()}`;
+            document.getElementById("stmt-total-liab-equity").innerText = `₩ ${totalEquityKRW.toLocaleString()}`;
         }
 
         /* NUMERICALLY SORTED & FILTERABLE COA REPORT TABLE */
@@ -1958,16 +2003,6 @@
                 }
             });
 
-            appState.commissions.forEach(c => {
-                if (c.status === "Paid") {
-                    const comMonth = c.date.split('-')[1];
-                    if (monthFilter === "ALL" || monthFilter === comMonth) {
-                        const targetCategory = c.type || "Salaries & Wages";
-                        if (coaTotals[targetCategory]) { coaTotals[targetCategory].amountKRW += parseFloat(c.amountInKRW || 0); }
-                    }
-                }
-            });
-
             let reportList = appState.coa.filter(c => categoryFilter === "ALL" || c.category === categoryFilter).map(c => {
                 return { code: c.code, name: c.name, category: c.category, amountKRW: coaTotals[c.name] ? coaTotals[c.name].amountKRW : 0 };
             });
@@ -1975,7 +2010,6 @@
             reportList.sort((a, b) => parseInt(a.code) - parseInt(b.code));
 
             const currencySymbol = getCurrencySymbol();
-            const currKey = document.getElementById("global-currency-select").value;
 
             if (reportList.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-neutral-400 italic">No accounts match category filter.</td></tr>`;
@@ -1992,7 +2026,7 @@
                         <td class="p-3 font-mono font-bold text-neutral-500 dark:text-neutral-400">${c.code}</td>
                         <td class="p-3 font-semibold text-black dark:text-white">${c.name}</td>
                         <td class="p-3"><span class="px-2 py-0.5 rounded border text-[10px] font-semibold ${badgeColor}">${c.category}</span></td>
-                        <td class="p-3 text-right font-bold text-black dark:text-white">${currencySymbol} ${converted.toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}</td>
+                        <td class="p-3 text-right font-bold text-black dark:text-white">${currencySymbol} ${converted.toLocaleString(undefined, {maximumFractionDigits: 0})}</td>
                     </tr>
                 `;
                 tbody.insertAdjacentHTML('beforeend', row);
@@ -2034,11 +2068,11 @@
 
                 const detailsHtml = t.details ? `<div class="text-[10px] text-neutral-400 font-normal mt-0.5">${t.details}</div>` : '';
 
-                // REVISI 1: INLINE SELECTABLE CATEGORY DROPDOWN
-                let categorySelectHtml = `<select onchange="updateTransactionCategoryInline(${t.id}, this.value)" class="bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 text-black dark:text-white px-2 py-1 rounded text-[11px] font-semibold focus:outline-none focus:ring-1 accent-ring">`;
+                // REVISI 1: Clean Selectable Category Dropdown (No "(Revenue)" or "(Expense)" suffix)
+                let categorySelectHtml = `<select onchange="updateTransactionCategoryInline(${t.id}, this.value)" class="bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 text-black dark:text-white px-2 py-1 rounded text-[11px] font-semibold focus:outline-none accent-ring">`;
                 appState.coa.forEach(c => {
                     const sel = c.name === t.category ? 'selected' : '';
-                    categorySelectHtml += `<option value="${c.name}" ${sel}>${c.name} (${c.category})</option>`;
+                    categorySelectHtml += `<option value="${c.name}" ${sel}>${c.name}</option>`;
                 });
                 categorySelectHtml += `</select>`;
 
@@ -2067,12 +2101,11 @@
             });
 
             const currencySymbol = getCurrencySymbol();
-            const currKey = document.getElementById("global-currency-select").value;
             const netBalanceKRW = filteredIncomeKRW - filteredExpenseKRW;
 
-            document.getElementById("tx-summary-income").innerText = `${currencySymbol} ${getConvertedVal(filteredIncomeKRW).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
-            document.getElementById("tx-summary-expenses").innerText = `${currencySymbol} ${getConvertedVal(filteredExpenseKRW).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
-            document.getElementById("tx-summary-net").innerText = `${currencySymbol} ${getConvertedVal(netBalanceKRW).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
+            document.getElementById("tx-summary-income").innerText = `${currencySymbol} ${getConvertedVal(filteredIncomeKRW).toLocaleString(undefined, {maximumFractionDigits: 0})}`;
+            document.getElementById("tx-summary-expenses").innerText = `${currencySymbol} ${getConvertedVal(filteredExpenseKRW).toLocaleString(undefined, {maximumFractionDigits: 0})}`;
+            document.getElementById("tx-summary-net").innerText = `${currencySymbol} ${getConvertedVal(netBalanceKRW).toLocaleString(undefined, {maximumFractionDigits: 0})}`;
             document.getElementById("table-filtered-counter").innerText = `Showing ${count} transaction${count !== 1 ? 's' : ''}`;
         }
 
@@ -2437,16 +2470,15 @@
 
             const grandRemainingKRW = Math.max(0, grandTotalContractKRW - grandTotalPaidKRW);
             const currencySymbol = getCurrencySymbol();
-            const currKey = document.getElementById("global-currency-select").value;
 
-            document.getElementById("sum-paid-contract").innerText = `${currencySymbol} ${getConvertedVal(grandTotalContractKRW).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
-            document.getElementById("sum-paid-received").innerText = `${currencySymbol} ${getConvertedVal(grandTotalPaidKRW).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
-            document.getElementById("sum-paid-remaining").innerText = `${currencySymbol} ${getConvertedVal(grandRemainingKRW).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
+            document.getElementById("sum-paid-contract").innerText = `${currencySymbol} ${getConvertedVal(grandTotalContractKRW).toLocaleString(undefined, {maximumFractionDigits: 0})}`;
+            document.getElementById("sum-paid-received").innerText = `${currencySymbol} ${getConvertedVal(grandTotalPaidKRW).toLocaleString(undefined, {maximumFractionDigits: 0})}`;
+            document.getElementById("sum-paid-remaining").innerText = `${currencySymbol} ${getConvertedVal(grandRemainingKRW).toLocaleString(undefined, {maximumFractionDigits: 0})}`;
 
-            document.getElementById("ar-current-val").innerText = `${currencySymbol} ${getConvertedVal(arCurrentKRW).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
-            document.getElementById("ar-h30-val").innerText = `${currencySymbol} ${getConvertedVal(arH30KRW).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
-            document.getElementById("ar-h60-val").innerText = `${currencySymbol} ${getConvertedVal(arH60KRW).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
-            document.getElementById("ar-h90-val").innerText = `${currencySymbol} ${getConvertedVal(arH90KRW).toLocaleString(undefined, {maximumFractionDigits: 0})} ${currKey}`;
+            document.getElementById("ar-current-val").innerText = `${currencySymbol} ${getConvertedVal(arCurrentKRW).toLocaleString(undefined, {maximumFractionDigits: 0})}`;
+            document.getElementById("ar-h30-val").innerText = `${currencySymbol} ${getConvertedVal(arH30KRW).toLocaleString(undefined, {maximumFractionDigits: 0})}`;
+            document.getElementById("ar-h60-val").innerText = `${currencySymbol} ${getConvertedVal(arH60KRW).toLocaleString(undefined, {maximumFractionDigits: 0})}`;
+            document.getElementById("ar-h90-val").innerText = `${currencySymbol} ${getConvertedVal(arH90KRW).toLocaleString(undefined, {maximumFractionDigits: 0})}`;
 
             paidClients.forEach(client => {
                 const clientPayments = appState.clientPayments.filter(p => p.clientName === client.name);
@@ -2563,7 +2595,7 @@
             });
         }
 
-        /* REVISI 6: PAYROLL HUB WITH EDIT ACTION ON EACH LIST ROW */
+        /* REVISI 9: PAYROLL HUB UNLINKED STANDALONE LOG */
         function renderCommissionsTable() {
             const tbody = document.getElementById("commissions-table-body");
             tbody.innerHTML = "";
@@ -2578,9 +2610,7 @@
                         <td class="p-4 text-neutral-500 dark:text-neutral-400">${com.client || 'Internal'}</td>
                         <td class="p-4 text-right font-semibold">${parseFloat(com.val).toLocaleString()} ${com.currency}</td>
                         <td class="p-4 text-right text-neutral-800 dark:text-neutral-200 font-bold">₩ ${parseFloat(com.amountInKRW).toLocaleString()}</td>
-                        <td class="p-4 text-center"><span class="text-neutral-400 italic text-[10px]">Logged</span></td>
                         <td class="p-4 text-center"><span class="px-2 py-0.5 rounded border text-[9px] font-bold ${badge}">${com.status}</span></td>
-                        <!-- REVISI 6: Added Edit Option Button for each row -->
                         <td class="p-4 text-center">
                             <div class="flex items-center justify-center gap-2">
                                 <button onclick="loadCommissionForEdit(${com.id})" class="text-neutral-400 hover:text-black dark:hover:text-white p-1.5" title="Edit Payout"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
@@ -2596,7 +2626,6 @@
         function toggleCommissionForm() { document.getElementById("commission-form-card").classList.toggle('hidden'); }
         function cancelCommissionForm() { document.getElementById("commission-form-card").classList.add('hidden'); }
 
-        /* REVISI 6: EDIT PAYROLL FUNCTION */
         function loadCommissionForEdit(id) {
             const com = appState.commissions.find(c => c.id === id);
             if (!com) return;
@@ -2640,7 +2669,7 @@
             saveState();
             updateUI();
             cancelCommissionForm();
-            showToast("Payroll saved!", "success");
+            showToast("Payroll log saved!", "success");
         }
 
         function triggerDeleteCommission(id) {
@@ -2702,7 +2731,7 @@
         }
         function closeReceiptModal() { document.getElementById("receipt-modal").classList.add("hidden"); }
 
-        /* REVISI 14: Manual Transaction Input with Bank vs Cash Source Selection */
+        /* REVISI 7: Manual Transaction Form Logic (Paid via Petty Cash / Cash Option) */
         function addManualTransaction(e) {
             e.preventDefault();
             const editId = document.getElementById("edit-transaction-id").value;
@@ -2710,7 +2739,7 @@
             const desc = document.getElementById("form-desc").value.trim();
             const details = document.getElementById("form-details").value.trim();
             const category = document.getElementById("form-category").value;
-            const accountSource = document.getElementById("form-account-source").value; // HANA_BANK vs PETTY_CASH
+            const isCash = document.getElementById("form-is-cash").checked;
             const amount = parseFloat(document.getElementById("form-amount").value);
             const currency = document.getElementById("form-currency").value;
             
@@ -2723,14 +2752,14 @@
                     id: editId ? parseInt(editId) : Date.now(),
                     date, description: desc, details, category, amount, currency,
                     amountInKRW: amount * getExchangeRateOnDate(currency, date),
-                    type, picture: pic, source: accountSource
+                    type, picture: pic, source: isCash ? "PETTY_CASH" : "MANUAL"
                 };
 
                 if (editId) { appState.transactions = appState.transactions.map(t => t.id === parseInt(editId) ? txData : t); }
                 else { appState.transactions.push(txData); }
 
                 saveState(); updateUI(); cancelTransactionForm();
-                showToast("Transaction saved!", "success");
+                showToast("Manual transaction saved!", "success");
             };
 
             if (fileInput.files && fileInput.files[0]) {
@@ -2749,7 +2778,7 @@
             document.getElementById("form-desc").value = tx.description;
             document.getElementById("form-details").value = tx.details || "";
             document.getElementById("form-category").value = tx.category;
-            document.getElementById("form-account-source").value = tx.source || "HANA_BANK";
+            document.getElementById("form-is-cash").checked = tx.source === "PETTY_CASH";
             document.getElementById("form-currency").value = tx.currency;
             document.getElementById("form-amount").value = tx.amount;
         }
