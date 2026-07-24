@@ -765,7 +765,13 @@
                                 <input type="text" id="client-dealtype-custom" placeholder="Type custom deal type..." class="hidden mt-1.5 w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Contract Value (KRW)</label>
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300">Contract Value (KRW)</label>
+                                    <label class="inline-flex items-center gap-1 cursor-pointer text-[10px] text-neutral-500 font-medium">
+                                        <input type="checkbox" id="client-include-tax" class="rounded text-black dark:text-white focus:ring-0">
+                                        <span>Include 3.3% Tax</span>
+                                    </label>
+                                </div>
                                 <input type="number" id="client-value-raw" placeholder="e.g. 1500000" class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
                             </div>
                             <div>
@@ -788,7 +794,7 @@
                                 <div class="flex justify-between items-center mb-1">
                                     <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300">Campaign End Date</label>
                                     <label class="inline-flex items-center gap-1 cursor-pointer text-[10px] text-neutral-500 font-medium">
-                                        <input type="checkbox" id="client-no-enddate" onchange="toggleOngoingCampaign()" class="rounded text-black focus:ring-0">
+                                        <input type="checkbox" id="client-no-enddate" onchange="toggleOngoingCampaign()" class="rounded text-black dark:text-white focus:ring-0">
                                         <span>Ongoing</span>
                                     </label>
                                 </div>
@@ -948,7 +954,7 @@
                             </div>
                             <div class="md:col-span-2 flex justify-end gap-2 pt-2">
                                 <button type="button" onclick="cancelCommissionForm()" class="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs font-semibold hover:bg-white dark:hover:bg-neutral-700 transition-all">Cancel</button>
-                                <button type="submit" id="comm-submit-btn" class="px-5 py-2 text-white bg-black dark:bg-white dark:text-black rounded-lg text-xs font-semibold hover:opacity-95 transition-all">Save Record</button>
+                                <button type="submit" id="comm-submit-btn" class="px-5 py-2 text-white bg-black dark:bg-white dark:text-black rounded-lg text-xs font-bold hover:opacity-95 transition-all">Save Record</button>
                             </div>
                         </form>
                     </div>
@@ -1448,17 +1454,18 @@
                         const rawAmountStr = cols[2] ? cols[2].replace(/[^0-9.]/g, '') : "0";
                         const amount = parseFloat(rawAmountStr) || 0;
                         
+                        // Bank: Credit = Uang Masuk, Debit = Uang Keluar
                         const rawType = (cols[3] || '').toUpperCase();
-                        let type = "DEBIT";
+                        let bankType = "DEBIT";
                         if (rawType.includes("CREDIT") || rawType.includes("입금") || rawType.includes("INCOME") || rawType.includes("REVENUE")) {
-                            type = "CREDIT";
+                            bankType = "CREDIT";
                         }
                         
                         const status = cols[4] || 'Reconciled';
                         const category = cols[5] || 'Uncategorized';
 
                         if (amount > 0) {
-                            bankReconData.push({ date, description, amount, type, status, category });
+                            bankReconData.push({ date, description, amount, type: bankType, status, category });
                         }
                     }
                 }
@@ -1513,23 +1520,25 @@
             document.getElementById("recon-items-count").innerText = `${filteredCount} items`;
         }
 
+        // Fungsionalitas Bank Sync: Bank Credit (masuk) -> Transaction Tracker menjadi DEBIT (Revenue/Hijau), Bank Debit (keluar) -> Transaction Tracker menjadi CREDIT (Expense/Merah)
         function syncBankDataToTransactions() {
             if (!bankReconData || bankReconData.length === 0) return;
 
             bankReconData.forEach(bankItem => {
                 const exists = appState.transactions.some(t => t.description === bankItem.description && t.date === bankItem.date && parseFloat(t.amount) === parseFloat(bankItem.amount) && t.source === "HANA_BANK");
                 if (!exists) {
+                    const isBankCredit = bankItem.type === 'CREDIT';
                     appState.transactions.push({
                         id: Date.now() + Math.random(),
                         date: bankItem.date,
                         description: bankItem.description,
                         category: bankItem.category || "KOL Seeding Revenue",
                         amount: parseFloat(bankItem.amount),
-                        type: bankItem.type,
+                        type: isBankCredit ? "DEBIT" : "CREDIT", // Dibalik sesuai instruksi
                         source: "HANA_BANK",
                         transactionBy: "Other",
                         notes: "",
-                        paidBy: bankItem.type === 'CREDIT' ? 'received' : 'paid'
+                        paidBy: isBankCredit ? 'received' : 'paid'
                     });
                 }
             });
@@ -1551,7 +1560,6 @@
             return newCoa.name;
         }
 
-        // Auto Kalkulasi Pajak 3.3% Gross-up (Nilai * 1.033) saat di-link ke Paid Client
         function processTransactionMapping(tx, oldTransactionBy) {
             if (oldTransactionBy && oldTransactionBy !== "Vively" && oldTransactionBy !== "Other") {
                 appState.clientPayments = appState.clientPayments.filter(p => !(p.clientName === oldTransactionBy && p.paidDate === tx.date));
@@ -1561,10 +1569,9 @@
                 const clientObj = appState.clients.find(c => c.name === tx.transactionBy && c.dealType === "Paid Campaign");
                 if (clientObj) {
                     tx.category = resolveRevenueCategory(clientObj.service);
-                    tx.type = "CREDIT";
+                    tx.type = "DEBIT"; // Bank Masuk -> DEBIT (Revenue)
                     tx.paidBy = "received";
 
-                    // Auto include 3.3% tax (gross-up) jika diinput sebelum pajak
                     const originalBase = parseFloat(tx.amount || 0);
                     const netWithTax = Math.round(originalBase * 1.033);
                     tx.amount = netWithTax;
@@ -1782,6 +1789,7 @@
             if (tabId === 'reimbursements') { renderReimbursementsTable(); }
         }
 
+        // Fungsionalitas Executive Dashboard: DEBIT (Uang Masuk/Revenue) dikurangi CREDIT (Uang Keluar/Expense)
         function updateUI() {
             let totalRevenue = 0;
             let totalExpenses = 0;
@@ -1792,8 +1800,8 @@
                 const txMonth = t.date.split('-')[1];
                 if (selectedMonthFilter === "ALL" || selectedMonthFilter === txMonth) {
                     const amt = parseFloat(t.amount || 0);
-                    if (t.type === "CREDIT") totalRevenue += amt;
-                    else if (t.type === "DEBIT") totalExpenses += amt;
+                    if (t.type === "DEBIT") totalRevenue += amt;
+                    else if (t.type === "CREDIT") totalExpenses += amt;
                 }
             });
 
@@ -1902,10 +1910,10 @@
                 const txMonth = t.date.split('-')[1];
                 if (selectedMonth === "ALL" || selectedMonth === txMonth) {
                     const amt = parseFloat(t.amount || 0);
-                    if (t.type === "CREDIT") {
+                    if (t.type === "DEBIT") {
                         totalRevKRW += amt;
                         revMap[t.category] = (revMap[t.category] || 0) + amt;
-                    } else if (t.type === "DEBIT") {
+                    } else if (t.type === "CREDIT") {
                         totalExpKRW += amt;
                         expMap[t.category] = (expMap[t.category] || 0) + amt;
                     }
@@ -2015,7 +2023,6 @@
                 return b.id - a.id;
             });
 
-            // Hanya menampilkan Paid Campaign clients (exclude free trial/free)
             const paidClients = appState.clients.filter(c => c.dealType === "Paid Campaign");
 
             sortedTransactions.forEach(t => {
@@ -2025,8 +2032,8 @@
 
                 count++;
                 const amountVal = parseFloat(t.amount || 0);
-                if (t.type === "CREDIT") { filteredIncomeKRW += amountVal; } 
-                else if (t.type === "DEBIT") { filteredExpenseKRW += amountVal; }
+                if (t.type === "DEBIT") { filteredIncomeKRW += amountVal; } 
+                else if (t.type === "CREDIT") { filteredExpenseKRW += amountVal; }
 
                 let txBySelectHtml = `<select onchange="updateTransactionByInline(${t.id}, this.value)" class="bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 text-black dark:text-white px-2 py-1 rounded text-[11px] font-semibold focus:outline-none accent-ring">
                     <option value="Vively" ${t.transactionBy === 'Vively' ? 'selected' : ''}>Vively</option>
@@ -2051,10 +2058,11 @@
 
                 const formattedDate = parseToStandardDate(t.date);
                 
+                // Aturan Warna Amount: DEBIT (Uang Masuk/Revenue) = Hijau, CREDIT (Uang Keluar/Expense) = Merah, Lainnya = Hitam
                 let amountColorClass = 'text-black dark:text-white font-bold';
-                if (t.paidBy === 'received' || t.type === 'CREDIT') {
+                if (t.type === 'DEBIT') {
                     amountColorClass = 'text-emerald-600 dark:text-emerald-400 font-bold';
-                } else if (t.paidBy === 'paid' || t.type === 'DEBIT') {
+                } else if (t.type === 'CREDIT') {
                     amountColorClass = 'text-rose-600 dark:text-rose-400 font-bold';
                 }
 
@@ -2094,10 +2102,10 @@
                 const coaMatch = appState.coa.find(c => c.name === newCategory);
                 if (coaMatch) {
                     if (coaMatch.category === "Revenue") {
-                        tx.type = "CREDIT";
+                        tx.type = "DEBIT";
                         tx.paidBy = "received";
                     } else if (coaMatch.category === "Expense") {
-                        tx.type = "DEBIT";
+                        tx.type = "CREDIT";
                         tx.paidBy = "paid";
                     }
                 }
@@ -2328,8 +2336,13 @@
             });
         }
 
-        /* CLIENTS MANAGEMENT LOGIC (Memperbaiki render list layout) */
-        function toggleClientForm() { document.getElementById("client-form-card").classList.toggle('hidden'); }
+        /* CLIENTS MANAGEMENT LOGIC */
+        function toggleClientForm() { 
+            document.getElementById("client-form-card").classList.toggle('hidden'); 
+            document.getElementById("edit-client-id").value = "";
+            document.getElementById("new-client-form").reset();
+            document.getElementById("client-include-tax").checked = false;
+        }
         function cancelClientForm() { document.getElementById("client-form-card").classList.add('hidden'); }
 
         function toggleOngoingCampaign() {
@@ -2451,6 +2464,7 @@
             document.getElementById("client-service").value = client.service || "KOL Seeding Revenue";
             document.getElementById("client-dealtype").value = client.dealType || "";
             document.getElementById("client-value-raw").value = client.originalValue || 0;
+            document.getElementById("client-include-tax").checked = false;
             document.getElementById("client-status").value = client.status || "Active";
             document.getElementById("client-creators").value = client.creatorsSeeding || 0;
             document.getElementById("client-start-date").value = client.campaignStart || "";
@@ -2464,6 +2478,12 @@
             const rawService = document.getElementById("client-service").value;
             const service = resolveRevenueCategory(rawService);
             const contractFileInput = document.getElementById("client-contract-file");
+            const includeTax = document.getElementById("client-include-tax").checked;
+            
+            let rawVal = parseFloat(document.getElementById("client-value-raw").value) || 0;
+            if (includeTax) {
+                rawVal = Math.round(rawVal * 1.033);
+            }
 
             const saveClientData = (contractFileBase64) => {
                 const clientData = {
@@ -2472,7 +2492,7 @@
                     industry: document.getElementById("client-industry").value.trim(),
                     service,
                     dealType: document.getElementById("client-dealtype").value,
-                    originalValue: parseFloat(document.getElementById("client-value-raw").value) || 0,
+                    originalValue: rawVal,
                     status: document.getElementById("client-status").value,
                     creatorsSeeding: parseInt(document.getElementById("client-creators").value) || 0,
                     campaignStart: document.getElementById("client-start-date").value,
@@ -2859,8 +2879,8 @@
                 appState.transactions.forEach(t => {
                     const monthIdx = new Date(t.date).getMonth();
                     if (monthIdx >= 0 && monthIdx < 12) {
-                        if (t.type === "CREDIT") monthlyRevenue[monthIdx] += parseFloat(t.amount);
-                        else if (t.type === "DEBIT") monthlyExpenses[monthIdx] += parseFloat(t.amount);
+                        if (t.type === "DEBIT") monthlyRevenue[monthIdx] += parseFloat(t.amount);
+                        else if (t.type === "CREDIT") monthlyExpenses[monthIdx] += parseFloat(t.amount);
                     }
                 });
 
@@ -2899,9 +2919,9 @@
             const amount = parseFloat(document.getElementById("form-amount").value);
             
             const coaMatch = appState.coa.find(c => c.name === category);
-            let type = "DEBIT";
+            let type = "CREDIT";
             if (paidBy === 'received' || (coaMatch && coaMatch.category === "Revenue")) {
-                type = "CREDIT";
+                type = "DEBIT";
             }
 
             const txData = {
