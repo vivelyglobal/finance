@@ -769,7 +769,7 @@
                                     <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300">Contract Value (KRW)</label>
                                     <label class="inline-flex items-center gap-1 cursor-pointer text-[10px] text-neutral-500 font-medium">
                                         <input type="checkbox" id="client-include-tax" class="rounded text-black dark:text-white focus:ring-0">
-                                        <span>Include 3.3% Tax</span>
+                                        <span>Include VAT 10%</span>
                                     </label>
                                 </div>
                                 <input type="number" id="client-value-raw" placeholder="e.g. 1500000" class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
@@ -1519,7 +1519,6 @@
             document.getElementById("recon-items-count").innerText = `${filteredCount} items`;
         }
 
-        // Sinkronisasi Bank: Bank CREDIT (Uang Masuk) -> DEBIT (Revenue/Hijau), Bank DEBIT (Uang Keluar) -> CREDIT (Expense/Merah)
         function syncBankDataToTransactions() {
             if (!bankReconData || bankReconData.length === 0) return;
 
@@ -1559,6 +1558,7 @@
             return newCoa.name;
         }
 
+        // Auto Kalkulasi VAT 10% Gross-up (Nilai * 1.10) saat di-link ke Paid Client
         function processTransactionMapping(tx, oldTransactionBy) {
             if (oldTransactionBy && oldTransactionBy !== "Vively" && oldTransactionBy !== "Other") {
                 appState.clientPayments = appState.clientPayments.filter(p => !(p.clientName === oldTransactionBy && p.paidDate === tx.date));
@@ -1572,7 +1572,7 @@
                     tx.paidBy = "received";
 
                     const originalBase = parseFloat(tx.amount || 0);
-                    const netWithTax = Math.round(originalBase * 1.033);
+                    const netWithTax = Math.round(originalBase * 1.10);
                     tx.amount = netWithTax;
 
                     let existingPayment = appState.clientPayments.find(p => p.clientName === clientObj.name && p.paidDate === tx.date);
@@ -1584,7 +1584,7 @@
                             id: Date.now() + Math.random(),
                             clientName: clientObj.name,
                             percentage: pct,
-                            termDesc: `${pct}% (Auto-Linked Inc. 3.3%)`,
+                            termDesc: `${pct}% (Auto-Linked Inc. VAT 10%)`,
                             paidDate: tx.date,
                             amount: netWithTax,
                             status: "Paid"
@@ -1788,7 +1788,6 @@
             if (tabId === 'reimbursements') { renderReimbursementsTable(); }
         }
 
-        // Executive Dashboard: DEBIT (Uang Masuk/Revenue) dikurangi CREDIT (Uang Keluar/Expense)
         function updateUI() {
             let totalRevenue = 0;
             let totalExpenses = 0;
@@ -2057,7 +2056,6 @@
 
                 const formattedDate = parseToStandardDate(t.date);
                 
-                // DEBIT = Hijau (Income), CREDIT = Merah (Expense)
                 let amountColorClass = 'text-black dark:text-white font-bold';
                 if (t.type === 'DEBIT') {
                     amountColorClass = 'text-emerald-600 dark:text-emerald-400 font-bold';
@@ -2335,7 +2333,7 @@
             });
         }
 
-        /* CLIENTS MANAGEMENT LOGIC */
+        /* CLIENTS MANAGEMENT LOGIC (Menampilkan Base Value sebelum pajak di bawah timeline) */
         function toggleClientForm() { 
             document.getElementById("client-form-card").classList.toggle('hidden'); 
             document.getElementById("edit-client-id").value = "";
@@ -2393,7 +2391,13 @@
 
                 count++;
                 const statusColor = "bg-neutral-100 text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200 border-neutral-200";
-                const formattedVal = typeof c.originalValue === 'number' ? c.originalValue.toLocaleString() : c.originalValue;
+                
+                const finalContractVal = c.originalValue || 0;
+                const baseValueBeforeTax = Math.round(finalContractVal / 1.10);
+                
+                const formattedVal = finalContractVal.toLocaleString();
+                const formattedBaseVal = baseValueBeforeTax.toLocaleString();
+                
                 const timelineDisplay = c.isOngoing ? `${c.campaignStart || 'N/A'} ~ Ongoing` : `${c.campaignStart || 'N/A'} ~ ${c.campaignEnd || 'N/A'}`;
 
                 const contractButton = c.contractFile ? 
@@ -2406,7 +2410,7 @@
                             <td class="p-4 font-bold text-black dark:text-white">${c.name}</td>
                             <td class="p-4 text-neutral-600 dark:text-neutral-300">${c.industry}</td>
                             <td class="p-4 text-neutral-600 dark:text-neutral-300">${c.service}</td>
-                            <td class="p-4 text-right font-bold text-black dark:text-white">${formattedVal} KRW</td>
+                            <td class="p-4 text-right font-bold text-black dark:text-white">${formattedVal} KRW<br><span class="text-[10px] font-normal text-neutral-400">(Before Tax: ${formattedBaseVal} KRW)</span></td>
                             <td class="p-4 text-center text-neutral-600 dark:text-neutral-300">${c.creatorsSeeding || 0}</td>
                             <td class="p-4 text-center text-neutral-500 text-[10px]">${timelineDisplay}</td>
                             <td class="p-4 text-center">${contractButton}</td>
@@ -2438,11 +2442,12 @@
                                     <span class="font-medium text-neutral-400">Deal Model:</span><span class="text-black dark:text-white font-semibold text-right">${c.dealType}</span>
                                     <span class="font-medium text-neutral-500 font-bold">Creators Seeding:</span><span class="text-black dark:text-white font-bold text-right">${c.creatorsSeeding || 0} creators</span>
                                     <span class="font-medium text-neutral-400">Campaign Timeline:</span><span class="text-neutral-800 dark:text-neutral-200 font-medium text-right text-[10px]">${timelineDisplay}</span>
+                                    <span class="font-medium text-neutral-400">Before Tax Value:</span><span class="text-neutral-600 dark:text-neutral-300 font-semibold text-right text-[11px]">${formattedBaseVal} KRW</span>
                                     <span class="font-medium text-neutral-400">Signed Contract:</span><span class="text-right">${contractButton}</span>
                                 </div>
                             </div>
                             <div class="pt-4 mt-4 border-t border-neutral-100 dark:border-neutral-700 flex justify-between items-center text-xs">
-                                <span class="text-neutral-400 font-medium">Contract Value:</span>
+                                <span class="text-neutral-400 font-medium">Contract Value (Inc. VAT):</span>
                                 <span class="font-bold text-black dark:text-white">${formattedVal} KRW</span>
                             </div>
                         </div>
@@ -2481,7 +2486,7 @@
             
             let rawVal = parseFloat(document.getElementById("client-value-raw").value) || 0;
             if (includeTax) {
-                rawVal = Math.round(rawVal * 1.033);
+                rawVal = Math.round(rawVal * 1.10);
             }
 
             const saveClientData = (contractFileBase64) => {
