@@ -211,11 +211,11 @@
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                         <div class="bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 rounded-2xl p-6 shadow-sm">
                             <div class="flex justify-between items-start mb-4">
-                                <span class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Total Revenue</span>
+                                <span class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Total Net Revenue</span>
                                 <span class="p-1.5 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 rounded-lg text-xs"><i class="fa-solid fa-arrow-trend-up"></i></span>
                             </div>
                             <h3 class="text-2xl font-bold text-emerald-600 dark:text-emerald-400" id="metric-revenue">₩ 0</h3>
-                            <p class="text-[10px] text-neutral-500 dark:text-neutral-400 mt-2">Client Services & Campaigns</p>
+                            <p class="text-[10px] text-neutral-500 dark:text-neutral-400 mt-2">Excludes VAT 10% Liability</p>
                         </div>
 
                         <div class="bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 rounded-2xl p-6 shadow-sm">
@@ -1146,7 +1146,7 @@
                         
                         <div class="space-y-4 text-xs">
                             <div class="flex justify-between font-bold text-emerald-600 dark:text-emerald-400 pb-1 border-b">
-                                <span>OPERATING REVENUE</span>
+                                <span>OPERATING REVENUE (EXCL. VAT)</span>
                                 <span id="stmt-total-revenue">₩ 0</span>
                             </div>
                             <div id="stmt-revenue-breakdown" class="space-y-1 pl-3 text-neutral-600 dark:text-neutral-300">
@@ -1188,7 +1188,7 @@
                                 <span id="stmt-total-liab-equity">₩ 0</span>
                             </div>
                             <div class="space-y-1.5 pl-3 text-neutral-600 dark:text-neutral-300">
-                                <div class="flex justify-between"><span>Accounts Payable (Loan / AP)</span><span id="stmt-liab-ap">₩ 0</span></div>
+                                <div class="flex justify-between"><span>VAT Payable / Accounts Payable</span><span id="stmt-liab-ap">₩ 0</span></div>
                                 <div class="flex justify-between font-semibold text-black dark:text-white"><span>Equity & Earnings Reserve</span><span id="stmt-equity-total">₩ 0</span></div>
                                 <div class="flex justify-between pl-3 text-[11px] text-neutral-400"><span>- Retained Net Profit (P&L)</span><span id="stmt-rere-profit">₩ 0</span></div>
                                 <div class="flex justify-between pl-3 text-[11px] text-neutral-400"><span>- Uncollected Revenue Reserve (AR Equity)</span><span id="stmt-ar-reserve">₩ 0</span></div>
@@ -1354,6 +1354,7 @@
             { id: 101, code: '1010', name: 'Cash (KRW)', category: 'Asset', side: 'Debit' },
             { id: 102, code: '1020', name: 'Accounts Receivable (Piutang)', category: 'Asset', side: 'Debit' },
             { id: 201, code: '2010', name: 'Accounts Payable / Loan (Hutang)', category: 'Liability', side: 'Credit' },
+            { id: 202, code: '2100', name: 'VAT Payable (Utang PPN 10%)', category: 'Liability', side: 'Credit' },
             { id: 301, code: '3010', name: "Owner's Capital", category: 'Equity', side: 'Credit' },
             { id: 302, code: '3020', name: 'Retained Earnings', category: 'Equity', side: 'Credit' },
             
@@ -1558,7 +1559,7 @@
             return newCoa.name;
         }
 
-        // Auto Kalkulasi VAT 10% Gross-up (Nilai * 1.10) saat di-link ke Paid Client
+        // Akuntansi Expert: Memisahkan Revenue bersih (100/110) dan VAT 10% (10/110)
         function processTransactionMapping(tx, oldTransactionBy) {
             if (oldTransactionBy && oldTransactionBy !== "Vively" && oldTransactionBy !== "Other") {
                 appState.clientPayments = appState.clientPayments.filter(p => !(p.clientName === oldTransactionBy && p.paidDate === tx.date));
@@ -1571,27 +1572,28 @@
                     tx.type = "DEBIT";
                     tx.paidBy = "received";
 
-                    const originalBase = parseFloat(tx.amount || 0);
-                    const netWithTax = Math.round(originalBase * 1.10);
-                    tx.amount = netWithTax;
+                    const grossAmount = parseFloat(tx.amount || 0); // Total uang masuk ke bank sudah termasuk VAT 10%
+                    const netRevenue = Math.round(grossAmount / 1.10); // Pendapatan bersih tanpa PPN
+                    
+                    tx.amount = netRevenue; // Di transaction tracker, nilai pencatatan revenue murni bersih
 
                     let existingPayment = appState.clientPayments.find(p => p.clientName === clientObj.name && p.paidDate === tx.date);
                     const totalContract = clientObj.originalValue || 1;
-                    const pct = Math.round((netWithTax / totalContract) * 100);
+                    const pct = Math.round((grossAmount / totalContract) * 100);
 
                     if (!existingPayment) {
                         appState.clientPayments.unshift({
                             id: Date.now() + Math.random(),
                             clientName: clientObj.name,
                             percentage: pct,
-                            termDesc: `${pct}% (Auto-Linked Inc. VAT 10%)`,
+                            termDesc: `${pct}% (Auto-Linked Net Rev)`,
                             paidDate: tx.date,
-                            amount: netWithTax,
+                            amount: grossAmount,
                             status: "Paid"
                         });
                     } else {
                         existingPayment.paidDate = tx.date;
-                        existingPayment.amount = netWithTax;
+                        existingPayment.amount = grossAmount;
                         existingPayment.status = "Paid";
                     }
                 }
