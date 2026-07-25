@@ -14,7 +14,7 @@
         tailwind.config = {
             darkMode: 'class',
             theme: {
-                extend: { colors: { vively: '#000000' } }
+                extend: { colors: { vively: '#10b981' } }
             }
         }
     </script>
@@ -26,19 +26,16 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         .font-korean { font-family: 'Noto Sans KR', sans-serif; }
-        .accent-text { color: #000000; }
-        .dark .accent-text { color: #ffffff; }
-        .accent-bg { background-color: #000000; color: #ffffff; }
-        .dark .accent-bg { background-color: #ffffff; color: #000000; }
-        .accent-border { border-color: #000000; }
-        .dark .accent-border { border-color: #ffffff; }
-        .accent-ring:focus { --tw-ring-color: #000000; }
+        .accent-text { color: #10b981; }
+        .accent-bg { background-color: #10b981; color: #ffffff; }
+        .accent-border { border-color: #10b981; }
+        .accent-ring:focus { --tw-ring-color: #10b981; }
         
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #e5e5e5; border-radius: 3px; }
         .dark ::-webkit-scrollbar-thumb { background: #333333; }
-        ::-webkit-scrollbar-thumb:hover { background: #666666; }
+        ::-webkit-scrollbar-thumb:hover { background: #10b981; }
     </style>
 </head>
 <body class="min-h-screen bg-white text-black dark:bg-neutral-900 dark:text-white transition-colors duration-200">
@@ -47,7 +44,7 @@
     <div id="login-container" class="min-h-screen flex flex-col justify-center items-center bg-white dark:bg-neutral-900 px-6">
         <div class="max-w-md w-full text-center space-y-8 p-8 border border-neutral-100 dark:border-neutral-800 rounded-3xl shadow-sm bg-white dark:bg-neutral-900">
             <div class="flex flex-col items-center gap-2">
-                <h1 class="font-korean text-7xl md:text-8xl font-bold tracking-tight text-black dark:text-white">vively</h1>
+                <h1 class="font-korean text-7xl md:text-8xl font-bold tracking-tight text-emerald-600">vively</h1>
             </div>
             <div class="space-y-1">
                 <p class="text-[11px] text-neutral-400 font-bold tracking-widest uppercase">Operations Gateway</p>
@@ -57,11 +54,11 @@
                 <div class="relative">
                     <input type="password" id="login-password" placeholder="••••••••" required class="w-full text-center text-sm tracking-widest px-4 py-3 border border-neutral-200 dark:border-neutral-700 rounded-2xl focus:outline-none focus:ring-1 accent-ring bg-neutral-50 dark:bg-neutral-800 dark:text-white font-sans">
                 </div>
-                <button type="submit" class="w-full py-3.5 text-white bg-black dark:bg-white dark:text-black rounded-2xl text-xs font-bold hover:opacity-90 transition-all shadow-sm uppercase tracking-wider">
+                <button type="submit" class="w-full py-3.5 text-white bg-emerald-600 hover:bg-emerald-700 rounded-2xl text-xs font-bold transition-all shadow-sm uppercase tracking-wider">
                     Login
                 </button>
                 <p id="login-error-msg" class="text-[11px] text-rose-500 font-semibold hidden">
-                    <i class="fa-solid fa-triangle-exclamation mr-1 text-neutral-400"></i> Incorrect password. Access denied.
+                    <i class="fa-solid fa-triangle-exclamation mr-1"></i> Incorrect password. Access denied.
                 </p>
             </form>
         </div>
@@ -76,7 +73,7 @@
                 <button onclick="toggleSidebar()" class="text-neutral-500 hover:text-black dark:hover:text-white transition-all text-sm p-1.5 rounded-lg bg-neutral-100 dark:bg-neutral-800" title="Toggle Sidebar">
                     <i id="sidebar-toggle-icon" class="fa-solid fa-outdent text-neutral-500"></i>
                 </button>
-                <h1 class="font-korean text-2xl font-bold tracking-tight text-black dark:text-white">vively</h1>
+                <h1 class="font-korean text-2xl font-bold tracking-tight text-emerald-600">vively</h1>
             </div>
             <div class="flex items-center gap-6 text-xs font-medium">
                 <div class="flex items-center gap-2">
@@ -85,7 +82,7 @@
                 </div>
                 <div class="h-4 w-[1px] bg-neutral-200 dark:bg-neutral-800"></div>
                 <span class="text-neutral-500 dark:text-neutral-400 flex items-center gap-1.5">
-                    <span class="w-2.5 h-2.5 rounded-full bg-neutral-400 inline-block"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
                     <span>Database Active</span>
                 </span>
                 
@@ -97,7 +94,7 @@
 
                 <div class="h-4 w-[1px] bg-neutral-200 dark:bg-neutral-800"></div>
                 <button onclick="handleLogout()" class="text-neutral-400 hover:text-rose-600 font-semibold transition-all flex items-center gap-1">
-                    <i class="fa-solid fa-right-from-bracket text-neutral-400"></i> Exit
+                    <i class="fa-solid fa-right-from-bracket"></i> Exit
                 </button>
             </div>
         </header>
@@ -112,44 +109,44 @@
                         <p class="text-[10px] font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider mb-4">Core Workspace</p>
                         <nav class="space-y-1">
                             <!-- 1. Executive Dashboard -->
-                            <button onclick="switchTab('dashboard')" id="btn-dashboard" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all bg-neutral-50 dark:bg-neutral-800 text-black dark:text-white border-l-4 border-black dark:border-white">
-                                <i class="fa-solid fa-chart-line text-neutral-500"></i> Executive Dashboard
+                            <button onclick="switchTab('dashboard')" id="btn-dashboard" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all bg-neutral-50 dark:bg-neutral-800 text-black dark:text-white border-l-4 accent-border">
+                                <i class="fa-solid fa-chart-line text-emerald-600"></i> Executive Dashboard
                             </button>
                             <!-- 2. Chart of Accounts -->
                             <button onclick="switchTab('coa')" id="btn-coa" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-black dark:hover:text-white border-l-4 border-transparent">
-                                <i class="fa-solid fa-book-bookmark text-neutral-500"></i> Chart of Accounts
+                                <i class="fa-solid fa-book-bookmark text-neutral-400"></i> Chart of Accounts
                             </button>
                             <!-- 3. Employee Data -->
                             <button onclick="switchTab('employees')" id="btn-employees" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-black dark:hover:text-white border-l-4 border-transparent">
-                                <i class="fa-solid fa-users text-neutral-500"></i> Employee Data
+                                <i class="fa-solid fa-users text-neutral-400"></i> Employee Data
                             </button>
                             <!-- 4. Key Client Portfolio -->
                             <button onclick="switchTab('clients')" id="btn-clients" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-black dark:hover:text-white border-l-4 border-transparent">
-                                <i class="fa-solid fa-address-book text-neutral-500"></i> Key Client Portfolio
+                                <i class="fa-solid fa-address-book text-neutral-400"></i> Key Client Portfolio
                             </button>
                             <!-- 5. Bank Reconciliation -->
                             <button onclick="switchTab('bank-recon')" id="btn-bank-recon" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-black dark:hover:text-white border-l-4 border-transparent">
-                                <i class="fa-solid fa-building-columns text-neutral-500"></i> Bank Reconciliation
+                                <i class="fa-solid fa-building-columns text-emerald-500"></i> Bank Reconciliation
                             </button>
-                            <!-- 6. Manual Cash Tracker (Transaction Tracker) -->
+                            <!-- 6. Manual Cash Tracker -->
                             <button onclick="switchTab('transactions')" id="btn-transactions" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-black dark:hover:text-white border-l-4 border-transparent">
-                                <i class="fa-solid fa-receipt text-neutral-500"></i> Manual Cash Tracker
+                                <i class="fa-solid fa-receipt text-neutral-400"></i> Manual Cash Tracker
                             </button>
                             <!-- 7. Client Payment -->
                             <button onclick="switchTab('client-payments')" id="btn-client-payments" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-black dark:hover:text-white border-l-4 border-transparent">
-                                <i class="fa-solid fa-file-invoice-dollar text-neutral-500"></i> Client Payment
+                                <i class="fa-solid fa-file-invoice-dollar text-neutral-400"></i> Client Payment
                             </button>
                             <!-- 8. Payroll -->
                             <button onclick="switchTab('commissions')" id="btn-commissions" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-black dark:hover:text-white border-l-4 border-transparent">
-                                <i class="fa-solid fa-wallet text-neutral-500"></i> Payroll & Payout Hub
+                                <i class="fa-solid fa-wallet text-neutral-400"></i> Payroll & Payout Hub
                             </button>
                             <!-- 9. Reimbursements -->
                             <button onclick="switchTab('reimbursements')" id="btn-reimbursements" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-black dark:hover:text-white border-l-4 border-transparent">
-                                <i class="fa-solid fa-file-invoice text-neutral-500"></i> Reimbursements
+                                <i class="fa-solid fa-file-invoice text-amber-500"></i> Reimbursements
                             </button>
                             <!-- 10. Financial Statements -->
                             <button onclick="switchTab('fin-statements')" id="btn-fin-statements" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-black dark:hover:text-white border-l-4 border-transparent">
-                                <i class="fa-solid fa-file-contract text-neutral-500"></i> Financial Statements
+                                <i class="fa-solid fa-file-contract text-emerald-600"></i> Financial Statements
                             </button>
                         </nav>
                     </div>
@@ -159,8 +156,8 @@
                         <p class="text-[10px] font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider mb-3">Export Data to Excel</p>
                         <div class="bg-neutral-50 dark:bg-neutral-800 rounded-2xl p-4 space-y-2 border border-neutral-100 dark:border-neutral-700">
                             <p class="text-[10px] text-neutral-500 dark:text-neutral-400 leading-normal">Download database records for Excel analysis.</p>
-                            <button onclick="exportCurrentTabCSV()" class="w-full py-2 text-xs font-bold text-white bg-black dark:bg-white dark:text-black rounded-xl hover:opacity-90 transition-all flex justify-center items-center gap-1.5 shadow-sm">
-                                <i class="fa-solid fa-file-excel text-neutral-200 dark:text-neutral-700"></i> Export CSV
+                            <button onclick="exportCurrentTabCSV()" class="w-full py-2 text-xs font-bold text-white accent-bg rounded-xl hover:opacity-90 transition-all flex justify-center items-center gap-1.5 shadow-sm">
+                                <i class="fa-solid fa-file-excel"></i> Export CSV
                             </button>
                         </div>
                     </div>
@@ -202,44 +199,44 @@
                                 </select>
                             </div>
                             <button onclick="triggerClearConfirmation()" class="px-3.5 py-1.5 border border-rose-200 dark:border-rose-900 text-rose-600 dark:text-rose-400 rounded-xl text-xs font-semibold hover:bg-rose-50 dark:hover:bg-rose-950 transition-all">
-                                <i class="fa-solid fa-trash-can mr-1.5 text-neutral-400"></i> Clear All Data
+                                <i class="fa-solid fa-trash-can mr-1.5"></i> Clear All Data
                             </button>
                         </div>
                     </div>
 
                     <!-- Metrics Cards Grid -->
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                        <div class="bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 rounded-2xl p-6 shadow-sm">
+                        <div class="bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 rounded-2xl p-6 shadow-sm border-l-4 border-emerald-500">
                             <div class="flex justify-between items-start mb-4">
                                 <span class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Total Net Revenue</span>
-                                <span class="p-1.5 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 rounded-lg text-xs"><i class="fa-solid fa-arrow-trend-up"></i></span>
+                                <span class="p-1.5 bg-emerald-50 dark:bg-emerald-950 text-emerald-600 rounded-lg text-xs"><i class="fa-solid fa-arrow-trend-up"></i></span>
                             </div>
                             <h3 class="text-2xl font-bold text-emerald-600 dark:text-emerald-400" id="metric-revenue">₩ 0</h3>
                             <p class="text-[10px] text-neutral-500 dark:text-neutral-400 mt-2">Excludes VAT 10% Liability</p>
                         </div>
 
-                        <div class="bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 rounded-2xl p-6 shadow-sm">
+                        <div class="bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 rounded-2xl p-6 shadow-sm border-l-4 border-rose-500">
                             <div class="flex justify-between items-start mb-4">
                                 <span class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Total Expenses</span>
-                                <span class="p-1.5 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 rounded-lg text-xs"><i class="fa-solid fa-arrow-trend-down"></i></span>
+                                <span class="p-1.5 bg-rose-50 dark:bg-rose-950 text-rose-600 rounded-lg text-xs"><i class="fa-solid fa-arrow-trend-down"></i></span>
                             </div>
                             <h3 class="text-2xl font-bold text-rose-600 dark:text-rose-400" id="metric-expenses">₩ 0</h3>
                             <p class="text-[10px] text-neutral-500 dark:text-neutral-400 mt-2">Salaries, Payouts, Software & Tools</p>
                         </div>
 
-                        <div class="bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 rounded-2xl p-6 shadow-sm">
+                        <div class="bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 rounded-2xl p-6 shadow-sm border-l-4 border-neutral-400">
                             <div class="flex justify-between items-start mb-4">
                                 <span class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Net Profit</span>
-                                <span class="p-1.5 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 rounded-lg text-xs"><i class="fa-solid fa-vault"></i></span>
+                                <span class="p-1.5 bg-neutral-50 dark:bg-neutral-700 text-black dark:text-white rounded-lg text-xs"><i class="fa-solid fa-vault"></i></span>
                             </div>
                             <h3 class="text-2xl font-bold" id="metric-profit">₩ 0</h3>
                             <p class="text-[10px] text-neutral-500 dark:text-neutral-400 mt-2">Net Cash Operations Balance</p>
                         </div>
 
-                        <div class="bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 rounded-2xl p-6 shadow-sm">
+                        <div class="bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 rounded-2xl p-6 shadow-sm border-l-4 border-amber-500">
                             <div class="flex justify-between items-start mb-4">
                                 <span class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Net Margin %</span>
-                                <span class="p-1.5 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 rounded-lg text-xs"><i class="fa-solid fa-percentage"></i></span>
+                                <span class="p-1.5 bg-amber-50 dark:bg-amber-950 text-amber-600 rounded-lg text-xs"><i class="fa-solid fa-percentage"></i></span>
                             </div>
                             <h3 class="text-2xl font-bold text-black dark:text-white" id="metric-margin">0%</h3>
                             <p class="text-[10px] text-neutral-500 dark:text-neutral-400 mt-2">Operating Efficiency Ratio</p>
@@ -258,9 +255,9 @@
                         <div class="border border-neutral-100 dark:border-neutral-800 rounded-2xl p-6 bg-white dark:bg-neutral-800 shadow-sm flex flex-col justify-between space-y-4">
                             <div class="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-700 pb-3">
                                 <h4 class="text-xs font-bold uppercase tracking-wider text-black dark:text-white flex items-center gap-2">
-                                    <i class="fa-solid fa-hand-holding-dollar text-neutral-500"></i> Payments Need to be Collected
+                                    <i class="fa-solid fa-hand-holding-dollar text-amber-500"></i> Payments Need to be Collected
                                 </h4>
-                                <span class="text-[10px] font-bold text-neutral-600 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-800 px-2 py-0.5 rounded border border-neutral-200 dark:border-neutral-700">Uncollected Invoices</span>
+                                <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950 px-2 py-0.5 rounded border border-amber-200 dark:border-amber-800">Uncollected Invoices</span>
                             </div>
                             
                             <div class="overflow-y-auto max-h-[240px] space-y-2 pr-1">
@@ -280,7 +277,7 @@
                         <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-neutral-100 dark:border-neutral-700 pb-4">
                             <div>
                                 <h4 class="text-xs font-bold uppercase tracking-wider text-black dark:text-white flex items-center gap-2">
-                                    <i class="fa-solid fa-list-check text-neutral-500"></i> Chart of Accounts Financial Report
+                                    <i class="fa-solid fa-list-check text-emerald-600"></i> Chart of Accounts Financial Report
                                 </h4>
                                 <span class="text-[11px] text-neutral-400 font-medium">Numerically sorted by Account Code.</span>
                             </div>
@@ -315,7 +312,7 @@
                     </div>
                 </section>
 
-                <!-- TAB: Bank Reconciliation (Dengan Selection Transaction By di Bawah Deskripsi) -->
+                <!-- TAB: Bank Reconciliation (Dengan Dropdown Transaction By di Bawah Deskripsi) -->
                 <section id="tab-bank-recon" class="hidden space-y-8 animate-fade-in">
                     <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b border-neutral-100 dark:border-neutral-800 pb-5 gap-4">
                         <div>
@@ -341,19 +338,19 @@
                                     <option value="12">December</option>
                                 </select>
                             </div>
-                            <button onclick="fetchGoogleSheetBankData()" class="px-4 py-2 bg-black text-white dark:bg-white dark:text-black font-semibold rounded-xl text-xs shadow-sm flex items-center gap-2">
-                                <i class="fa-solid fa-arrows-rotate text-neutral-200 dark:text-neutral-700"></i> Sync Bank Sheet
+                            <button onclick="fetchGoogleSheetBankData()" class="px-4 py-2 accent-bg text-white font-semibold rounded-xl text-xs shadow-sm flex items-center gap-2">
+                                <i class="fa-solid fa-arrows-rotate"></i> Sync Bank Sheet
                             </button>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div class="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-5 shadow-sm">
-                            <span class="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Total Credit / Deposits (입금)</span>
+                            <span class="text-[10px] font-bold text-emerald-500 uppercase tracking-wider">Total Credit / Deposits (입금)</span>
                             <h3 class="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-1" id="recon-total-credit">₩ 0</h3>
                         </div>
                         <div class="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-5 shadow-sm">
-                            <span class="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Total Debit / Withdrawals (출금)</span>
+                            <span class="text-[10px] font-bold text-rose-500 uppercase tracking-wider">Total Debit / Withdrawals (출금)</span>
                             <h3 class="text-2xl font-bold text-rose-600 dark:text-rose-400 mt-1" id="recon-total-debit">₩ 0</h3>
                         </div>
                         <div class="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-5 shadow-sm">
@@ -392,10 +389,10 @@
                         </div>
                         <div class="flex gap-2">
                             <button onclick="exportCSV('transactions')" class="px-3.5 py-2 border border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 rounded-xl text-xs font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all flex items-center gap-1.5">
-                                <i class="fa-solid fa-download text-neutral-400"></i> Export CSV
+                                <i class="fa-solid fa-download"></i> Export CSV
                             </button>
-                            <button onclick="openNewTransactionForm()" class="px-4 py-2 text-white bg-black dark:bg-white dark:text-black rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
-                                <i class="fa-solid fa-plus mr-1.5 text-neutral-200 dark:text-neutral-700"></i> Log Manual Cash Transaction
+                            <button onclick="openNewTransactionForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
+                                <i class="fa-solid fa-plus mr-1.5"></i> Log Manual Cash Transaction
                             </button>
                         </div>
                     </div>
@@ -406,7 +403,7 @@
                                 <p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Total Filtered Income</p>
                                 <h4 class="text-lg font-bold text-emerald-600 dark:text-emerald-400 mt-1" id="tx-summary-income">₩ 0</h4>
                             </div>
-                            <div class="w-9 h-9 rounded-xl bg-neutral-100 dark:bg-neutral-700 flex items-center justify-center text-neutral-600 text-sm">
+                            <div class="w-9 h-9 rounded-xl bg-emerald-100/50 dark:bg-emerald-950 flex items-center justify-center text-emerald-600 text-sm">
                                 <i class="fa-solid fa-arrow-down-left"></i>
                             </div>
                         </div>
@@ -415,7 +412,7 @@
                                 <p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Total Filtered Expenses</p>
                                 <h4 class="text-lg font-bold text-rose-600 dark:text-rose-400 mt-1" id="tx-summary-expenses">₩ 0</h4>
                             </div>
-                            <div class="w-9 h-9 rounded-xl bg-neutral-100 dark:bg-neutral-700 flex items-center justify-center text-neutral-600 text-sm">
+                            <div class="w-9 h-9 rounded-xl bg-rose-100/50 dark:bg-rose-950 flex items-center justify-center text-rose-600 text-sm">
                                 <i class="fa-solid fa-arrow-up-right"></i>
                             </div>
                         </div>
@@ -424,7 +421,7 @@
                                 <p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Filtered Net Balance</p>
                                 <h4 class="text-lg font-bold text-black dark:text-white mt-1" id="tx-summary-net">₩ 0</h4>
                             </div>
-                            <div class="w-9 h-9 rounded-xl bg-neutral-100 dark:bg-neutral-700 flex items-center justify-center text-neutral-600 text-sm">
+                            <div class="w-9 h-9 rounded-xl bg-neutral-200/50 dark:bg-neutral-700 flex items-center justify-center text-black dark:text-white text-sm">
                                 <i class="fa-solid fa-scale-balanced"></i>
                             </div>
                         </div>
@@ -460,7 +457,7 @@
                             </div>
                             <div class="md:col-span-3 flex justify-end gap-2 pt-2 border-t border-neutral-100 dark:border-neutral-700">
                                 <button type="button" onclick="cancelTransactionForm()" class="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs font-semibold hover:bg-white dark:hover:bg-neutral-700 transition-all">Cancel</button>
-                                <button type="submit" id="form-tx-submit" class="px-5 py-2 text-white bg-black dark:bg-white dark:text-black rounded-lg text-xs font-bold hover:opacity-95 transition-all">Submit Entry</button>
+                                <button type="submit" id="form-tx-submit" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-bold hover:opacity-95 transition-all">Submit Entry</button>
                             </div>
                         </form>
                     </div>
@@ -526,10 +523,10 @@
                         </div>
                         <div class="flex gap-2">
                             <button onclick="exportCSV('coa')" class="px-3.5 py-2 border border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 rounded-xl text-xs font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all flex items-center gap-1.5">
-                                <i class="fa-solid fa-download text-neutral-400"></i> Export CSV
+                                <i class="fa-solid fa-download"></i> Export CSV
                             </button>
-                            <button onclick="toggleCOAForm()" class="px-4 py-2 text-white bg-black dark:bg-white dark:text-black rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
-                                <i class="fa-solid fa-plus mr-1.5 text-neutral-200 dark:text-neutral-700"></i> Add COA
+                            <button onclick="toggleCOAForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
+                                <i class="fa-solid fa-plus mr-1.5"></i> Add COA
                             </button>
                         </div>
                     </div>
@@ -566,7 +563,7 @@
                             </div>
                             <div class="md:col-span-4 flex justify-end gap-2 pt-2 border-t border-neutral-100 dark:border-neutral-700">
                                 <button type="button" onclick="cancelCOAForm()" class="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs font-semibold hover:bg-white dark:hover:bg-neutral-700 transition-all">Cancel</button>
-                                <button type="submit" id="coa-submit-btn" class="px-5 py-2 text-white bg-black dark:bg-white dark:text-black rounded-lg text-xs font-bold hover:opacity-95 transition-all">Save Account</button>
+                                <button type="submit" id="coa-submit-btn" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-bold hover:opacity-95 transition-all">Save Account</button>
                             </div>
                         </form>
                     </div>
@@ -598,10 +595,10 @@
                         </div>
                         <div class="flex gap-2">
                             <button onclick="exportCSV('employees')" class="px-3.5 py-2 border border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 rounded-xl text-xs font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all flex items-center gap-1.5">
-                                <i class="fa-solid fa-download text-neutral-400"></i> Export CSV
+                                <i class="fa-solid fa-download"></i> Export CSV
                             </button>
-                            <button onclick="toggleEmployeeForm()" class="px-4 py-2 text-white bg-black dark:bg-white dark:text-black rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
-                                <i class="fa-solid fa-plus mr-1.5 text-neutral-200 dark:text-neutral-700"></i> Add Employee
+                            <button onclick="toggleEmployeeForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
+                                <i class="fa-solid fa-plus mr-1.5"></i> Add Employee
                             </button>
                         </div>
                     </div>
@@ -649,7 +646,7 @@
                                 <input type="text" id="emp-account" placeholder="Account Number..." class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
                             </div>
                             <div class="flex gap-2">
-                                <button type="submit" id="emp-submit-btn" class="flex-1 px-4 py-2 text-white bg-black dark:bg-white dark:text-black rounded-lg text-xs font-semibold hover:opacity-95 transition-all">Save Employee</button>
+                                <button type="submit" id="emp-submit-btn" class="flex-1 px-4 py-2 text-white accent-bg rounded-lg text-xs font-semibold hover:opacity-95 transition-all">Save Employee</button>
                                 <button type="button" onclick="cancelEmployeeForm()" class="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs font-semibold hover:bg-white dark:hover:bg-neutral-700 transition-all">Cancel</button>
                             </div>
                         </form>
@@ -686,18 +683,18 @@
                         
                         <div class="flex items-center gap-3">
                             <button onclick="exportCSV('clients')" class="px-3.5 py-2 border border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 rounded-xl text-xs font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all flex items-center gap-1.5">
-                                <i class="fa-solid fa-download text-neutral-400"></i> Export CSV
+                                <i class="fa-solid fa-download"></i> Export CSV
                             </button>
                             <div class="bg-neutral-100 dark:bg-neutral-800 p-1 rounded-xl flex gap-1 border border-neutral-200 dark:border-neutral-700">
                                 <button onclick="setClientLayout('card')" id="layout-btn-card" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white dark:bg-neutral-900 text-black dark:text-white shadow-sm">
-                                    <i class="fa-solid fa-grip mr-1 text-neutral-500"></i> Cards
+                                    <i class="fa-solid fa-grip mr-1"></i> Cards
                                 </button>
                                 <button onclick="setClientLayout('list')" id="layout-btn-list" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white">
-                                    <i class="fa-solid fa-list mr-1 text-neutral-500"></i> List Layout
+                                    <i class="fa-solid fa-list mr-1"></i> List Layout
                                 </button>
                             </div>
-                            <button onclick="toggleClientForm()" class="px-4 py-2 text-white bg-black dark:bg-white dark:text-black rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
-                                <i class="fa-solid fa-plus mr-1.5 text-neutral-200 dark:text-neutral-700"></i> Add Client
+                            <button onclick="toggleClientForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
+                                <i class="fa-solid fa-plus mr-1.5"></i> Add Client
                             </button>
                         </div>
                     </div>
@@ -768,7 +765,7 @@
                                 <div class="flex justify-between items-center mb-1">
                                     <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300">Contract Value (KRW)</label>
                                     <label class="inline-flex items-center gap-1 cursor-pointer text-[10px] text-neutral-500 font-medium">
-                                        <input type="checkbox" id="client-include-tax" class="rounded text-black dark:text-white focus:ring-0">
+                                        <input type="checkbox" id="client-include-tax" class="rounded text-vively focus:ring-0">
                                         <span>Include VAT 10%</span>
                                     </label>
                                 </div>
@@ -794,7 +791,7 @@
                                 <div class="flex justify-between items-center mb-1">
                                     <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300">Campaign End Date</label>
                                     <label class="inline-flex items-center gap-1 cursor-pointer text-[10px] text-neutral-500 font-medium">
-                                        <input type="checkbox" id="client-no-enddate" onchange="toggleOngoingCampaign()" class="rounded text-black dark:text-white focus:ring-0">
+                                        <input type="checkbox" id="client-no-enddate" onchange="toggleOngoingCampaign()" class="rounded text-vively focus:ring-0">
                                         <span>Ongoing</span>
                                     </label>
                                 </div>
@@ -805,7 +802,7 @@
                                 <input type="file" id="client-contract-file" accept="image/*,.pdf" class="w-full text-xs px-2 py-1.5 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
                             </div>
                             <div class="md:col-span-4 flex justify-end gap-2 pt-2 border-t border-neutral-100 dark:border-neutral-700">
-                                <button type="submit" class="px-5 py-2 text-white bg-black dark:bg-white dark:text-black rounded-lg text-xs font-semibold hover:opacity-95 transition-all">Save Changes</button>
+                                <button type="submit" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-semibold hover:opacity-95 transition-all">Save Changes</button>
                                 <button type="button" onclick="cancelClientForm()" class="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs font-semibold hover:bg-white dark:hover:bg-neutral-700 transition-all">Cancel</button>
                             </div>
                         </form>
@@ -878,7 +875,7 @@
                                 <input type="number" step="any" id="edit-pay-amount" required class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white">
                             </div>
                             <div class="flex gap-2">
-                                <button type="submit" class="px-5 py-2 text-white bg-black dark:bg-white dark:text-black rounded-lg text-xs font-semibold hover:opacity-95 transition-all">Update Payment</button>
+                                <button type="submit" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-semibold hover:opacity-95 transition-all">Update Payment</button>
                                 <button type="button" onclick="cancelClientPaymentEdit()" class="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs font-semibold hover:bg-white dark:hover:bg-neutral-700 transition-all">Cancel</button>
                             </div>
                         </form>
@@ -897,10 +894,10 @@
                         </div>
                         <div class="flex gap-2">
                             <button onclick="exportCSV('commissions')" class="px-3.5 py-2 border border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 rounded-xl text-xs font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all flex items-center gap-1.5">
-                                <i class="fa-solid fa-download text-neutral-400"></i> Export CSV
+                                <i class="fa-solid fa-download"></i> Export CSV
                             </button>
-                            <button onclick="toggleCommissionForm()" class="px-4 py-2 text-white bg-black dark:bg-white dark:text-black rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
-                                <i class="fa-solid fa-plus mr-1.5 text-neutral-200 dark:text-neutral-700"></i> Log Payout / Salary
+                            <button onclick="toggleCommissionForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
+                                <i class="fa-solid fa-plus mr-1.5"></i> Log Payout / Salary
                             </button>
                         </div>
                     </div>
@@ -941,7 +938,7 @@
                             
                             <div class="flex items-center gap-2 py-2">
                                 <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-semibold text-neutral-700 dark:text-neutral-300">
-                                    <input type="checkbox" id="comm-tax-deduct" class="rounded text-black dark:text-white focus:ring-0 w-4 h-4">
+                                    <input type="checkbox" id="comm-tax-deduct" class="rounded text-vively focus:ring-0 w-4 h-4">
                                     <span>Deduct 3.3% Tax (PPh)</span>
                                 </label>
                             </div>
@@ -954,7 +951,7 @@
                             </div>
                             <div class="md:col-span-2 flex justify-end gap-2 pt-2">
                                 <button type="button" onclick="cancelCommissionForm()" class="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs font-semibold hover:bg-white dark:hover:bg-neutral-700 transition-all">Cancel</button>
-                                <button type="submit" id="comm-submit-btn" class="px-5 py-2 text-white bg-black dark:bg-white dark:text-black rounded-lg text-xs font-bold hover:opacity-95 transition-all">Save Record</button>
+                                <button type="submit" id="comm-submit-btn" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-semibold hover:opacity-95 transition-all">Save Record</button>
                             </div>
                         </form>
                     </div>
@@ -1009,10 +1006,10 @@
                         </div>
                         <div class="flex gap-2">
                             <button onclick="exportCSV('reimbursements')" class="px-3.5 py-2 border border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 rounded-xl text-xs font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all flex items-center gap-1.5">
-                                <i class="fa-solid fa-download text-neutral-400"></i> Export CSV
+                                <i class="fa-solid fa-download"></i> Export CSV
                             </button>
-                            <button onclick="toggleReimbursementForm()" class="px-4 py-2 text-white bg-black dark:bg-white dark:text-black rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
-                                <i class="fa-solid fa-plus mr-1.5 text-neutral-200 dark:text-neutral-700"></i> Add Reimbursement
+                            <button onclick="toggleReimbursementForm()" class="px-4 py-2 text-white accent-bg rounded-xl text-xs font-semibold hover:opacity-95 transition-all shadow-sm">
+                                <i class="fa-solid fa-plus mr-1.5"></i> Add Reimbursement
                             </button>
                         </div>
                     </div>
@@ -1053,7 +1050,7 @@
                             </div>
                             <div class="md:col-span-4 flex justify-end gap-2 pt-2 border-t border-neutral-100 dark:border-neutral-700">
                                 <button type="button" onclick="cancelReimbursementForm()" class="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs font-semibold hover:bg-white dark:hover:bg-neutral-700 transition-all">Cancel</button>
-                                <button type="submit" class="px-5 py-2 text-white bg-black dark:bg-white dark:text-black rounded-lg text-xs font-bold hover:opacity-95 transition-all">Save Reimbursement</button>
+                                <button type="submit" class="px-5 py-2 text-white accent-bg rounded-lg text-xs font-bold hover:opacity-95 transition-all">Save Reimbursement</button>
                             </div>
                         </form>
                     </div>
@@ -1220,21 +1217,21 @@
         </div>
     </div>
 
-    <!-- NOTES MODAL POPUP -->
+    <!-- NOTES MODAL POPUP (Untuk Bank Recon Uang Keluar / Debit) -->
     <div id="notes-modal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-neutral-900 bg-opacity-50 flex items-center justify-center p-4">
         <div class="bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 rounded-2xl p-6 max-w-md w-full space-y-4 shadow-xl relative">
             <button onclick="closeNotesModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-black dark:hover:text-white transition-all p-1.5"><i class="fa-solid fa-xmark"></i></button>
             <h3 class="text-sm font-bold text-black dark:text-white uppercase tracking-wider">Transaction Note Manager</h3>
-            <input type="hidden" id="notes-tx-id" value="">
+            <input type="hidden" id="notes-bank-idx" value="">
             <div>
                 <label class="block text-[11px] font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Note Details</label>
                 <textarea id="notes-text-input" rows="3" placeholder="Type note details here..." class="w-full text-xs p-3 border border-neutral-200 dark:border-neutral-700 rounded-xl focus:outline-none accent-ring bg-white dark:bg-neutral-900 text-black dark:text-white"></textarea>
             </div>
             <div class="flex justify-between items-center pt-2 border-t border-neutral-100 dark:border-neutral-700">
-                <button type="button" onclick="deleteTransactionNote()" class="text-rose-600 hover:text-rose-700 text-xs font-semibold"><i class="fa-solid fa-trash mr-1 text-neutral-400"></i> Delete Note</button>
+                <button type="button" onclick="deleteBankNote()" class="text-rose-600 hover:text-rose-700 text-xs font-semibold"><i class="fa-solid fa-trash mr-1"></i> Delete Note</button>
                 <div class="flex gap-2">
-                    <button type="button" onclick="closeNotesModal()" class="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs font-semibold hover:bg-white dark:hover:bg-neutral-700 transition-all">Exit</button>
-                    <button type="button" onclick="saveTransactionNote()" class="px-4 py-2 text-white bg-black dark:bg-white dark:text-black rounded-lg text-xs font-bold hover:opacity-95 transition-all">Save Note</button>
+                    <button type="button" onclick="closeNotesModal()" class="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all">Exit</button>
+                    <button type="button" onclick="saveBankNote()" class="px-4 py-2 text-white accent-bg rounded-lg text-xs font-bold hover:opacity-95 transition-all">Save</button>
                 </div>
             </div>
         </div>
@@ -1249,12 +1246,12 @@
             <div id="confirm-password-container" class="hidden space-y-2 pt-1">
                 <label class="block text-[11px] font-bold text-neutral-700 dark:text-neutral-300">Enter Admin Password to confirm:</label>
                 <input type="password" id="confirm-password-input" placeholder="••••••••" class="w-full text-xs px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-xl focus:outline-none accent-ring bg-neutral-50 dark:bg-neutral-900 text-black dark:text-white font-mono">
-                <p id="confirm-password-error" class="text-[10px] text-rose-500 font-semibold hidden"><i class="fa-solid fa-triangle-exclamation mr-1 text-neutral-400"></i> Incorrect password!</p>
+                <p id="confirm-password-error" class="text-[10px] text-rose-500 font-semibold hidden"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Incorrect password!</p>
             </div>
 
             <div class="flex gap-2 justify-end pt-2">
                 <button id="confirm-btn-cancel" class="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs font-semibold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all">Cancel</button>
-                <button id="confirm-btn-ok" class="px-4 py-2 text-white bg-black dark:bg-white dark:text-black rounded-lg text-xs font-semibold hover:opacity-90 transition-all">Yes, Proceed</button>
+                <button id="confirm-btn-ok" class="px-4 py-2 text-white accent-bg rounded-lg text-xs font-semibold hover:opacity-90 transition-all">Yes, Proceed</button>
             </div>
         </div>
     </div>
@@ -1295,7 +1292,7 @@
             const icon = document.getElementById("theme-icon");
             const label = document.getElementById("theme-label");
             if (isDark) {
-                icon.className = "fa-solid fa-sun text-neutral-400";
+                icon.className = "fa-solid fa-sun text-amber-400";
                 label.innerText = "Day Mode";
             } else {
                 icon.className = "fa-solid fa-moon text-neutral-500";
@@ -1364,6 +1361,7 @@
             { id: 404, code: '4040', name: 'Localization Consulting Revenue', category: 'Revenue', side: 'Credit' },
             { id: 405, code: '4050', name: 'Live Host Revenue', category: 'Revenue', side: 'Credit' },
             { id: 406, code: '4060', name: 'Legal Registration Revenue', category: 'Revenue', side: 'Credit' },
+            { id: 407, code: '4070', name: 'Other Revenue', category: 'Revenue', side: 'Credit' },
 
             { id: 501, code: '5010', name: 'Salaries & Wages', category: 'Expense', side: 'Debit' },
             { id: 502, code: '5020', name: 'Commission Expense', category: 'Expense', side: 'Debit' },
@@ -1465,16 +1463,15 @@
                         const category = cols[5] || 'KOL Seeding Revenue';
 
                         if (amount > 0) {
-                            bankReconData.push({ date, description, amount, type: bankType, status, category, transactionBy: "Other" });
+                            bankReconData.push({ date, description, amount, type: bankType, status, category, transactionBy: "Other", notes: "" });
                         }
                     }
                 }
 
-                // Inisialisasi bank feed item baru jika belum ada di state
+                if (!appState.bankFeedState) appState.bankFeedState = {};
                 bankReconData.forEach((b, idx) => {
-                    if (!appState.bankFeedState) appState.bankFeedState = {};
                     if (!appState.bankFeedState[idx]) {
-                        appState.bankFeedState[idx] = { category: b.category, transactionBy: b.transactionBy };
+                        appState.bankFeedState[idx] = { category: b.category, transactionBy: b.transactionBy, notes: b.notes || "" };
                     }
                 });
 
@@ -1487,7 +1484,7 @@
 
         function updateBankCategory(idx, cat) {
             if (!appState.bankFeedState) appState.bankFeedState = {};
-            if (!appState.bankFeedState[idx]) appState.bankFeedState[idx] = { category: "KOL Seeding Revenue", transactionBy: "Other" };
+            if (!appState.bankFeedState[idx]) appState.bankFeedState[idx] = { category: "KOL Seeding Revenue", transactionBy: "Other", notes: "" };
             appState.bankFeedState[idx].category = cat;
             saveState();
             updateUI();
@@ -1495,14 +1492,13 @@
 
         function updateBankTransactionBy(idx, txBy) {
             if (!appState.bankFeedState) appState.bankFeedState = {};
-            if (!appState.bankFeedState[idx]) appState.bankFeedState[idx] = { category: "KOL Seeding Revenue", transactionBy: "Other" };
+            if (!appState.bankFeedState[idx]) appState.bankFeedState[idx] = { category: "KOL Seeding Revenue", transactionBy: "Other", notes: "" };
             
             const oldTxBy = appState.bankFeedState[idx].transactionBy;
             appState.bankFeedState[idx].transactionBy = txBy;
 
             const item = bankReconData[idx];
             if (item) {
-                // Proses link ke Client Payment
                 processBankItemMapping(item, txBy, oldTxBy);
             }
             saveState();
@@ -1510,8 +1506,8 @@
             showToast("Bank Transaction By updated & synced!", "success");
         }
 
+        // Link otomatis ke Client Payment, dan hapus jika diganti/dihapus
         function processBankItemMapping(bankItem, newTxBy, oldTxBy) {
-            // Hapus link lama jika sebelumnya terhubung ke paid client
             if (oldTxBy && oldTxBy !== "Vively" && oldTxBy !== "Other") {
                 appState.clientPayments = appState.clientPayments.filter(p => !(p.clientName === oldTxBy && p.paidDate === bankItem.date));
             }
@@ -1566,7 +1562,7 @@
                 if (isCredit) totalCredit += amountVal;
                 else totalDebit += amountVal;
 
-                const feedState = (appState.bankFeedState && appState.bankFeedState[idx]) ? appState.bankFeedState[idx] : { category: item.category, transactionBy: "Other" };
+                const feedState = (appState.bankFeedState && appState.bankFeedState[idx]) ? appState.bankFeedState[idx] : { category: item.category, transactionBy: item.transactionBy, notes: item.notes || "" };
 
                 // Dropdown Category COA
                 let categorySelectHtml = `<select onchange="updateBankCategory(${idx}, this.value)" class="bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 text-black dark:text-white px-2 py-1 rounded text-[11px] font-semibold focus:outline-none accent-ring">`;
@@ -1577,25 +1573,37 @@
                 });
                 categorySelectHtml += `</select>`;
 
-                // Selection Transaction By di bawah description
-                let txBySelectHtml = `<select onchange="updateBankTransactionBy(${idx}, this.value)" class="mt-1 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 text-black dark:text-white px-2 py-1 rounded text-[10px] font-semibold focus:outline-none accent-ring">
-                    <option value="Other" ${feedState.transactionBy === 'Other' ? 'selected' : ''}>Transaction By: Other</option>
-                    <option value="Vively" ${feedState.transactionBy === 'Vively' ? 'selected' : ''}>Transaction By: Vively</option>`;
-                paidClients.forEach(client => {
-                    txBySelectHtml += `<option value="${client.name}" ${feedState.transactionBy === client.name ? 'selected' : ''}>Transaction By: ${client.name}</option>`;
-                });
-                txBySelectHtml += `</select>`;
+                let descriptionCellHtml = `<div class="font-semibold text-black dark:text-white">${item.description}</div>`;
+
+                // Jika Uang Masuk (CREDIT) -> Tampilkan selection "Transaction By"
+                if (isCredit) {
+                    let txBySelectHtml = `<select onchange="updateBankTransactionBy(${idx}, this.value)" class="mt-1 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 text-black dark:text-white px-2 py-1 rounded text-[10px] font-semibold focus:outline-none accent-ring">
+                        <option value="Other" ${feedState.transactionBy === 'Other' ? 'selected' : ''}>Transaction By: Other</option>
+                        <option value="Vively" ${feedState.transactionBy === 'Vively' ? 'selected' : ''}>Transaction By: Vively</option>`;
+                    paidClients.forEach(client => {
+                        txBySelectHtml += `<option value="${client.name}" ${feedState.transactionBy === client.name ? 'selected' : ''}>Transaction By: ${client.name}</option>`;
+                    });
+                    txBySelectHtml += `</select>`;
+                    descriptionCellHtml += txBySelectHtml;
+                } else {
+                    // Jika Uang Keluar (DEBIT) -> Tampilkan tombol Add Notes / Notes Added
+                    if (feedState.notes && feedState.notes.trim() !== "") {
+                        descriptionCellHtml += `<button onclick="openBankNotesModal(${idx})" class="mt-1 block px-2 py-0.5 rounded text-[9px] font-bold border border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-800 transition-all"><i class="fa-solid fa-note-sticky mr-1 text-neutral-400"></i> Notes Added</button>`;
+                    } else {
+                        descriptionCellHtml += `<button onclick="openBankNotesModal(${idx})" class="mt-1 block px-2 py-0.5 rounded text-[9px] font-bold border border-neutral-200 dark:border-neutral-700 text-neutral-500 hover:text-black dark:hover:text-white bg-neutral-50 dark:bg-neutral-800 transition-all"><i class="fa-solid fa-plus mr-1 text-neutral-400"></i> Add Notes</button>`;
+                    }
+                }
+
+                // Warna Amount: Expense/Debit berwarna Merah
+                const amountColorClass = isCredit ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-rose-600 dark:text-rose-400 font-bold';
 
                 const row = `
                     <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-700/30 transition-all">
                         <td class="p-3.5 font-mono text-neutral-500 dark:text-neutral-400">${item.date}</td>
-                        <td class="p-3.5">
-                            <div class="font-semibold text-black dark:text-white">${item.description}</div>
-                            ${txBySelectHtml}
-                        </td>
+                        <td class="p-3.5">${descriptionCellHtml}</td>
                         <td class="p-3.5">${categorySelectHtml}</td>
-                        <td class="p-3.5 text-right font-bold ${isCredit ? 'text-emerald-600 dark:text-emerald-400' : 'text-black dark:text-white'}">₩ ${amountVal.toLocaleString()}</td>
-                        <td class="p-3.5 text-center"><span class="px-2 py-0.5 rounded text-[9px] font-bold ${isCredit ? 'bg-neutral-100 text-neutral-800 dark:bg-neutral-700 dark:text-neutral-200' : 'bg-neutral-100 text-neutral-800 dark:bg-neutral-700 dark:text-neutral-200'}">${item.type}</span></td>
+                        <td class="p-3.5 text-right ${amountColorClass}">₩ ${amountVal.toLocaleString()}</td>
+                        <td class="p-3.5 text-center"><span class="px-2 py-0.5 rounded text-[9px] font-bold bg-neutral-100 text-neutral-800 dark:bg-neutral-700 dark:text-neutral-200">${item.type}</span></td>
                     </tr>
                 `;
                 tbody.insertAdjacentHTML('beforeend', row);
@@ -1606,19 +1614,39 @@
             document.getElementById("recon-items-count").innerText = `${filteredCount} items`;
         }
 
-        function resolveRevenueCategory(rawServiceName) {
-            if (!rawServiceName) return "KOL Seeding Revenue";
-            let name = rawServiceName.trim();
-            if (!name.toLowerCase().includes("revenue")) { name = `${name} Revenue`; }
+        // Notes Manager untuk Bank Reconciliation Uang Keluar
+        function openBankNotesModal(idx) {
+            if (!appState.bankFeedState || !appState.bankFeedState[idx]) return;
+            document.getElementById("notes-bank-idx").value = idx;
+            document.getElementById("notes-text-input").value = appState.bankFeedState[idx].notes || "";
+            document.getElementById("notes-modal").classList.remove("hidden");
+        }
 
-            const exactMatch = appState.coa.find(c => c.name.toLowerCase() === name.toLowerCase());
-            if (exactMatch) return exactMatch.name;
+        function closeNotesModal() {
+            document.getElementById("notes-modal").classList.add("hidden");
+        }
 
-            const newCoa = { id: Date.now(), code: '4' + Math.floor(100 + Math.random() * 899), name: name, category: 'Revenue', side: 'Credit' };
-            appState.coa.push(newCoa);
-            saveState();
-            populateCOADropdowns();
-            return newCoa.name;
+        function saveBankNote() {
+            const idx = parseInt(document.getElementById("notes-bank-idx").value);
+            const text = document.getElementById("notes-text-input").value.trim();
+            if (appState.bankFeedState && appState.bankFeedState[idx]) {
+                appState.bankFeedState[idx].notes = text;
+                saveState();
+                renderReconTable();
+                closeNotesModal();
+                showToast("Bank transaction note saved!", "success");
+            }
+        }
+
+        function deleteBankNote() {
+            const idx = parseInt(document.getElementById("notes-bank-idx").value);
+            if (appState.bankFeedState && appState.bankFeedState[idx]) {
+                appState.bankFeedState[idx].notes = "";
+                saveState();
+                renderReconTable();
+                closeNotesModal();
+                showToast("Bank transaction note deleted!", "success");
+            }
         }
 
         function populateDynamicSelects() {
@@ -1720,10 +1748,10 @@
             
             if (type === 'success') {
                 toast.classList.add('border-neutral-200', 'text-neutral-800', 'dark:text-neutral-200');
-                toast.innerHTML = `<span class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-neutral-500 text-sm"></i> ${message}</span>`;
+                toast.innerHTML = `<span class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-500 text-sm"></i> ${message}</span>`;
             } else if (type === 'error') {
                 toast.classList.add('border-neutral-200', 'text-neutral-800', 'dark:text-neutral-200');
-                toast.innerHTML = `<span class="flex items-center gap-2"><i class="fa-solid fa-circle-exclamation text-neutral-500 text-sm"></i> ${message}</span>`;
+                toast.innerHTML = `<span class="flex items-center gap-2"><i class="fa-solid fa-circle-exclamation text-rose-500 text-sm"></i> ${message}</span>`;
             }
 
             container.appendChild(toast);
@@ -1803,21 +1831,20 @@
             const currentTab = document.getElementById(`tab-${tabId}`);
             if (currentTab) currentTab.classList.remove('hidden');
             const currentBtn = document.getElementById(`btn-${tabId}`);
-            if (currentBtn) currentBtn.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all bg-neutral-50 dark:bg-neutral-800 text-black dark:text-white border-l-4 border-black dark:border-white";
+            if (currentBtn) currentBtn.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all bg-neutral-50 dark:bg-neutral-800 text-black dark:text-white border-l-4 accent-border";
             
             if (tabId === 'dashboard') { setTimeout(renderCharts, 100); }
             if (tabId === 'fin-statements') { renderFormalFinancialStatements(); }
             if (tabId === 'reimbursements') { renderReimbursementsTable(); }
         }
 
-        // Kalkulasi Executive Dashboard berdasarkan Bank Recon (feedState category) + Manual Cash Tracker
+        // Kalkulasi Executive Dashboard dari Bank Recon (feedState category) + Manual Cash Tracker
         function updateUI() {
             let totalRevenue = 0;
             let totalExpenses = 0;
 
             const selectedMonthFilter = document.getElementById("dashboard-month-filter").value;
 
-            // Hitung dari Bank Reconciliation yang sudah dikategorikan
             if (bankReconData && bankReconData.length > 0) {
                 bankReconData.forEach((b, idx) => {
                     const txMonth = b.date.split('-')[1];
@@ -1838,7 +1865,6 @@
                 });
             }
 
-            // Hitung dari Manual Cash Tracker
             appState.transactions.forEach(t => {
                 const txMonth = t.date.split('-')[1];
                 if (selectedMonthFilter === "ALL" || selectedMonthFilter === txMonth) {
@@ -1904,7 +1930,7 @@
                             </div>
                             <div class="text-right">
                                 <span class="font-bold text-rose-600 dark:text-rose-400">₩ ${uncollectedKRW.toLocaleString(undefined, {maximumFractionDigits:0})}</span>
-                                <p class="text-[9px] text-neutral-500 font-semibold">Need Collection</p>
+                                <p class="text-[9px] text-amber-500 font-semibold">Need Collection</p>
                             </div>
                         </div>
                     `;
@@ -2070,7 +2096,8 @@
             }
 
             reportList.forEach(c => {
-                const badgeColor = "bg-neutral-100 text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200";
+                const badgeColor = c.category === "Revenue" ? "bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-950 dark:text-emerald-400" :
+                                  (c.category === "Expense" ? "bg-rose-50 text-rose-600 border-rose-100 dark:bg-rose-950 dark:text-rose-400" : "bg-neutral-50 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300");
 
                 const row = `
                     <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-700/30 transition-all">
@@ -2288,7 +2315,8 @@
             const sortedCOA = [...appState.coa].sort((a, b) => parseInt(a.code) - parseInt(b.code));
 
             sortedCOA.forEach(c => {
-                const catBadge = "bg-neutral-100 text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200 border-neutral-200";
+                const catBadge = c.category === "Revenue" ? "bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-950 dark:text-emerald-400" :
+                                  (c.category === "Expense" ? "bg-rose-50 text-rose-600 border-rose-100 dark:bg-rose-950 dark:text-rose-400" : "bg-neutral-50 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300");
                 const row = `
                     <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-700/30 transition-all">
                         <td class="p-4 font-mono font-bold text-black dark:text-white">${c.code}</td>
@@ -2367,12 +2395,12 @@
             }
 
             appState.employees.forEach(emp => {
-                const statusColor = "bg-neutral-100 text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200 border-neutral-200";
+                const statusColor = emp.status === "On-Going" ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-neutral-50 text-neutral-600 border-neutral-100";
                 const row = `
                     <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-700/30 transition-all">
                         <td class="p-4 font-bold text-black dark:text-white">${emp.name}</td>
                         <td class="p-4 font-semibold text-neutral-600 dark:text-neutral-300">${emp.type}</td>
-                        <td class="p-4"><span class="px-2 py-0.5 rounded border text-[9px] font-semibold ${statusColor}">${emp.status}</span></td>
+                        <td class="p-4"><span class="px-2 py-0.5 rounded text-[9px] font-semibold border ${statusColor}">${emp.status}</span></td>
                         <td class="p-4 text-neutral-500 dark:text-neutral-400">${emp.phone || '-'}</td>
                         <td class="p-4 text-neutral-500 dark:text-neutral-400">${emp.email || '-'}</td>
                         <td class="p-4 font-semibold text-neutral-700 dark:text-neutral-300">${emp.bank || '-'}</td>
@@ -2470,7 +2498,7 @@
                 if (statusFilter !== "ALL" && c.status !== statusFilter) return;
 
                 count++;
-                const statusColor = "bg-neutral-100 text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200 border-neutral-200";
+                const statusColor = c.status === "Active" ? "bg-emerald-50 text-emerald-600 border-emerald-100" : (c.status === "Pending" ? "bg-amber-50 text-amber-600 border-amber-100" : "bg-neutral-50 text-neutral-600 border-neutral-100");
                 
                 const finalContractVal = c.originalValue || 0;
                 const baseValueBeforeTax = Math.round(finalContractVal / 1.10);
@@ -2481,7 +2509,7 @@
                 const timelineDisplay = c.isOngoing ? `${c.campaignStart || 'N/A'} ~ Ongoing` : `${c.campaignStart || 'N/A'} ~ ${c.campaignEnd || 'N/A'}`;
 
                 const contractButton = c.contractFile ? 
-                    `<button onclick="openReceiptModal('${c.contractFile}')" class="text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white font-bold text-[11px]"><i class="fa-solid fa-file-contract mr-1 text-neutral-400"></i> View Contract</button>` : 
+                    `<button onclick="openReceiptModal('${c.contractFile}')" class="text-emerald-600 hover:text-black dark:hover:text-white font-bold text-[11px]"><i class="fa-solid fa-file-contract mr-1"></i> View Contract</button>` : 
                     `<span class="text-neutral-400 text-[10px] italic">No Contract</span>`;
 
                 if (appState.clientLayout === 'list') {
@@ -2520,7 +2548,7 @@
                                     <span class="font-medium text-neutral-400">Industry:</span><span class="text-black dark:text-white font-semibold text-right">${c.industry}</span>
                                     <span class="font-medium text-neutral-400">Service Line:</span><span class="text-black dark:text-white font-semibold text-right">${c.service}</span>
                                     <span class="font-medium text-neutral-400">Deal Model:</span><span class="text-black dark:text-white font-semibold text-right">${c.dealType}</span>
-                                    <span class="font-medium text-neutral-500 font-bold">Creators Seeding:</span><span class="text-black dark:text-white font-bold text-right">${c.creatorsSeeding || 0} creators</span>
+                                    <span class="font-medium text-emerald-600 font-bold">Creators Seeding:</span><span class="text-black dark:text-white font-bold text-right">${c.creatorsSeeding || 0} creators</span>
                                     <span class="font-medium text-neutral-400">Campaign Timeline:</span><span class="text-neutral-800 dark:text-neutral-200 font-medium text-right text-[10px]">${timelineDisplay}</span>
                                     <span class="font-medium text-neutral-400">Before Tax Value:</span><span class="text-neutral-600 dark:text-neutral-300 font-semibold text-right text-[11px]">${formattedBaseVal} KRW</span>
                                     <span class="font-medium text-neutral-400">Signed Contract:</span><span class="text-right">${contractButton}</span>
@@ -2614,7 +2642,7 @@
             });
         }
 
-        /* CLIENT PAYMENT HUB (Menampilkan breakdown Contract Value, VAT 10%, Paid, dan Remaining tanpa teks sisa pembayaran) */
+        /* CLIENT PAYMENT HUB (Menampilkan breakdown detail tanpa tulisan sisa pembayaran) */
         function renderPaymentScheduleHub() {
             const container = document.getElementById("paid-clients-payment-container");
             if (!container) return;
@@ -2656,7 +2684,7 @@
                             <td class="p-3.5 font-semibold text-black dark:text-white">${p.termDesc}</td>
                             <td class="p-3.5 font-mono text-neutral-700 dark:text-neutral-300">${parseToStandardDate(p.paidDate)}</td>
                             <td class="p-3.5 text-right font-bold text-black dark:text-white">₩ ${parseFloat(p.amount).toLocaleString()}</td>
-                            <td class="p-3.5 text-center"><span class="px-2 py-0.5 rounded border text-[9px] font-bold bg-neutral-100 text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200 border-neutral-200">Paid / Cleared</span></td>
+                            <td class="p-3.5 text-center"><span class="px-2 py-0.5 rounded border text-[9px] font-bold bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400 border-emerald-100">Paid / Cleared</span></td>
                             <td class="p-3.5 text-center">
                                 <div class="flex justify-center gap-1.5">
                                     <button onclick="loadClientPaymentForEdit(${p.id})" class="text-neutral-400 hover:text-black dark:hover:text-white p-1" title="Edit Payment"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
@@ -2807,8 +2835,8 @@
                 const rMonth = r.date.split('-')[1];
                 if (monthFilter !== "ALL" && rMonth !== monthFilter) return;
 
-                const statusBadge = "bg-neutral-100 text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200 border-neutral-200";
-                const proofCol = r.picture ? `<button onclick="openReceiptModal('${r.picture}')" class="text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white font-bold"><i class="fa-solid fa-image mr-1 text-neutral-400"></i> View Proof</button>` : `<span class="text-neutral-400 italic text-[10px]">No Proof</span>`;
+                const statusBadge = r.status === "Paid" ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-amber-50 text-amber-600 border-amber-100";
+                const proofCol = r.picture ? `<button onclick="openReceiptModal('${r.picture}')" class="text-emerald-600 hover:text-black dark:hover:text-white font-bold"><i class="fa-solid fa-image mr-1"></i> View Proof</button>` : `<span class="text-neutral-400 italic text-[10px]">No Proof</span>`;
 
                 const row = `
                     <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-700/30 transition-all">
@@ -2857,7 +2885,7 @@
             if (!tbody) return;
             tbody.innerHTML = "";
             appState.commissions.forEach(com => {
-                const badge = "bg-neutral-100 text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200 border-neutral-200";
+                const badge = com.status === "Paid" ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400 border-emerald-100" : "bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-400 border-amber-100";
                 const row = `
                     <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-700/30 transition-all">
                         <td class="p-4 text-neutral-500 dark:text-neutral-400 font-mono">${parseToStandardDate(com.date)}</td>
@@ -2996,8 +3024,8 @@
                 perfChart = new Chart(canvasPerf, {
                     type: 'bar',
                     data: { labels, datasets: [
-                        { label: 'Revenue', data: monthlyRevenue, backgroundColor: '#000000', borderRadius: 4 },
-                        { label: 'Expenses', data: monthlyExpenses, backgroundColor: '#737373', borderRadius: 4 }
+                        { label: 'Revenue', data: monthlyRevenue, backgroundColor: '#10b981', borderRadius: 4 },
+                        { label: 'Expenses', data: monthlyExpenses, backgroundColor: '#f43f5e', borderRadius: 4 }
                     ]},
                     options: { responsive: true, maintainAspectRatio: false }
                 });
