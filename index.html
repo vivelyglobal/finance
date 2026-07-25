@@ -1454,7 +1454,6 @@
                         const rawAmountStr = cols[2] ? cols[2].replace(/[^0-9.]/g, '') : "0";
                         const amount = parseFloat(rawAmountStr) || 0;
                         
-                        // Bank: Credit = Uang Masuk, Debit = Uang Keluar
                         const rawType = (cols[3] || '').toUpperCase();
                         let bankType = "DEBIT";
                         if (rawType.includes("CREDIT") || rawType.includes("입금") || rawType.includes("INCOME") || rawType.includes("REVENUE")) {
@@ -1520,7 +1519,7 @@
             document.getElementById("recon-items-count").innerText = `${filteredCount} items`;
         }
 
-        // Fungsionalitas Bank Sync: Bank Credit (masuk) -> Transaction Tracker menjadi DEBIT (Revenue/Hijau), Bank Debit (keluar) -> Transaction Tracker menjadi CREDIT (Expense/Merah)
+        // Sinkronisasi Bank: Bank CREDIT (Uang Masuk) -> DEBIT (Revenue/Hijau), Bank DEBIT (Uang Keluar) -> CREDIT (Expense/Merah)
         function syncBankDataToTransactions() {
             if (!bankReconData || bankReconData.length === 0) return;
 
@@ -1534,7 +1533,7 @@
                         description: bankItem.description,
                         category: bankItem.category || "KOL Seeding Revenue",
                         amount: parseFloat(bankItem.amount),
-                        type: isBankCredit ? "DEBIT" : "CREDIT", // Dibalik sesuai instruksi
+                        type: isBankCredit ? "DEBIT" : "CREDIT",
                         source: "HANA_BANK",
                         transactionBy: "Other",
                         notes: "",
@@ -1569,7 +1568,7 @@
                 const clientObj = appState.clients.find(c => c.name === tx.transactionBy && c.dealType === "Paid Campaign");
                 if (clientObj) {
                     tx.category = resolveRevenueCategory(clientObj.service);
-                    tx.type = "DEBIT"; // Bank Masuk -> DEBIT (Revenue)
+                    tx.type = "DEBIT";
                     tx.paidBy = "received";
 
                     const originalBase = parseFloat(tx.amount || 0);
@@ -1789,7 +1788,7 @@
             if (tabId === 'reimbursements') { renderReimbursementsTable(); }
         }
 
-        // Fungsionalitas Executive Dashboard: DEBIT (Uang Masuk/Revenue) dikurangi CREDIT (Uang Keluar/Expense)
+        // Executive Dashboard: DEBIT (Uang Masuk/Revenue) dikurangi CREDIT (Uang Keluar/Expense)
         function updateUI() {
             let totalRevenue = 0;
             let totalExpenses = 0;
@@ -2058,7 +2057,7 @@
 
                 const formattedDate = parseToStandardDate(t.date);
                 
-                // Aturan Warna Amount: DEBIT (Uang Masuk/Revenue) = Hijau, CREDIT (Uang Keluar/Expense) = Merah, Lainnya = Hitam
+                // DEBIT = Hijau (Income), CREDIT = Merah (Expense)
                 let amountColorClass = 'text-black dark:text-white font-bold';
                 if (t.type === 'DEBIT') {
                     amountColorClass = 'text-emerald-600 dark:text-emerald-400 font-bold';
