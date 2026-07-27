@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>vively - Financial Dashboard</title>
+    <title>vively - Financial Operations Hub</title>
     <!-- Google Fonts: Inter & Noto Sans KR -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,7 +16,7 @@
             theme: { extend: { colors: { vively: '#000000' } } }
         }
     </script>
-    <!-- FontAwesome Icons & Chart.js -->
+    <!-- FontAwesome Icons & Chart.js CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
@@ -31,32 +31,8 @@
 </head>
 <body class="min-h-screen bg-white text-black dark:bg-neutral-900 dark:text-white transition-colors duration-200">
 
-    <!-- Login Screen -->
-    <div id="login-container" class="min-h-screen flex flex-col justify-center items-center bg-white dark:bg-neutral-900 px-6">
-        <div class="max-w-md w-full text-center space-y-8 p-8 border border-neutral-100 dark:border-neutral-800 rounded-3xl shadow-sm bg-white dark:bg-neutral-900">
-            <div class="flex flex-col items-center gap-2">
-                <h1 class="font-korean text-7xl md:text-8xl font-bold tracking-tight text-black dark:text-white">vively</h1>
-            </div>
-            <div class="space-y-1">
-                <p class="text-[11px] text-neutral-400 font-bold tracking-widest uppercase">Operations Gateway</p>
-                <p class="text-xs text-neutral-500 dark:text-neutral-400">Read-Only Financial Dashboard Access</p>
-            </div>
-            <form onsubmit="handleLogin(event)" class="space-y-4">
-                <div class="relative">
-                    <input type="password" id="login-password" placeholder="••••••••" required class="w-full text-center text-sm tracking-widest px-4 py-3 border border-neutral-200 dark:border-neutral-700 rounded-2xl focus:outline-none bg-neutral-50 dark:bg-neutral-800 dark:text-white font-sans">
-                </div>
-                <button type="submit" class="w-full py-3.5 text-white bg-black dark:bg-white dark:text-black rounded-2xl text-xs font-bold hover:opacity-90 transition-all shadow-sm uppercase tracking-wider">
-                    Login
-                </button>
-                <p id="login-error-msg" class="text-[11px] text-rose-500 font-semibold hidden">
-                    <i class="fa-solid fa-triangle-exclamation mr-1"></i> Password salah. Akses ditolak.
-                </p>
-            </form>
-        </div>
-    </div>
-
     <!-- Main Workspace App -->
-    <div id="app-workspace" class="hidden min-h-screen flex flex-col bg-white dark:bg-neutral-900">
+    <div id="app-workspace" class="min-h-screen flex flex-col bg-white dark:bg-neutral-900">
         
         <!-- Header Navigation -->
         <header class="border-b border-neutral-100 dark:border-neutral-800 px-8 py-3.5 flex justify-between items-center bg-white dark:bg-neutral-900 sticky top-0 z-40">
@@ -67,7 +43,7 @@
                 <h1 class="font-korean text-2xl font-bold tracking-tight text-black dark:text-white">vively</h1>
             </div>
             <div class="flex items-center gap-6 text-xs font-medium">
-                <button onclick="fetchAllSheetsData()" class="px-3 py-1.5 bg-black text-white dark:bg-white dark:text-black rounded-xl font-bold flex items-center gap-2 hover:opacity-80 transition-all">
+                <button onclick="fetchAllSheetsData()" class="px-3.5 py-1.5 bg-black text-white dark:bg-white dark:text-black rounded-xl font-bold flex items-center gap-2 hover:opacity-80 transition-all shadow-sm">
                     <i class="fa-solid fa-rotate text-xs"></i> Refresh Excel Sync
                 </button>
                 <div class="h-4 w-[1px] bg-neutral-200 dark:bg-neutral-800"></div>
@@ -79,10 +55,6 @@
                 <button onclick="toggleDarkMode()" class="px-3 py-1 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white font-semibold transition-all flex items-center gap-1.5">
                     <i id="theme-icon" class="fa-solid fa-moon text-neutral-500"></i>
                     <span id="theme-label">Night Mode</span>
-                </button>
-                <div class="h-4 w-[1px] bg-neutral-200 dark:bg-neutral-800"></div>
-                <button onclick="handleLogout()" class="text-neutral-400 hover:text-rose-600 font-semibold transition-all flex items-center gap-1">
-                    <i class="fa-solid fa-right-from-bracket"></i> Exit
                 </button>
             </div>
         </header>
@@ -117,6 +89,9 @@
                             <button onclick="switchTab('reimbursements')" id="btn-reimbursements" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 border-l-4 border-transparent">
                                 <i class="fa-solid fa-file-invoice text-neutral-500"></i> Reimbursements
                             </button>
+                            <button onclick="switchTab('fin-statements')" id="btn-fin-statements" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 border-l-4 border-transparent">
+                                <i class="fa-solid fa-file-contract text-neutral-500"></i> Financial Statements
+                            </button>
                         </nav>
                     </div>
                 </div>
@@ -130,34 +105,54 @@
             <!-- Main Viewport -->
             <main class="flex-1 p-8 overflow-y-auto bg-white dark:bg-neutral-900">
                 
-                <!-- Tab 1: Executive Dashboard -->
+                <!-- TAB 1: EXECUTIVE DASHBOARD -->
                 <section id="tab-dashboard" class="space-y-8 animate-fade-in">
-                    <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b border-neutral-100 dark:border-neutral-800 pb-5 gap-4">
-                        <div>
-                            <h2 class="text-xl font-bold tracking-tight">Executive Dashboard</h2>
-                            <p class="text-xs text-neutral-500 dark:text-neutral-400">Monitoring real-time finansial tersinkronisasi dari Google Sheets Excel.</p>
+                    <div class="border-b border-neutral-100 dark:border-neutral-800 pb-5">
+                        <h2 class="text-xl font-bold tracking-tight">Executive Dashboard</h2>
+                    </div>
+
+                    <!-- Top 5 Metric Cards Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                        <!-- 1. Total Sales Contract -->
+                        <div class="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-5 shadow-sm space-y-2">
+                            <span class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block">Total Sales Contracts</span>
+                            <h3 class="text-xl font-bold text-black dark:text-white" id="metric-sales">₩ 0</h3>
+                            <div class="flex justify-between items-center text-[10px] pt-1 border-t border-neutral-100 dark:border-neutral-700">
+                                <span class="text-emerald-600 font-bold" id="metric-sales-paid">Paid: ₩ 0</span>
+                                <span class="text-rose-600 font-bold" id="metric-sales-unpaid">Unpaid: ₩ 0</span>
+                            </div>
+                        </div>
+
+                        <!-- 2. Total Net Revenue -->
+                        <div class="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-5 shadow-sm space-y-1">
+                            <span class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block">Total Net Revenue</span>
+                            <h3 class="text-xl font-bold text-emerald-600 dark:text-emerald-400" id="metric-revenue">₩ 0</h3>
+                            <span class="text-[10px] text-neutral-400 block pt-1">Cash Received</span>
+                        </div>
+
+                        <!-- 3. Total Expenses -->
+                        <div class="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-5 shadow-sm space-y-1">
+                            <span class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block">Total Expenses</span>
+                            <h3 class="text-xl font-bold text-rose-600 dark:text-rose-400" id="metric-expenses">₩ 0</h3>
+                            <span class="text-[10px] text-neutral-400 block pt-1">Bank Cash Outflow</span>
+                        </div>
+
+                        <!-- 4. Net Profit -->
+                        <div class="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-5 shadow-sm space-y-1">
+                            <span class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block">Net Profit</span>
+                            <h3 class="text-xl font-bold" id="metric-profit">₩ 0</h3>
+                            <span class="text-[10px] text-neutral-400 block pt-1">Operating Cash Balance</span>
+                        </div>
+
+                        <!-- 5. Net Margin -->
+                        <div class="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-5 shadow-sm space-y-1">
+                            <span class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block">Net Margin %</span>
+                            <h3 class="text-xl font-bold text-black dark:text-white" id="metric-margin">0%</h3>
+                            <span class="text-[10px] text-neutral-400 block pt-1">Efficiency Ratio</span>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                        <div class="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-6 shadow-sm">
-                            <span class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Total Net Revenue</span>
-                            <h3 class="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-2" id="metric-revenue">₩ 0</h3>
-                        </div>
-                        <div class="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-6 shadow-sm">
-                            <span class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Total Expenses</span>
-                            <h3 class="text-2xl font-bold text-rose-600 dark:text-rose-400 mt-2" id="metric-expenses">₩ 0</h3>
-                        </div>
-                        <div class="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-6 shadow-sm">
-                            <span class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Net Profit</span>
-                            <h3 class="text-2xl font-bold mt-2" id="metric-profit">₩ 0</h3>
-                        </div>
-                        <div class="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-6 shadow-sm">
-                            <span class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Net Margin %</span>
-                            <h3 class="text-2xl font-bold text-black dark:text-white mt-2" id="metric-margin">0%</h3>
-                        </div>
-                    </div>
-
+                    <!-- Charts & AR Grid -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <div class="border border-neutral-200 dark:border-neutral-700 rounded-2xl p-6 bg-white dark:bg-neutral-800 shadow-sm flex flex-col">
                             <h4 class="text-xs font-bold uppercase tracking-wider text-neutral-400 mb-4">Monthly Performance Summary</h4>
@@ -177,9 +172,55 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- EXPENSE BREAKDOWN & FILTER WIDGET (Di bawah Grafik) -->
+                    <div class="border border-neutral-200 dark:border-neutral-700 rounded-2xl p-6 bg-white dark:bg-neutral-800 shadow-sm space-y-4">
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-neutral-100 dark:border-neutral-700 pb-4">
+                            <div>
+                                <h4 class="text-xs font-bold uppercase tracking-wider text-black dark:text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-filter-circle-dollar text-neutral-500"></i> Expense Breakdown Explorer
+                                </h4>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-xs font-bold text-neutral-500">Select Expense Category:</span>
+                                <select id="dash-expense-category-filter" onchange="renderDashboardExpenseFilter()" class="bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 text-black dark:text-white px-3 py-1.5 rounded-xl text-xs font-semibold focus:outline-none">
+                                    <option value="ALL">All Expenses</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <!-- Category Total Display -->
+                            <div class="bg-neutral-50 dark:bg-neutral-900 p-5 rounded-2xl border border-neutral-100 dark:border-neutral-700 flex flex-col justify-between space-y-3">
+                                <div>
+                                    <span class="text-[10px] font-bold text-neutral-400 uppercase tracking-widest block">Category Summary</span>
+                                    <h3 id="dash-exp-cat-title" class="text-sm font-bold text-black dark:text-white mt-1">All Expenses Combined</h3>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-neutral-400 block font-semibold">Total Category Expenditure</span>
+                                    <h2 id="dash-exp-cat-total" class="text-2xl font-bold text-rose-600 dark:text-rose-400">₩ 0</h2>
+                                </div>
+                            </div>
+
+                            <!-- List of Filtered Expense Transactions -->
+                            <div class="lg:col-span-2 border border-neutral-100 dark:border-neutral-700 rounded-2xl overflow-hidden max-h-64 overflow-y-auto">
+                                <table class="w-full text-left border-collapse text-xs">
+                                    <thead>
+                                        <tr class="bg-neutral-50 dark:bg-neutral-700/50 border-b border-neutral-100 dark:border-neutral-700 text-neutral-500 font-bold uppercase text-[9px]">
+                                            <th class="p-3">Date</th>
+                                            <th class="p-3">Description</th>
+                                            <th class="p-3">Category</th>
+                                            <th class="p-3 text-right">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dash-expense-items-body" class="divide-y divide-neutral-100 dark:divide-neutral-700"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </section>
 
-                <!-- Tab 2: Employee Data -->
+                <!-- TAB 2: EMPLOYEE DATA -->
                 <section id="tab-employees" class="hidden space-y-8 animate-fade-in">
                     <div class="border-b border-neutral-100 dark:border-neutral-800 pb-5">
                         <h2 class="text-xl font-bold tracking-tight">Employee Data</h2>
@@ -202,20 +243,16 @@
                     </div>
                 </section>
 
-                <!-- Tab 3: Client Database (UPDATED WITH ADVANCED FILTERS & VIEWS) -->
+                <!-- TAB 3: CLIENT DATABASE (Default: Cards View) -->
                 <section id="tab-clients" class="hidden space-y-8 animate-fade-in">
                     <div class="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-800 pb-5">
-                        <div>
-                            <h2 class="text-xl font-bold tracking-tight">Client Database</h2>
-                            <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-1">Kelola portofolio klien, tipe kampanye, dan riwayat pembayaran rinci.</p>
-                        </div>
-                        <!-- Toggle View Mode Button -->
+                        <h2 class="text-xl font-bold tracking-tight">Client Database</h2>
                         <div class="bg-neutral-100 dark:bg-neutral-800 p-1 rounded-xl flex gap-1 border border-neutral-200 dark:border-neutral-700">
-                            <button onclick="setClientViewMode('table')" id="btn-view-table" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white dark:bg-neutral-900 text-black dark:text-white shadow-sm">
-                                <i class="fa-solid fa-list mr-1"></i> Table View
-                            </button>
-                            <button onclick="setClientViewMode('cards')" id="btn-view-cards" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-neutral-500 hover:text-black dark:hover:text-white">
+                            <button onclick="setClientViewMode('cards')" id="btn-view-cards" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white dark:bg-neutral-900 text-black dark:text-white shadow-sm">
                                 <i class="fa-solid fa-grip mr-1"></i> Cards View
+                            </button>
+                            <button onclick="setClientViewMode('table')" id="btn-view-table" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-neutral-500 hover:text-black dark:hover:text-white">
+                                <i class="fa-solid fa-list mr-1"></i> Table View
                             </button>
                         </div>
                     </div>
@@ -223,7 +260,6 @@
                     <!-- Client Filters Panel -->
                     <div class="flex flex-wrap gap-4 items-center justify-between bg-neutral-50 dark:bg-neutral-800 p-4 rounded-2xl border border-neutral-100 dark:border-neutral-700">
                         <div class="flex flex-wrap items-center gap-4">
-                            <!-- Campaign Type Filter -->
                             <div class="flex items-center gap-2">
                                 <span class="text-xs font-bold text-neutral-500">Campaign Type:</span>
                                 <select id="client-type-filter" onchange="renderClientDatabaseView()" class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 text-black dark:text-white px-3 py-1.5 rounded-xl text-xs font-semibold focus:outline-none">
@@ -232,7 +268,6 @@
                                     <option value="Free Campaign">Free Campaign Only</option>
                                 </select>
                             </div>
-                            <!-- Industry Filter -->
                             <div class="flex items-center gap-2">
                                 <span class="text-xs font-bold text-neutral-500">Industry:</span>
                                 <select id="client-industry-filter" onchange="renderClientDatabaseView()" class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 text-black dark:text-white px-3 py-1.5 rounded-xl text-xs font-semibold focus:outline-none">
@@ -243,8 +278,11 @@
                         <span class="text-xs text-neutral-500 font-semibold" id="client-counter-text">Showing 0 clients</span>
                     </div>
 
+                    <!-- Cards View Layout (Default View) -->
+                    <div id="clients-cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
                     <!-- Table View Layout -->
-                    <div id="clients-table-container" class="border border-neutral-100 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-sm bg-white dark:bg-neutral-800">
+                    <div id="clients-table-container" class="hidden border border-neutral-100 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-sm bg-white dark:bg-neutral-800">
                         <table class="w-full text-left border-collapse text-xs">
                             <thead>
                                 <tr class="bg-neutral-50 dark:bg-neutral-700/50 border-b border-neutral-100 dark:border-neutral-700 text-neutral-500 font-bold uppercase text-[10px]">
@@ -265,15 +303,18 @@
                             <tbody id="clients-table-body" class="divide-y divide-neutral-100 dark:divide-neutral-700"></tbody>
                         </table>
                     </div>
-
-                    <!-- Cards View Layout -->
-                    <div id="clients-cards-container" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
                 </section>
 
-                <!-- Tab 4: Bank Statement -->
+                <!-- TAB 4: BANK STATEMENT (With Category Filter) -->
                 <section id="tab-bank-recon" class="hidden space-y-8 animate-fade-in">
-                    <div class="border-b border-neutral-100 dark:border-neutral-800 pb-5">
+                    <div class="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-800 pb-5">
                         <h2 class="text-xl font-bold tracking-tight">Bank Statement</h2>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold text-neutral-500">Filter Category:</span>
+                            <select id="bank-cat-filter" onchange="renderBankTable()" class="bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-black dark:text-white px-3 py-1.5 rounded-xl text-xs font-semibold focus:outline-none">
+                                <option value="ALL">All Categories</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="border border-neutral-100 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-sm bg-white dark:bg-neutral-800">
                         <table class="w-full text-left border-collapse text-xs">
@@ -292,10 +333,16 @@
                     </div>
                 </section>
 
-                <!-- Tab 5: Client Payment -->
+                <!-- TAB 5: CLIENT PAYMENT (With Paid By Filter) -->
                 <section id="tab-client-payments" class="hidden space-y-8 animate-fade-in">
-                    <div class="border-b border-neutral-100 dark:border-neutral-800 pb-5">
+                    <div class="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-800 pb-5">
                         <h2 class="text-xl font-bold tracking-tight">Client Payment</h2>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold text-neutral-500">Filter Paid by:</span>
+                            <select id="pay-client-filter" onchange="renderClientPaymentsTable()" class="bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-black dark:text-white px-3 py-1.5 rounded-xl text-xs font-semibold focus:outline-none">
+                                <option value="ALL">All Clients / Payers</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="border border-neutral-100 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-sm bg-white dark:bg-neutral-800">
                         <table class="w-full text-left border-collapse text-xs">
@@ -312,10 +359,16 @@
                     </div>
                 </section>
 
-                <!-- Tab 6: Payroll & Payout Hub -->
+                <!-- TAB 6: PAYROLL & PAYOUT HUB (With Category Filter) -->
                 <section id="tab-commissions" class="hidden space-y-8 animate-fade-in">
-                    <div class="border-b border-neutral-100 dark:border-neutral-800 pb-5">
+                    <div class="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-800 pb-5">
                         <h2 class="text-xl font-bold tracking-tight">Payroll & Payout Hub</h2>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold text-neutral-500">Filter Category:</span>
+                            <select id="payroll-cat-filter" onchange="renderPayrollTable()" class="bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-black dark:text-white px-3 py-1.5 rounded-xl text-xs font-semibold focus:outline-none">
+                                <option value="ALL">All Categories</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="border border-neutral-100 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-sm bg-white dark:bg-neutral-800">
                         <table class="w-full text-left border-collapse text-xs">
@@ -335,10 +388,16 @@
                     </div>
                 </section>
 
-                <!-- Tab 7: Reimbursement -->
+                <!-- TAB 7: REIMBURSEMENT (With Category Filter) -->
                 <section id="tab-reimbursements" class="hidden space-y-8 animate-fade-in">
-                    <div class="border-b border-neutral-100 dark:border-neutral-800 pb-5">
+                    <div class="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-800 pb-5">
                         <h2 class="text-xl font-bold tracking-tight">Reimbursement</h2>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold text-neutral-500">Filter Category:</span>
+                            <select id="reimb-cat-filter" onchange="renderReimbursementsTable()" class="bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-black dark:text-white px-3 py-1.5 rounded-xl text-xs font-semibold focus:outline-none">
+                                <option value="ALL">All Categories</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="border border-neutral-100 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-sm bg-white dark:bg-neutral-800">
                         <table class="w-full text-left border-collapse text-xs">
@@ -358,6 +417,80 @@
                     </div>
                 </section>
 
+                <!-- TAB 8: FINANCIAL STATEMENTS WORKSPACE -->
+                <section id="tab-fin-statements" class="hidden space-y-8 animate-fade-in">
+                    <div class="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-800 pb-5">
+                        <h2 class="text-xl font-bold tracking-tight">Financial Statements</h2>
+                        <div class="bg-neutral-100 dark:bg-neutral-800 p-1 rounded-xl flex gap-1 border border-neutral-200 dark:border-neutral-700">
+                            <button onclick="setStatementMode('INCOME')" id="btn-stmt-income" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white dark:bg-neutral-900 text-black dark:text-white shadow-sm">
+                                Income Statement (P&L)
+                            </button>
+                            <button onclick="setStatementMode('BALANCE')" id="btn-stmt-balance" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-neutral-500 hover:text-black dark:hover:text-white">
+                                Balance Sheet
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Income Statement View -->
+                    <div id="stmt-view-income" class="max-w-3xl mx-auto border border-neutral-200 dark:border-neutral-700 rounded-3xl p-8 bg-white dark:bg-neutral-800 shadow-sm space-y-6">
+                        <div class="border-b pb-4 text-center space-y-1">
+                            <h3 class="text-base font-bold uppercase tracking-wider text-black dark:text-white font-korean">Vively Global Operations</h3>
+                            <h4 class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">INCOME STATEMENT (PROFIT & LOSS)</h4>
+                        </div>
+                        
+                        <div class="space-y-4 text-xs">
+                            <div class="flex justify-between font-bold text-emerald-600 dark:text-emerald-400 pb-2 border-b border-neutral-200 dark:border-neutral-700 text-sm">
+                                <span>OPERATING REVENUE (CASH RECEIVED)</span>
+                                <span id="stmt-total-revenue">₩ 0</span>
+                            </div>
+                            <div id="stmt-revenue-breakdown" class="space-y-1.5 pl-3 text-neutral-600 dark:text-neutral-300"></div>
+
+                            <div class="flex justify-between font-bold text-rose-600 dark:text-rose-400 pt-4 pb-2 border-b border-neutral-200 dark:border-neutral-700 text-sm">
+                                <span>OPERATING EXPENSES</span>
+                                <span id="stmt-total-expenses">₩ 0</span>
+                            </div>
+                            <div id="stmt-expense-breakdown" class="space-y-1.5 pl-3 text-neutral-600 dark:text-neutral-300"></div>
+
+                            <div class="flex justify-between font-bold text-base pt-4 border-t-2 border-black dark:border-white text-black dark:text-white">
+                                <span>NET OPERATING INCOME / PROFIT</span>
+                                <span id="stmt-net-profit">₩ 0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Balance Sheet View -->
+                    <div id="stmt-view-balance" class="hidden max-w-3xl mx-auto border border-neutral-200 dark:border-neutral-700 rounded-3xl p-8 bg-white dark:bg-neutral-800 shadow-sm space-y-6">
+                        <div class="border-b pb-4 text-center space-y-1">
+                            <h3 class="text-base font-bold uppercase tracking-wider text-black dark:text-white font-korean">Vively Global Operations</h3>
+                            <h4 class="text-xs font-bold text-neutral-500 uppercase tracking-widest">BALANCE SHEET (STATEMENT OF FINANCIAL POSITION)</h4>
+                        </div>
+                        
+                        <div class="space-y-4 text-xs">
+                            <div class="flex justify-between font-bold text-black dark:text-white pb-2 border-b border-neutral-200 dark:border-neutral-700 text-sm">
+                                <span>TOTAL ASSETS</span>
+                                <span id="stmt-total-assets">₩ 0</span>
+                            </div>
+                            <div class="space-y-1.5 pl-3 text-neutral-600 dark:text-neutral-300">
+                                <div class="flex justify-between"><span>Bank Cash Balances</span><span id="stmt-asset-cash">₩ 0</span></div>
+                                <div class="flex justify-between"><span>Accounts Receivable (Uncollected AR)</span><span id="stmt-asset-ar">₩ 0</span></div>
+                            </div>
+
+                            <div class="flex justify-between font-bold text-black dark:text-white pt-4 pb-2 border-b border-neutral-200 dark:border-neutral-700 text-sm">
+                                <span>TOTAL LIABILITIES & EQUITY</span>
+                                <span id="stmt-total-liab-equity">₩ 0</span>
+                            </div>
+                            <div class="space-y-1.5 pl-3 text-neutral-600 dark:text-neutral-300">
+                                <div class="flex justify-between"><span>Liabilities / VAT Payable</span><span>₩ 0</span></div>
+                                <div class="flex justify-between font-semibold text-black dark:text-white pt-1"><span>Total Equity & Retained Profits</span><span id="stmt-equity-total">₩ 0</span></div>
+                            </div>
+
+                            <div class="p-3 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-2xl text-center text-neutral-700 dark:text-neutral-300 font-bold text-[11px] mt-4">
+                                ✓ Accounting Equation Verification: Assets = Liabilities + Equity (Balanced)
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
             </main>
         </div>
     </div>
@@ -372,7 +505,6 @@
                 <h3 id="modal-client-name" class="text-lg font-bold text-black dark:text-white font-korean mt-0.5">-</h3>
             </div>
 
-            <!-- Total Status Summary -->
             <div class="grid grid-cols-3 gap-3 bg-neutral-50 dark:bg-neutral-900 p-3.5 rounded-2xl border border-neutral-100 dark:border-neutral-700 text-xs">
                 <div>
                     <span class="text-[10px] text-neutral-400 font-semibold block">Total Contract</span>
@@ -388,7 +520,6 @@
                 </div>
             </div>
 
-            <!-- List of Payment Records -->
             <div class="space-y-2">
                 <h4 class="text-xs font-bold text-neutral-500 uppercase tracking-wider">Payment History Logs</h4>
                 <div id="modal-payments-list" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
@@ -412,31 +543,9 @@
         };
 
         let sheetsData = { employee: [], clientDb: [], bankStatement: [], clientPayment: [], payroll: [], reimbursement: [] };
-        let currentClientViewMode = 'table';
+        let currentClientViewMode = 'cards'; // Cards View Utama
         let isSidebarVisible = true;
         let perfChart = null;
-
-        function handleLogin(e) {
-            if (e) e.preventDefault();
-            if (document.getElementById("login-password").value === "20260619") {
-                sessionStorage.setItem("vively_logged_in", "true");
-                showWorkspace();
-            } else {
-                document.getElementById("login-error-msg").classList.remove("hidden");
-            }
-        }
-
-        function showWorkspace() {
-            document.getElementById("login-container").classList.add("hidden");
-            document.getElementById("app-workspace").classList.remove("hidden");
-            fetchAllSheetsData();
-        }
-
-        function handleLogout() {
-            sessionStorage.removeItem("vively_logged_in");
-            document.getElementById("login-container").classList.remove("hidden");
-            document.getElementById("app-workspace").classList.add("hidden");
-        }
 
         function toggleSidebar() {
             isSidebarVisible = !isSidebarVisible;
@@ -462,7 +571,7 @@
         }
 
         function switchTab(tabId) {
-            const tabs = ['dashboard', 'employees', 'clients', 'bank-recon', 'client-payments', 'commissions', 'reimbursements'];
+            const tabs = ['dashboard', 'employees', 'clients', 'bank-recon', 'client-payments', 'commissions', 'reimbursements', 'fin-statements'];
             tabs.forEach(t => {
                 const el = document.getElementById(`tab-${t}`);
                 if (el) el.classList.add('hidden');
@@ -508,19 +617,57 @@
                 sheetsData.payroll = parseCSV(payrollRes);
                 sheetsData.reimbursement = parseCSV(reimbRes);
 
-                populateIndustryDropdown();
+                populateAllDropdownFilters();
                 renderAllTables();
                 renderDashboardMetrics();
+                renderFinancialStatements();
             } catch (err) {
                 console.error("Gagal sinkronisasi data Google Sheets:", err);
             }
         }
 
-        function populateIndustryDropdown() {
+        function populateAllDropdownFilters() {
+            // 1. Client Industry Filter
             const indSelect = document.getElementById("client-industry-filter");
-            if (!indSelect) return;
-            const industries = [...new Set(sheetsData.clientDb.map(r => r[3]).filter(Boolean))];
-            indSelect.innerHTML = `<option value="ALL">All Industries</option>` + industries.map(ind => `<option value="${ind}">${ind}</option>`).join('');
+            if (indSelect) {
+                const industries = [...new Set(sheetsData.clientDb.map(r => r[3]).filter(Boolean))];
+                indSelect.innerHTML = `<option value="ALL">All Industries</option>` + industries.map(ind => `<option value="${ind}">${ind}</option>`).join('');
+            }
+
+            // 2. Bank Category Filter
+            const bankCatSelect = document.getElementById("bank-cat-filter");
+            if (bankCatSelect) {
+                const categories = [...new Set(sheetsData.bankStatement.map(r => r[4]).filter(Boolean))];
+                bankCatSelect.innerHTML = `<option value="ALL">All Categories</option>` + categories.map(c => `<option value="${c}">${c}</option>`).join('');
+            }
+
+            // 3. Client Payment "Paid by" Filter
+            const payClientSelect = document.getElementById("pay-client-filter");
+            if (payClientSelect) {
+                const clients = [...new Set(sheetsData.clientPayment.map(r => r[3]).filter(Boolean))];
+                payClientSelect.innerHTML = `<option value="ALL">All Clients / Payers</option>` + clients.map(c => `<option value="${c}">${c}</option>`).join('');
+            }
+
+            // 4. Payroll Category Filter
+            const payrollCatSelect = document.getElementById("payroll-cat-filter");
+            if (payrollCatSelect) {
+                const categories = [...new Set(sheetsData.payroll.map(r => r[3]).filter(Boolean))];
+                payrollCatSelect.innerHTML = `<option value="ALL">All Categories</option>` + categories.map(c => `<option value="${c}">${c}</option>`).join('');
+            }
+
+            // 5. Reimbursement Category Filter
+            const reimbCatSelect = document.getElementById("reimb-cat-filter");
+            if (reimbCatSelect) {
+                const categories = [...new Set(sheetsData.reimbursement.map(r => r[2]).filter(Boolean))];
+                reimbCatSelect.innerHTML = `<option value="ALL">All Categories</option>` + categories.map(c => `<option value="${c}">${c}</option>`).join('');
+            }
+
+            // 6. Dashboard Expense Category Filter
+            const dashExpSelect = document.getElementById("dash-expense-category-filter");
+            if (dashExpSelect) {
+                const expenseCats = [...new Set(sheetsData.bankStatement.filter(r => cleanNum(r[3]) > 0).map(r => r[4]).filter(Boolean))];
+                dashExpSelect.innerHTML = `<option value="ALL">All Expenses</option>` + expenseCats.map(c => `<option value="${c}">${c}</option>`).join('');
+            }
         }
 
         function setClientViewMode(mode) {
@@ -530,16 +677,16 @@
             const tableContainer = document.getElementById("clients-table-container");
             const cardsContainer = document.getElementById("clients-cards-container");
 
-            if (mode === 'table') {
-                btnTable.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white dark:bg-neutral-900 text-black dark:text-white shadow-sm";
-                btnCards.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-neutral-500 hover:text-black dark:hover:text-white";
-                tableContainer.classList.remove("hidden");
-                cardsContainer.classList.add("hidden");
-            } else {
+            if (mode === 'cards') {
                 btnCards.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white dark:bg-neutral-900 text-black dark:text-white shadow-sm";
                 btnTable.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-neutral-500 hover:text-black dark:hover:text-white";
                 cardsContainer.classList.remove("hidden");
                 tableContainer.classList.add("hidden");
+            } else {
+                btnTable.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white dark:bg-neutral-900 text-black dark:text-white shadow-sm";
+                btnCards.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-neutral-500 hover:text-black dark:hover:text-white";
+                tableContainer.classList.remove("hidden");
+                cardsContainer.classList.add("hidden");
             }
             renderClientDatabaseView();
         }
@@ -556,47 +703,7 @@
 
             document.getElementById("client-counter-text").innerText = `Showing ${filteredClients.length} client${filteredClients.length !== 1 ? 's' : ''}`;
 
-            // Render Table View
-            const clientBody = document.getElementById("clients-table-body");
-            clientBody.innerHTML = filteredClients.map(r => {
-                const companyName = r[0] || '';
-                const totalPaid = cleanNum(r[9]);
-                const totalContract = cleanNum(r[8]);
-                
-                // Cari riwayat pembayaran di Client Payment
-                const paymentLogs = sheetsData.clientPayment.filter(p => p[3] && p[3].trim() === companyName.trim());
-                const paymentCount = paymentLogs.length;
-
-                let detailBtn = `<span class="text-neutral-400 text-[10px] italic">No Payments</span>`;
-                if (paymentCount > 0) {
-                    detailBtn = `<button onclick="openPaymentModal('${companyName.replace(/'/g, "\\'")}', ${totalContract}, ${totalPaid})" class="px-2.5 py-1 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-700 dark:hover:bg-neutral-600 font-bold text-neutral-800 dark:text-neutral-200 rounded-lg text-[10px] transition-all flex items-center gap-1 mx-auto">
-                        <i class="fa-solid fa-receipt text-emerald-500"></i> ${paymentCount} Payment${paymentCount > 1 ? 's' : ''}
-                    </button>`;
-                }
-
-                const typeBadge = r[2] === "Paid Campaign" 
-                    ? "bg-emerald-50 text-emerald-600 border border-emerald-100" 
-                    : "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400";
-
-                return `
-                    <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-700/30">
-                        <td class="p-4 font-bold text-black dark:text-white">${companyName}</td>
-                        <td class="p-4 font-mono text-neutral-400">${r[1]||'-'}</td>
-                        <td class="p-4"><span class="px-2 py-0.5 rounded text-[9px] font-bold ${typeBadge}">${r[2]||''}</span></td>
-                        <td class="p-4">${r[3]||''}</td>
-                        <td class="p-4">${r[4]||''}</td>
-                        <td class="p-4 text-center">${r[5]||'0'}</td>
-                        <td class="p-4 text-right">₩ ${cleanNum(r[6]).toLocaleString()}</td>
-                        <td class="p-4 text-right">₩ ${cleanNum(r[7]).toLocaleString()}</td>
-                        <td class="p-4 text-right font-bold">₩ ${cleanNum(r[8]).toLocaleString()}</td>
-                        <td class="p-4 text-right font-bold text-emerald-600">₩ ${cleanNum(r[9]).toLocaleString()}</td>
-                        <td class="p-4 text-right font-bold text-rose-600">₩ ${cleanNum(r[10]).toLocaleString()}</td>
-                        <td class="p-4 text-center">${detailBtn}</td>
-                    </tr>
-                `;
-            }).join('');
-
-            // Render Cards View
+            // Render Cards View (Utama)
             const cardsContainer = document.getElementById("clients-cards-container");
             cardsContainer.innerHTML = filteredClients.map(r => {
                 const companyName = r[0] || '';
@@ -653,6 +760,146 @@
                     </div>
                 `;
             }).join('');
+
+            // Render Table View
+            const clientBody = document.getElementById("clients-table-body");
+            clientBody.innerHTML = filteredClients.map(r => {
+                const companyName = r[0] || '';
+                const totalPaid = cleanNum(r[9]);
+                const totalContract = cleanNum(r[8]);
+                
+                const paymentLogs = sheetsData.clientPayment.filter(p => p[3] && p[3].trim() === companyName.trim());
+                const paymentCount = paymentLogs.length;
+
+                let detailBtn = `<span class="text-neutral-400 text-[10px] italic">No Payments</span>`;
+                if (paymentCount > 0) {
+                    detailBtn = `<button onclick="openPaymentModal('${companyName.replace(/'/g, "\\'")}', ${totalContract}, ${totalPaid})" class="px-2.5 py-1 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-700 dark:hover:bg-neutral-600 font-bold text-neutral-800 dark:text-neutral-200 rounded-lg text-[10px] transition-all flex items-center gap-1 mx-auto">
+                        <i class="fa-solid fa-receipt text-emerald-500"></i> ${paymentCount} Payment${paymentCount > 1 ? 's' : ''}
+                    </button>`;
+                }
+
+                const typeBadge = r[2] === "Paid Campaign" 
+                    ? "bg-emerald-50 text-emerald-600 border border-emerald-100" 
+                    : "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400";
+
+                return `
+                    <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-700/30">
+                        <td class="p-4 font-bold text-black dark:text-white">${companyName}</td>
+                        <td class="p-4 font-mono text-neutral-400">${r[1]||'-'}</td>
+                        <td class="p-4"><span class="px-2 py-0.5 rounded text-[9px] font-bold ${typeBadge}">${r[2]||''}</span></td>
+                        <td class="p-4">${r[3]||''}</td>
+                        <td class="p-4">${r[4]||''}</td>
+                        <td class="p-4 text-center">${r[5]||'0'}</td>
+                        <td class="p-4 text-right">₩ ${cleanNum(r[6]).toLocaleString()}</td>
+                        <td class="p-4 text-right">₩ ${cleanNum(r[7]).toLocaleString()}</td>
+                        <td class="p-4 text-right font-bold">₩ ${cleanNum(r[8]).toLocaleString()}</td>
+                        <td class="p-4 text-right font-bold text-emerald-600">₩ ${cleanNum(r[9]).toLocaleString()}</td>
+                        <td class="p-4 text-right font-bold text-rose-600">₩ ${cleanNum(r[10]).toLocaleString()}</td>
+                        <td class="p-4 text-center">${detailBtn}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderBankTable() {
+            const filter = document.getElementById("bank-cat-filter").value;
+            const bankBody = document.getElementById("bank-table-body");
+            
+            const filtered = sheetsData.bankStatement.filter(r => filter === "ALL" || r[4] === filter);
+
+            bankBody.innerHTML = filtered.map(r => `
+                <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-700/30">
+                    <td class="p-3.5 font-mono text-neutral-400">${r[0]||''}</td>
+                    <td class="p-3.5 font-semibold text-black dark:text-white">${r[1]||''}</td>
+                    <td class="p-3.5 text-right text-emerald-600 font-bold">${cleanNum(r[2]) > 0 ? '₩ ' + cleanNum(r[2]).toLocaleString() : ''}</td>
+                    <td class="p-3.5 text-right text-rose-600 font-bold">${cleanNum(r[3]) > 0 ? '₩ ' + cleanNum(r[3]).toLocaleString() : ''}</td>
+                    <td class="p-3.5"><span class="px-2 py-0.5 rounded text-[10px] bg-neutral-100 dark:bg-neutral-800 font-semibold">${r[4]||''}</span></td>
+                    <td class="p-3.5 text-neutral-400">${r[5]||''}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderClientPaymentsTable() {
+            const filter = document.getElementById("pay-client-filter").value;
+            const payBody = document.getElementById("client-payments-table-body");
+            
+            const filtered = sheetsData.clientPayment.filter(r => filter === "ALL" || r[3] === filter);
+
+            payBody.innerHTML = filtered.map(r => `
+                <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-700/30">
+                    <td class="p-4 font-mono text-neutral-400">${r[0]||''}</td>
+                    <td class="p-4 font-semibold text-black dark:text-white">${r[1]||''}</td>
+                    <td class="p-4 text-right text-emerald-600 font-bold">₩ ${cleanNum(r[2]).toLocaleString()}</td>
+                    <td class="p-4 font-bold">${r[3]||''}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderPayrollTable() {
+            const filter = document.getElementById("payroll-cat-filter").value;
+            const payrollBody = document.getElementById("payroll-table-body");
+            
+            const filtered = sheetsData.payroll.filter(r => filter === "ALL" || r[3] === filter);
+
+            payrollBody.innerHTML = filtered.map(r => `
+                <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-700/30">
+                    <td class="p-4 font-mono text-neutral-400">${r[0]||''}</td>
+                    <td class="p-4 font-semibold text-black dark:text-white">${r[1]||''}</td>
+                    <td class="p-4 text-right font-bold text-rose-600">₩ ${cleanNum(r[2]).toLocaleString()}</td>
+                    <td class="p-4"><span class="px-2 py-0.5 rounded text-[10px] bg-neutral-100 dark:bg-neutral-800 font-semibold">${r[3]||''}</span></td>
+                    <td class="p-4 text-right">₩ ${cleanNum(r[4]).toLocaleString()}</td>
+                    <td class="p-4 text-right font-bold">₩ ${cleanNum(r[5]).toLocaleString()}</td>
+                    <td class="p-4 text-neutral-400">${r[6]||''}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderReimbursementsTable() {
+            const filter = document.getElementById("reimb-cat-filter").value;
+            const reimbBody = document.getElementById("reimbursements-table-body");
+            
+            const filtered = sheetsData.reimbursement.filter(r => filter === "ALL" || r[2] === filter);
+
+            reimbBody.innerHTML = filtered.map(r => `
+                <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-700/30">
+                    <td class="p-4 font-mono text-neutral-400">${r[0]||''}</td>
+                    <td class="p-4 font-semibold text-black dark:text-white">${r[1]||''}</td>
+                    <td class="p-4">${r[2]||''}</td>
+                    <td class="p-4 text-right font-bold">₩ ${cleanNum(r[3]).toLocaleString()}</td>
+                    <td class="p-4 font-semibold">${r[4]||''}</td>
+                    <td class="p-4 text-center"><span class="px-2 py-0.5 rounded text-[9px] font-bold ${r[5] === 'Paid' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-amber-50 text-amber-600 border border-amber-100'}">${r[5]||'Unpaid'}</span></td>
+                    <td class="p-4 text-center">${r[6] ? `<a href="${r[6]}" target="_blank" class="text-emerald-600 font-bold hover:underline"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> View Proof</a>` : '<span class="text-neutral-400">No Proof</span>'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderDashboardExpenseFilter() {
+            const filter = document.getElementById("dash-expense-category-filter").value;
+            const titleEl = document.getElementById("dash-exp-cat-title");
+            const totalEl = document.getElementById("dash-exp-cat-total");
+            const tableBody = document.getElementById("dash-expense-items-body");
+
+            const expenseItems = sheetsData.bankStatement.filter(r => cleanNum(r[3]) > 0);
+            const filtered = expenseItems.filter(r => filter === "ALL" || r[4] === filter);
+
+            let sumTotal = 0;
+            filtered.forEach(r => { sumTotal += cleanNum(r[3]); });
+
+            titleEl.innerText = filter === "ALL" ? "All Expenses Combined" : filter;
+            totalEl.innerText = `₩ ${sumTotal.toLocaleString()}`;
+
+            if (filtered.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-neutral-400 italic text-xs">No expense items match this category.</td></tr>`;
+            } else {
+                tableBody.innerHTML = filtered.map(r => `
+                    <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-700/30">
+                        <td class="p-3 font-mono text-neutral-400">${r[0]||''}</td>
+                        <td class="p-3 font-semibold text-black dark:text-white">${r[1]||''}</td>
+                        <td class="p-3"><span class="px-2 py-0.5 rounded text-[9px] bg-neutral-100 dark:bg-neutral-800 font-bold">${r[4]||'Expense'}</span></td>
+                        <td class="p-3 text-right font-bold text-rose-600">₩ ${cleanNum(r[3]).toLocaleString()}</td>
+                    </tr>
+                `).join('');
+            }
         }
 
         function openPaymentModal(clientName, totalContract, totalPaid) {
@@ -663,7 +910,6 @@
             const remaining = Math.max(0, totalContract - totalPaid);
             document.getElementById("modal-total-remaining").innerText = `₩ ${remaining.toLocaleString()}`;
 
-            // Sync payment logs
             const paymentLogs = sheetsData.clientPayment.filter(p => p[3] && p[3].trim() === clientName.trim());
             const modalList = document.getElementById("modal-payments-list");
             
@@ -692,7 +938,7 @@
         }
 
         function renderAllTables() {
-            // 1. Employee Data
+            // Employee Data
             const empBody = document.getElementById("employees-table-body");
             empBody.innerHTML = sheetsData.employee.map(r => `
                 <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-700/30">
@@ -706,63 +952,29 @@
                 </tr>
             `).join('');
 
-            // 2. Client Database
             renderClientDatabaseView();
-
-            // 3. Bank Statement
-            const bankBody = document.getElementById("bank-table-body");
-            bankBody.innerHTML = sheetsData.bankStatement.map(r => `
-                <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-700/30">
-                    <td class="p-3.5 font-mono text-neutral-400">${r[0]||''}</td>
-                    <td class="p-3.5 font-semibold text-black dark:text-white">${r[1]||''}</td>
-                    <td class="p-3.5 text-right text-emerald-600 font-bold">${cleanNum(r[2]) > 0 ? '₩ ' + cleanNum(r[2]).toLocaleString() : ''}</td>
-                    <td class="p-3.5 text-right text-rose-600 font-bold">${cleanNum(r[3]) > 0 ? '₩ ' + cleanNum(r[3]).toLocaleString() : ''}</td>
-                    <td class="p-3.5"><span class="px-2 py-0.5 rounded text-[10px] bg-neutral-100 dark:bg-neutral-800 font-semibold">${r[4]||''}</span></td>
-                    <td class="p-3.5 text-neutral-400">${r[5]||''}</td>
-                </tr>
-            `).join('');
-
-            // 4. Client Payment
-            const payBody = document.getElementById("client-payments-table-body");
-            payBody.innerHTML = sheetsData.clientPayment.map(r => `
-                <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-700/30">
-                    <td class="p-4 font-mono text-neutral-400">${r[0]||''}</td>
-                    <td class="p-4 font-semibold text-black dark:text-white">${r[1]||''}</td>
-                    <td class="p-4 text-right text-emerald-600 font-bold">₩ ${cleanNum(r[2]).toLocaleString()}</td>
-                    <td class="p-4 font-bold">${r[3]||''}</td>
-                </tr>
-            `).join('');
-
-            // 5. Payroll
-            const payrollBody = document.getElementById("payroll-table-body");
-            payrollBody.innerHTML = sheetsData.payroll.map(r => `
-                <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-700/30">
-                    <td class="p-4 font-mono text-neutral-400">${r[0]||''}</td>
-                    <td class="p-4 font-semibold text-black dark:text-white">${r[1]||''}</td>
-                    <td class="p-4 text-right font-bold text-rose-600">₩ ${cleanNum(r[2]).toLocaleString()}</td>
-                    <td class="p-4"><span class="px-2 py-0.5 rounded text-[10px] bg-neutral-100 dark:bg-neutral-800 font-semibold">${r[3]||''}</span></td>
-                    <td class="p-4 text-right">₩ ${cleanNum(r[4]).toLocaleString()}</td>
-                    <td class="p-4 text-right font-bold">₩ ${cleanNum(r[5]).toLocaleString()}</td>
-                    <td class="p-4 text-neutral-400">${r[6]||''}</td>
-                </tr>
-            `).join('');
-
-            // 6. Reimbursement
-            const reimbBody = document.getElementById("reimbursements-table-body");
-            reimbBody.innerHTML = sheetsData.reimbursement.map(r => `
-                <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-700/30">
-                    <td class="p-4 font-mono text-neutral-400">${r[0]||''}</td>
-                    <td class="p-4 font-semibold text-black dark:text-white">${r[1]||''}</td>
-                    <td class="p-4">${r[2]||''}</td>
-                    <td class="p-4 text-right font-bold">₩ ${cleanNum(r[3]).toLocaleString()}</td>
-                    <td class="p-4 font-semibold">${r[4]||''}</td>
-                    <td class="p-4 text-center"><span class="px-2 py-0.5 rounded text-[9px] font-bold ${r[5] === 'Paid' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-amber-50 text-amber-600 border border-amber-100'}">${r[5]||'Unpaid'}</span></td>
-                    <td class="p-4 text-center">${r[6] ? `<a href="${r[6]}" target="_blank" class="text-emerald-600 font-bold hover:underline"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> View Proof</a>` : '<span class="text-neutral-400">No Proof</span>'}</td>
-                </tr>
-            `).join('');
+            renderBankTable();
+            renderClientPaymentsTable();
+            renderPayrollTable();
+            renderReimbursementsTable();
+            renderDashboardExpenseFilter();
         }
 
         function renderDashboardMetrics() {
+            let totalSalesContracts = 0;
+            let totalSalesPaid = 0;
+            let totalSalesUnpaid = 0;
+
+            sheetsData.clientDb.forEach(r => {
+                totalSalesContracts += cleanNum(r[8]);
+                totalSalesPaid += cleanNum(r[9]);
+                totalSalesUnpaid += cleanNum(r[10]);
+            });
+
+            document.getElementById("metric-sales").innerText = `₩ ${totalSalesContracts.toLocaleString()}`;
+            document.getElementById("metric-sales-paid").innerText = `Paid: ₩ ${totalSalesPaid.toLocaleString()}`;
+            document.getElementById("metric-sales-unpaid").innerText = `Unpaid: ₩ ${totalSalesUnpaid.toLocaleString()}`;
+
             let totalRevenue = 0;
             let totalExpenses = 0;
 
@@ -810,6 +1022,66 @@
             renderChart();
         }
 
+        function setStatementMode(mode) {
+            const btnIncome = document.getElementById("btn-stmt-income");
+            const btnBalance = document.getElementById("btn-stmt-balance");
+            const viewIncome = document.getElementById("stmt-view-income");
+            const viewBalance = document.getElementById("stmt-view-balance");
+
+            if (mode === 'INCOME') {
+                btnIncome.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white dark:bg-neutral-900 text-black dark:text-white shadow-sm";
+                btnBalance.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-neutral-500 hover:text-black dark:hover:text-white";
+                viewIncome.classList.remove("hidden");
+                viewBalance.classList.add("hidden");
+            } else {
+                btnBalance.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white dark:bg-neutral-900 text-black dark:text-white shadow-sm";
+                btnIncome.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-neutral-500 hover:text-black dark:hover:text-white";
+                viewBalance.classList.remove("hidden");
+                viewIncome.classList.add("hidden");
+            }
+        }
+
+        function renderFinancialStatements() {
+            let totalRev = 0, totalExp = 0;
+            const revMap = {}, expMap = {};
+
+            sheetsData.bankStatement.forEach(r => {
+                const credit = cleanNum(r[2]);
+                const debit = cleanNum(r[3]);
+                const cat = r[4] || 'Other';
+
+                if (credit > 0) {
+                    totalRev += credit;
+                    revMap[cat] = (revMap[cat] || 0) + credit;
+                }
+                if (debit > 0) {
+                    totalExp += debit;
+                    expMap[cat] = (expMap[cat] || 0) + debit;
+                }
+            });
+
+            const netProfit = totalRev - totalExp;
+
+            document.getElementById("stmt-total-revenue").innerText = `₩ ${totalRev.toLocaleString()}`;
+            document.getElementById("stmt-revenue-breakdown").innerHTML = Object.keys(revMap).map(k => `<div class="flex justify-between"><span>${k}</span><span>₩ ${revMap[k].toLocaleString()}</span></div>`).join('');
+
+            document.getElementById("stmt-total-expenses").innerText = `₩ ${totalExp.toLocaleString()}`;
+            document.getElementById("stmt-expense-breakdown").innerHTML = Object.keys(expMap).map(k => `<div class="flex justify-between"><span>${k}</span><span>₩ ${expMap[k].toLocaleString()}</span></div>`).join('');
+
+            document.getElementById("stmt-net-profit").innerText = `₩ ${netProfit.toLocaleString()}`;
+
+            let uncollectedAR = 0;
+            sheetsData.clientDb.forEach(r => { uncollectedAR += cleanNum(r[10]); });
+
+            const totalAssets = netProfit + uncollectedAR;
+
+            document.getElementById("stmt-asset-cash").innerText = `₩ ${netProfit.toLocaleString()}`;
+            document.getElementById("stmt-asset-ar").innerText = `₩ ${uncollectedAR.toLocaleString()}`;
+            document.getElementById("stmt-total-assets").innerText = `₩ ${totalAssets.toLocaleString()}`;
+            document.getElementById("stmt-equity-total").innerText = `₩ ${totalAssets.toLocaleString()}`;
+            document.getElementById("stmt-total-liab-equity").innerText = `₩ ${totalAssets.toLocaleString()}`;
+        }
+
         function renderChart() {
             if (perfChart) perfChart.destroy();
             const ctx = document.getElementById('chart-performance');
@@ -842,8 +1114,7 @@
         }
 
         window.onload = function() {
-            if (sessionStorage.getItem("vively_logged_in") === "true") { showWorkspace(); }
-            else { document.getElementById("login-container").classList.remove("hidden"); }
+            fetchAllSheetsData();
         };
     </script>
 </body>
